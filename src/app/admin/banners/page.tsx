@@ -263,9 +263,9 @@ export default function BannersPage() {
                             圖片上傳 <span className="text-xs text-gray-500 font-normal ml-2">(建議尺寸: 1920x1080px, 檔案大小: 2MB 以內)</span>
                         </label>
                         <div className="flex items-center gap-4">
-                            <label className="cursor-pointer bg-lanna-green text-white px-4 py-2 rounded hover:bg-lanna-green/90 flex items-center gap-2">
+                            <label className={`cursor-pointer text-white px-4 py-2 rounded flex items-center gap-2 ${imageUrl ? 'bg-blue-500 hover:bg-blue-600' : 'bg-lanna-green hover:bg-lanna-green/90'}`}>
                                 <Upload size={18} />
-                                {uploading ? "上傳中..." : "選擇圖片"}
+                                {uploading ? "上傳中..." : (imageUrl ? "更換圖片" : "選擇圖片")}
                                 <input
                                     type="file"
                                     className="hidden"
@@ -275,8 +275,16 @@ export default function BannersPage() {
                                 />
                             </label>
                             {imageUrl && (
-                                <div className="relative w-32 h-20 border rounded overflow-hidden">
+                                <div className="relative w-48 h-28 border rounded overflow-hidden group">
                                     <Image src={imageUrl} alt="Preview" fill className="object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={() => setImageUrl("")}
+                                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        title="移除這張圖片"
+                                    >
+                                        <X size={14} />
+                                    </button>
                                 </div>
                             )}
                         </div>
