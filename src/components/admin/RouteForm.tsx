@@ -136,7 +136,7 @@ export default function RouteForm({ initialData, isEdit = false }: RouteFormProp
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">
-                            行程名稱 (繁體中文) *
+                            行程名稱 (繁體中文) <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="text"
@@ -207,7 +207,7 @@ export default function RouteForm({ initialData, isEdit = false }: RouteFormProp
                                 className="hidden"
                             />
                         </label>
-                        <span className="text-xs text-gray-500">建議尺寸: 800x600, 支援 jpg/png</span>
+                        <span className="text-xs text-gray-500">建議尺寸: 800x600px, 檔案大小: 2MB 以內</span>
                     </div>
 
                     {/* Hidden URL input if needed manually */}

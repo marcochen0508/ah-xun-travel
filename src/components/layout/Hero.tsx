@@ -1,22 +1,40 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { Banner } from "@/types/schema";
 
 export default function Hero() {
     const { t } = useLanguage();
+    const [bgImage, setBgImage] = useState("/hero-bg-new.jpg");
+
+    useEffect(() => {
+        const fetchBanner = async () => {
+            try {
+                const res = await fetch("/api/banner");
+                const data = await res.json();
+                if (data && data.image_url) {
+                    setBgImage(data.image_url);
+                }
+            } catch (error) {
+                console.error("Failed to fetch banner:", error);
+            }
+        };
+        fetchBanner();
+    }, []);
 
     return (
         <div className="relative h-screen w-full flex items-center justify-center overflow-hidden">
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
                 <Image
-                    src="/hero-bg-new.jpg"
+                    src={bgImage}
                     alt="Chiang Mai Landscape"
                     fill
-                    className="object-cover"
+                    className="object-cover transition-opacity duration-1000"
                     priority
                 />
                 {/* Overlay for readability */}

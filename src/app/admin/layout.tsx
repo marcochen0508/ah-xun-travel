@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Map, Newspaper, Info, LogOut, FileText, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Map, Newspaper, Info, LogOut, FileText, MessageSquare, Image as ImageIcon } from "lucide-react";
 
 export default function AdminLayout({
     children,
@@ -24,11 +24,11 @@ export default function AdminLayout({
                         <span>總覽 (Dashboard)</span>
                     </Link>
                     <Link
-                        href="/admin/routes"
+                        href="/admin/banners"
                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
                     >
-                        <Map size={20} />
-                        <span>特色行程管理</span>
+                        <ImageIcon size={20} />
+                        <span>首頁看板管理</span>
                     </Link>
                     <Link
                         href="/admin/news"
@@ -45,19 +45,25 @@ export default function AdminLayout({
                         <span>關於我們編輯</span>
                     </Link>
                     <Link
-                        href="/admin/notes"
+                        href="/admin/routes"
                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
                     >
-                        <FileText size={20} />
-                        <span>包車注意事項</span>
+                        <Map size={20} />
+                        <span>特色行程管理</span>
                     </Link>
-
                     <Link
                         href="/admin/reviews"
                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
                     >
                         <MessageSquare size={20} />
                         <span>顧客回饋</span>
+                    </Link>
+                    <Link
+                        href="/admin/notes"
+                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
+                    >
+                        <FileText size={20} />
+                        <span>包車注意事項</span>
                     </Link>
                 </nav>
 

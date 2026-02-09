@@ -40,6 +40,7 @@ export type GeneralContent = {
     updated_at?: string;
 };
 
+
 export interface CustomerReview {
     id: string;
     name: string;
@@ -47,5 +48,16 @@ export interface CustomerReview {
     rating?: number;
     photos?: string[];
     show_on_home: boolean;
+    created_at?: string;
+};
+
+export interface Banner {
+    id: string;
+    title?: string;
+    image_url: string;
+    is_default: boolean;
+    start_at?: string;
+    end_at?: string;
+    is_active: boolean;
     created_at?: string;
 };

@@ -219,7 +219,7 @@ export default function ReviewForm({ initialData, isEdit = false }: ReviewFormPr
                                 className="hidden"
                             />
                         </label>
-                        <span className="text-xs text-gray-500">支援 jpg, png, webp (建議壓縮後再上傳)</span>
+                        <span className="text-xs text-gray-500">建議尺寸: 800x600px (或 4:3 比例), 檔案大小: 2MB 以內</span>
                     </div>
 
                     {/* Preview Grid */}
