@@ -14,7 +14,7 @@ export default function Hero() {
     useEffect(() => {
         const fetchBanner = async () => {
             try {
-                const res = await fetch("/api/banner");
+                const res = await fetch("/api/banner", { cache: 'no-store' });
                 const data = await res.json();
                 if (data && data.image_url) {
                     setBgImage(data.image_url);

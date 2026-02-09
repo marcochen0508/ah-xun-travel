@@ -10,6 +10,8 @@ export default function BannersPage() {
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
 
+    const [editId, setEditId] = useState<string | null>(null);
+
     // Form State
     const [title, setTitle] = useState("");
     const [startAt, setStartAt] = useState("");
@@ -30,6 +32,26 @@ export default function BannersPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleEdit = (banner: Banner) => {
+        setEditId(banner.id);
+        setTitle(banner.title || "");
+        setImageUrl(banner.image_url);
+        // Format for datetime-local: YYYY-MM-DDTHH:mm
+        if (banner.start_at) setStartAt(new Date(banner.start_at).toISOString().slice(0, 16));
+        if (banner.end_at) setSetEndAt(new Date(banner.end_at).toISOString().slice(0, 16));
+
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancelEdit = () => {
+        setEditId(null);
+        setTitle("");
+        setImageUrl("");
+        setStartAt("");
+        setEndAt("");
     };
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +91,7 @@ export default function BannersPage() {
         if (!imageUrl) return alert("請上傳圖片");
         if (!startAt || !endAt) return alert("請設定開始與結束時間");
 
-        const payload = {
+        const payload: any = {
             title,
             image_url: imageUrl,
             is_default: false,
@@ -78,23 +100,24 @@ export default function BannersPage() {
             end_at: new Date(endAt).toISOString(),
         };
 
+        if (editId) {
+            payload.id = editId;
+        }
+
         try {
+            const method = editId ? "PUT" : "POST";
             const res = await fetch("/api/admin/banners", {
-                method: "POST",
+                method: method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
 
             if (res.ok) {
-                alert("新增成功！");
-                // Reset form
-                setTitle("");
-                setImageUrl("");
-                setStartAt("");
-                setEndAt("");
+                alert(editId ? "更新成功！" : "新增成功！");
+                handleCancelEdit(); // Reset form
                 fetchBanners();
             } else {
-                alert("新增失敗");
+                alert("操作失敗");
             }
         } catch (error) {
             alert("發生錯誤");
@@ -111,13 +134,37 @@ export default function BannersPage() {
         }
     };
 
+    const getStatusBadge = (start?: string, end?: string) => {
+        if (!start || !end) return <span className="bg-gray-500 text-white text-xs px-2 py-1 rounded-full">未設定</span>;
+
+        const now = new Date();
+        const startTime = new Date(start);
+        const endTime = new Date(end);
+
+        if (now >= startTime && now <= endTime) {
+            return <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">進行中 (Active)</span>;
+        } else if (now < startTime) {
+            return <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">未開始 (Scheduled)</span>;
+        } else {
+            return <span className="bg-gray-400 text-white text-xs px-2 py-1 rounded-full">已結束 (Ended)</span>;
+        }
+    };
+
     return (
         <div>
             <h2 className="text-2xl font-bold mb-6">首頁看板管理 (Banner)</h2>
 
-            {/* Add New Banner Form */}
-            <div className="bg-white p-6 rounded-lg shadow mb-8">
-                <h3 className="font-bold text-lg mb-4">新增期間限定看板</h3>
+            {/* Add/Edit Banner Form */}
+            <div className={`p-6 rounded-lg shadow mb-8 transition-colors ${editId ? 'bg-blue-50 border-2 border-blue-200' : 'bg-white'}`}>
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-bold text-lg">{editId ? "編輯看板設定" : "新增期間限定看板"}</h3>
+                    {editId && (
+                        <button onClick={handleCancelEdit} className="text-sm text-gray-500 hover:text-gray-700 underline">
+                            取消編輯
+                        </button>
+                    )}
+                </div>
+
                 <div className="text-sm text-gray-500 mb-4">
                     提示：若無設定任何活動看板，首頁將顯示系統預設圖片。
                 </div>
@@ -189,44 +236,59 @@ export default function BannersPage() {
                         </div>
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={uploading || !imageUrl}
-                        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 font-bold"
-                    >
-                        新增看板設定
-                    </button>
+                    <div className="flex gap-4">
+                        <button
+                            type="submit"
+                            disabled={uploading || !imageUrl}
+                            className={`flex-1 text-white py-2 rounded disabled:opacity-50 font-bold ${editId ? 'bg-blue-600 hover:bg-blue-700' : 'bg-lanna-green hover:bg-lanna-green/90'}`}
+                        >
+                            {editId ? "更新設定" : "新增看板設定"}
+                        </button>
+                        {editId && (
+                            <button
+                                type="button"
+                                onClick={handleCancelEdit}
+                                className="px-6 py-2 border border-gray-300 rounded hover:bg-gray-100 font-bold text-gray-600"
+                            >
+                                取消
+                            </button>
+                        )}
+                    </div>
                 </form>
             </div>
 
             {/* List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {banners.map((banner) => (
-                    <div key={banner.id} className="bg-white rounded-lg shadow overflow-hidden relative group">
+                    <div key={banner.id} className={`bg-white rounded-lg shadow overflow-hidden relative group border ${editId === banner.id ? 'ring-2 ring-blue-500' : ''}`}>
                         <div className="relative h-48 w-full">
                             <Image src={banner.image_url} alt={banner.title || "Banner"} fill className="object-cover" />
                             <div className="absolute top-2 right-2 flex gap-2">
-                                {banner.is_default && (
-                                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">預設</span>
-                                )}
-                                {banner.start_at && (
-                                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">排程</span>
-                                )}
+                                {getStatusBadge(banner.start_at, banner.end_at)}
                             </div>
                         </div>
                         <div className="p-4">
                             <h4 className="font-bold truncate">{banner.title || "未命名"}</h4>
                             {banner.start_at && (
-                                <p className="text-xs text-gray-500 mt-2">
-                                    {new Date(banner.start_at).toLocaleDateString()} - {new Date(banner.end_at!).toLocaleDateString()}
-                                </p>
+                                <div className="text-xs text-gray-500 mt-2">
+                                    {new Date(banner.start_at).toLocaleString()} <br />- {new Date(banner.end_at!).toLocaleString()}
+                                </div>
                             )}
-                            <button
-                                onClick={() => handleDelete(banner.id)}
-                                className="mt-4 w-full flex items-center justify-center gap-2 text-red-500 hover:bg-red-50 py-2 rounded transition-colors"
-                            >
-                                <Trash2 size={16} /> 刪除
-                            </button>
+
+                            <div className="flex gap-2 mt-4">
+                                <button
+                                    onClick={() => handleEdit(banner)}
+                                    className="flex-1 flex items-center justify-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 py-2 rounded transition-colors font-bold text-sm"
+                                >
+                                    編輯
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(banner.id)}
+                                    className="flex items-center justify-center gap-2 text-red-500 hover:bg-red-50 px-4 rounded transition-colors"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}
