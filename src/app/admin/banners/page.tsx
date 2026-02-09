@@ -14,8 +14,10 @@ export default function BannersPage() {
 
     // Form State
     const [title, setTitle] = useState("");
-    const [startAt, setStartAt] = useState("");
-    const [endAt, setEndAt] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [startTime, setStartTime] = useState("00:00");
+    const [endDate, setEndDate] = useState("");
+    const [endTime, setEndTime] = useState("23:59");
     const [imageUrl, setImageUrl] = useState("");
 
     useEffect(() => {
@@ -38,9 +40,17 @@ export default function BannersPage() {
         setEditId(banner.id);
         setTitle(banner.title || "");
         setImageUrl(banner.image_url);
-        // Format for datetime-local: YYYY-MM-DDTHH:mm
-        if (banner.start_at) setStartAt(new Date(banner.start_at).toISOString().slice(0, 16));
-        if (banner.end_at) setEndAt(new Date(banner.end_at).toISOString().slice(0, 16));
+
+        if (banner.start_at) {
+            const d = new Date(banner.start_at);
+            setStartDate(d.toISOString().split('T')[0]);
+            setStartTime(d.toTimeString().slice(0, 5));
+        }
+        if (banner.end_at) {
+            const d = new Date(banner.end_at);
+            setEndDate(d.toISOString().split('T')[0]);
+            setEndTime(d.toTimeString().slice(0, 5));
+        }
 
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -50,8 +60,10 @@ export default function BannersPage() {
         setEditId(null);
         setTitle("");
         setImageUrl("");
-        setStartAt("");
-        setEndAt("");
+        setStartDate("");
+        setStartTime("00:00");
+        setEndDate("");
+        setEndTime("23:59");
     };
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,15 +101,18 @@ export default function BannersPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!imageUrl) return alert("請上傳圖片");
-        if (!startAt || !endAt) return alert("請設定開始與結束時間");
+        if (!startDate || !endDate) return alert("請設定開始與結束日期");
+
+        const startAt = new Date(`${startDate}T${startTime}:00`).toISOString();
+        const endAt = new Date(`${endDate}T${endTime}:00`).toISOString();
 
         const payload: any = {
             title,
             image_url: imageUrl,
             is_default: false,
             is_active: true,
-            start_at: new Date(startAt).toISOString(),
-            end_at: new Date(endAt).toISOString(),
+            start_at: startAt,
+            end_at: endAt,
         };
 
         if (editId) {
@@ -184,29 +199,60 @@ export default function BannersPage() {
 
                         {/* Date Range - Always Visible */}
                         <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-yellow-50 p-4 rounded border border-yellow-200">
-                            <div>
+                            {/* Start Date */}
+                            <div className="space-y-2">
                                 <label className="block text-sm font-bold mb-1">
                                     活動開始時間 <span className="text-red-500">*</span>
                                 </label>
-                                <input
-                                    type="datetime-local"
-                                    required
-                                    value={startAt}
-                                    onChange={(e) => setStartAt(e.target.value)}
-                                    className="w-full border rounded p-2"
-                                />
+                                <div className="flex gap-2">
+                                    <input
+                                        type="date"
+                                        required
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        className="flex-1 border rounded p-2"
+                                    />
+                                    <select
+                                        value={startTime}
+                                        onChange={(e) => setStartTime(e.target.value)}
+                                        className="w-32 border rounded p-2"
+                                    >
+                                        <option value="00:00">00:00 (開始)</option>
+                                        <option value="06:00">06:00 (早上)</option>
+                                        <option value="09:00">09:00 (上午)</option>
+                                        <option value="12:00">12:00 (中午)</option>
+                                        <option value="14:00">14:00 (下午)</option>
+                                        <option value="18:00">18:00 (晚上)</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div>
+
+                            {/* End Date */}
+                            <div className="space-y-2">
                                 <label className="block text-sm font-bold mb-1">
                                     活動結束時間 <span className="text-red-500">*</span>
                                 </label>
-                                <input
-                                    type="datetime-local"
-                                    required
-                                    value={endAt}
-                                    onChange={(e) => setEndAt(e.target.value)}
-                                    className="w-full border rounded p-2"
-                                />
+                                <div className="flex gap-2">
+                                    <input
+                                        type="date"
+                                        required
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        className="flex-1 border rounded p-2"
+                                    />
+                                    <select
+                                        value={endTime}
+                                        onChange={(e) => setEndTime(e.target.value)}
+                                        className="w-32 border rounded p-2"
+                                    >
+                                        <option value="00:00">00:00 (開始)</option>
+                                        <option value="09:00">09:00 (上午)</option>
+                                        <option value="12:00">12:00 (中午)</option>
+                                        <option value="14:00">14:00 (下午)</option>
+                                        <option value="18:00">18:00 (晚上)</option>
+                                        <option value="23:59">23:59 (結束)</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
