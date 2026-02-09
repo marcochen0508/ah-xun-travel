@@ -40,7 +40,7 @@ export default function BannersPage() {
         setImageUrl(banner.image_url);
         // Format for datetime-local: YYYY-MM-DDTHH:mm
         if (banner.start_at) setStartAt(new Date(banner.start_at).toISOString().slice(0, 16));
-        if (banner.end_at) setSetEndAt(new Date(banner.end_at).toISOString().slice(0, 16));
+        if (banner.end_at) setEndAt(new Date(banner.end_at).toISOString().slice(0, 16));
 
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
