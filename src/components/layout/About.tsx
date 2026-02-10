@@ -12,54 +12,98 @@ export default function About() {
     useEffect(() => {
         const fetchAbout = async () => {
             const { data } = await supabase.from("about_info").select("*").eq("id", "about_us_main").single();
-            if (data) setDbContent(data);
-        };
-        fetchAbout();
-    }, []);
+            const fetchContent = async () => {
+                try {
+                    const { data } = await supabase
+                        .from('general_content')
+                        .select('*')
+                        .eq('key', 'about_us')
+                        .single();
 
-    const content = dbContent
-        ? (language === "th" ? dbContent.content_th : (language === "zh-CN" ? dbContent.content_zh_cn : dbContent.content_zh_tw))
-        : t.about.content;
+                    if (data) setContent(data);
+                } catch (error) {
+                    console.error("Failed to fetch about content");
+                }
+            };
+            fetchContent();
+        }, []);
+
+    // Helper to get current language content
+    const getLocalizedData = () => {
+        // Default static data
+        const staticData = {
+            title: t.about.title,
+            content: t.about.desc,
+            image: "/about-new.jpg"
+        };
+
+        if (!content) return staticData;
+
+        // Dynamic data from DB
+        let title, desc;
+        if (language === 'th') {
+            title = content.title_th;
+            desc = content.content_th;
+        } else if (language === 'zh-CN') {
+            title = content.title_zh_cn;
+            desc = content.content_zh_cn;
+        } else {
+            title = content.title_zh_tw;
+            desc = content.content_zh_tw;
+        }
+
+        return {
+            title: title || staticData.title,
+            content: desc || staticData.content,
+            image: content.settings?.image_url || staticData.image
+        };
+    };
+
+    const { title, content: desc, image } = getLocalizedData();
 
     return (
         <section id="about" className="py-20 bg-lanna-cream/30">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row items-center gap-12">
-                    {/* Left: Image */}
-                    <div className="w-full md:w-1/2 relative">
-                        <div className="relative aspect-[3/4] w-full max-w-md mx-auto rounded-2xl overflow-hidden shadow-xl rotate-3 transition-transform hover:rotate-0 duration-500">
+                    {/* Image Side */}
+                    <div className="w-full md:w-1/2">
+                        <div className="relative h-[400px] w-full rounded-2xl overflow-hidden shadow-xl transform hover:scale-[1.02] transition-transform duration-500">
                             <Image
-                                src="/about-new.jpg"
-                                alt={t.about.imageAlt}
+                                src={image}
+                                alt="About Ah Xun Travel"
                                 fill
                                 className="object-cover"
                             />
-                            {/* Border Frame */}
-                            <div className="absolute inset-0 border-[1rem] border-white/20 pointer-events-none"></div>
+                            {/* Decorative Border */}
+                            <div className="absolute inset-0 border-[10px] border-white/20 pointer-events-none"></div>
                         </div>
-                        {/* Decorative Background */}
-                        <div className="absolute -z-10 top-10 -left-10 w-full h-full bg-lanna-gold/10 rounded-full blur-3xl"></div>
                     </div>
 
-                    {/* Right: Content */}
-                    <div className="w-full md:w-1/2 text-left">
-                        <h2 className="text-sm font-bold text-lanna-gold tracking-widest mb-2 uppercase">
-                            {t.about.subtitle}
-                        </h2>
-                        <h3 className="text-3xl font-serif font-bold text-lanna-coffee mb-6 relative inline-block">
-                            {t.about.title}
-                            <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-lanna-green rounded-full"></span>
-                        </h3>
-
-                        <div className="prose prose-lg text-gray-600 leading-relaxed font-light whitespace-pre-line">
-                            {content || t.about.content}
+                    {/* Content Side */}
+                    <div className="w-full md:w-1/2 space-y-6">
+                        <div className="inline-block px-4 py-1 bg-lanna-gold/10 text-lanna-gold rounded-full text-sm font-bold tracking-wider mb-2">
+                            EST. 2015
                         </div>
 
-                        {/* Signature or Quote (Optional) */}
-                        <div className="mt-8 pt-6 border-t border-gray-200">
-                            <p className="font-serif italic text-lanna-coffee/80 text-lg">
-                                "Slow down, breathe in, and experience the real Chiang Mai."
-                            </p>
+                        <h2 className="text-3xl md:text-4xl font-serif font-bold text-lanna-green leading-tight">
+                            {title}
+                        </h2>
+
+                        <div className="w-20 h-1 bg-lanna-gold rounded-full"></div>
+
+                        <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">
+                            {desc}
+                        </p>
+
+                        <div className="pt-4 grid grid-cols-2 gap-6">
+                            <div className="text-center p-4 bg-white rounded-xl shadow-sm border border-lanna-gold/20">
+                                <div className="text-3xl font-bold text-lanna-gold mb-1">10+</div>
+                                <div className="text-sm text-gray-500">Years Experience</div>
+                            </div>
+                            <div className="text-center p-4 bg-white rounded-xl shadow-sm border border-lanna-gold/20">
+                                <div className="text-3xl font-bold text-lanna-gold mb-1">5000+</div>
+                                <div className="text-sm text-gray-500">Happy Travelers</div>
+                            </div>
                         </div>
                     </div>
                 </div>
