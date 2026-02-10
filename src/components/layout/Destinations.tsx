@@ -42,10 +42,15 @@ export default function Destinations() {
                 const res = await fetch(`/api/routes?lang=${language}&t=${Date.now()}`);
                 const data = await res.json();
 
-                // Shuffle the array for random display order
-                const shuffled = data.sort(() => 0.5 - Math.random());
-
-                setRoutes(shuffled);
+                // Ensure data is an array before using
+                if (Array.isArray(data)) {
+                    // Shuffle the array for random display order
+                    const shuffled = data.sort(() => 0.5 - Math.random());
+                    setRoutes(shuffled);
+                } else {
+                    console.error("API returned non-array:", data);
+                    setRoutes([]);
+                }
             } catch (error) {
                 console.error("Failed to fetch routes:", error);
             }
