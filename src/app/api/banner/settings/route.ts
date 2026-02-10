@@ -8,7 +8,7 @@ export async function GET() {
     try {
         const { data, error } = await supabase
             .from('general_content')
-            .select('content')
+            .select('settings')
             .eq('key', 'banner_settings')
             .single();
 
@@ -16,9 +16,9 @@ export async function GET() {
             console.error('Error fetching banner settings:', error);
         }
 
-        // Default to 5000ms if not found
-        const settings = data?.content || { interval: 5000 };
-        return NextResponse.json(settings);
+        // Default to 5000ms if not found or null
+        const config = data?.settings || { interval: 5000 };
+        return NextResponse.json(config);
 
     } catch (error) {
         return NextResponse.json({ interval: 5000 });
@@ -34,10 +34,13 @@ export async function POST(req: Request) {
             .from('general_content')
             .upsert({
                 key: 'banner_settings',
-                content: { interval: parseInt(interval) || 5000 }
+                settings: { interval: parseInt(interval) || 5000 }
             }, { onConflict: 'key' });
 
-        if (error) throw error;
+        if (error) {
+            console.error('Error saving settings:', error);
+            throw error;
+        }
 
         return NextResponse.json({ success: true });
     } catch (error: any) {
