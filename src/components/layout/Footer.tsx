@@ -27,7 +27,7 @@ export default function Footer() {
                         <div className="flex items-center gap-3 mb-6">
                             <div className="relative w-12 h-12 bg-white rounded-full p-2">
                                 <Image
-                                    src="/logo.png"
+                                    src="/globe.svg"
                                     alt="Ah Xun Logo"
                                     width={48}
                                     height={48}
