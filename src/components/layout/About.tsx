@@ -12,13 +12,13 @@ export default function About() {
     useEffect(() => {
         const fetchContent = async () => {
             try {
-                const { data } = await supabase
-                    .from('general_content')
-                    .select('*')
-                    .eq('key', 'about_us')
-                    .single();
+                // Use API route with cache buster to ensure fresh data
+                const res = await fetch(`/api/admin/content?key=about_us&t=${Date.now()}`);
+                const data = await res.json();
 
-                if (data) setContent(data);
+                if (data && data.key) {
+                    setContent(data);
+                }
             } catch (error) {
                 console.error("Failed to fetch about content", error);
             }
@@ -31,7 +31,7 @@ export default function About() {
         // Default static data
         const staticData = {
             title: t.about.title,
-            content: t.about.desc,
+            content: t.about.content,
             image: "/about-new.jpg"
         };
 
