@@ -174,6 +174,15 @@ export default function Footer() {
                 <div className="border-t border-white/10 pt-8 text-center text-xs text-white/40 font-light">
                     <p>&copy; {new Date().getFullYear()} Ah Xun Chiang Mai Charter. All rights reserved.</p>
                 </div>
+
+                {/* DEBUG OVERLAY - REMOVE AFTER FIX */}
+                <div className="fixed bottom-0 left-0 bg-black/80 text-white p-2 text-[10px] z-50 max-w-sm pointer-events-none font-mono">
+                    <p>DEBUG INFO:</p>
+                    <p>Has Data: {contactInfo ? "YES" : "NO"}</p>
+                    <p>Phone: {contactInfo?.settings?.phone || "N/A"}</p>
+                    <p>Key: {contactInfo?.key || "N/A"}</p>
+                    <p>Timestamp: {new Date().toISOString()}</p>
+                </div>
             </div>
         </footer>
     );
