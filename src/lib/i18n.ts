@@ -56,6 +56,7 @@ export const translations = {
             quickLinks: "快速連結",
             rights: "保留所有權利",
             charterNotes: "包車注意事項",
+            address: "清邁, 泰國",
         }
     },
     "zh-CN": {
@@ -113,6 +114,7 @@ export const translations = {
             quickLinks: "快速链接",
             rights: "保留所有权利",
             charterNotes: "包车注意事项",
+            address: "清迈, 泰国",
         }
     },
     "th": {
@@ -173,6 +175,7 @@ export const translations = {
             quickLinks: "ลิงค์ด่วน",
             rights: "สงวนลิขสิทธิ์",
             charterNotes: "ข้อควรระวังในการเช่ารถ",
+            address: "เชียงใหม่, ประเทศไทย",
         }
     },
 };
