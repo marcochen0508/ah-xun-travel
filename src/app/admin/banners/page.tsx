@@ -14,6 +14,7 @@ export default function BannersPage() {
 
     // Form State
     const [title, setTitle] = useState("");
+    const [isDefault, setIsDefault] = useState(false);
     const [startDate, setStartDate] = useState("");
     const [startTime, setStartTime] = useState("00:00");
     const [endDate, setEndDate] = useState("");
@@ -40,16 +41,24 @@ export default function BannersPage() {
         setEditId(banner.id);
         setTitle(banner.title || "");
         setImageUrl(banner.image_url);
+        setIsDefault(!!banner.is_default);
 
         if (banner.start_at) {
             const d = new Date(banner.start_at);
             setStartDate(d.toISOString().split('T')[0]);
             setStartTime(d.toTimeString().slice(0, 5));
+        } else {
+            setStartDate("");
+            setStartTime("00:00");
         }
+
         if (banner.end_at) {
             const d = new Date(banner.end_at);
             setEndDate(d.toISOString().split('T')[0]);
             setEndTime(d.toTimeString().slice(0, 5));
+        } else {
+            setEndDate("");
+            setEndTime("23:59");
         }
 
         // Scroll to top
@@ -60,6 +69,7 @@ export default function BannersPage() {
         setEditId(null);
         setTitle("");
         setImageUrl("");
+        setIsDefault(false);
         setStartDate("");
         setStartTime("00:00");
         setEndDate("");
@@ -101,15 +111,23 @@ export default function BannersPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!imageUrl) return alert("請上傳圖片");
-        if (!startDate || !endDate) return alert("請設定開始與結束日期");
 
-        const startAt = new Date(`${startDate}T${startTime}:00`).toISOString();
-        const endAt = new Date(`${endDate}T${endTime}:00`).toISOString();
+        if (!isDefault) {
+            if (!startDate || !endDate) return alert("請設定開始與結束日期");
+        }
+
+        let startAt = null;
+        let endAt = null;
+
+        if (!isDefault) {
+            startAt = new Date(`${startDate}T${startTime}:00`).toISOString();
+            endAt = new Date(`${endDate}T${endTime}:00`).toISOString();
+        }
 
         const payload: any = {
             title,
             image_url: imageUrl,
-            is_default: false,
+            is_default: isDefault,
             is_active: true,
             start_at: startAt,
             end_at: endAt,
@@ -149,12 +167,16 @@ export default function BannersPage() {
         }
     };
 
-    const getStatusBadge = (start?: string, end?: string) => {
-        if (!start || !end) return <span className="bg-gray-500 text-white text-xs px-2 py-1 rounded-full">未設定</span>;
+    const getStatusBadge = (banner: Banner) => {
+        if (banner.is_default) {
+            return <span className="bg-purple-500 text-white text-xs px-2 py-1 rounded-full">隨機輪播 (Default)</span>;
+        }
+
+        if (!banner.start_at || !banner.end_at) return <span className="bg-gray-500 text-white text-xs px-2 py-1 rounded-full">未設定</span>;
 
         const now = new Date();
-        const startTime = new Date(start);
-        const endTime = new Date(end);
+        const startTime = new Date(banner.start_at);
+        const endTime = new Date(banner.end_at);
 
         if (now >= startTime && now <= endTime) {
             return <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">進行中 (Active)</span>;
@@ -172,7 +194,7 @@ export default function BannersPage() {
             {/* Add/Edit Banner Form */}
             <div className={`p-6 rounded-lg shadow mb-8 transition-colors ${editId ? 'bg-blue-50 border-2 border-blue-200' : 'bg-white'}`}>
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-bold text-lg">{editId ? "編輯看板設定" : "新增期間限定看板"}</h3>
+                    <h3 className="font-bold text-lg">{editId ? "編輯看板設定" : "新增看板設定"}</h3>
                     {editId && (
                         <button onClick={handleCancelEdit} className="text-sm text-gray-500 hover:text-gray-700 underline">
                             取消編輯
@@ -181,7 +203,7 @@ export default function BannersPage() {
                 </div>
 
                 <div className="text-sm text-gray-500 mb-4">
-                    提示：若無設定任何活動看板，首頁將顯示系統預設圖片。
+                    提示：若目前時間沒有「活動排程」的看板，系統將會在「隨機輪播」的圖片中自動切換顯示。
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -193,7 +215,7 @@ export default function BannersPage() {
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 className="w-full border rounded p-2"
-                                placeholder="例如：水燈節活動"
+                                placeholder="例如：水燈節活動 or 預設風景圖1"
                             />
                         </div>
 
@@ -344,15 +366,21 @@ export default function BannersPage() {
                         <div className="relative h-48 w-full">
                             <Image src={banner.image_url} alt={banner.title || "Banner"} fill className="object-cover" />
                             <div className="absolute top-2 right-2 flex gap-2">
-                                {getStatusBadge(banner.start_at, banner.end_at)}
+                                {getStatusBadge(banner)}
                             </div>
                         </div>
                         <div className="p-4">
                             <h4 className="font-bold truncate">{banner.title || "未命名"}</h4>
-                            {banner.start_at && (
-                                <div className="text-xs text-gray-500 mt-2">
-                                    {new Date(banner.start_at).toLocaleString()} <br />- {new Date(banner.end_at!).toLocaleString()}
+                            {banner.is_default ? (
+                                <div className="text-xs text-purple-600 mt-2 font-bold">
+                                    隨機輪播圖片
                                 </div>
+                            ) : (
+                                banner.start_at && (
+                                    <div className="text-xs text-gray-500 mt-2">
+                                        {new Date(banner.start_at).toLocaleString()} <br />- {new Date(banner.end_at!).toLocaleString()}
+                                    </div>
+                                )
                             )}
 
                             <div className="flex gap-2 mt-4">
