@@ -44,34 +44,38 @@ export default function RouteForm({ initialData, isEdit = false }: RouteFormProp
 
         setUploading(true);
         const file = e.target.files[0];
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-        const filePath = `${fileName}`;
 
         try {
-            // Upload to 'routes' bucket (or reuse 'reviews' if preferred, but distinct is better)
-            // We will ask user to create 'routes' bucket.
-            const { error: uploadError } = await supabase.storage
-                .from('routes')
-                .upload(filePath, file);
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('bucket', 'routes'); // Use 'routes' bucket
 
-            if (uploadError) throw uploadError;
+            // Removed client-side filename generation, API handles it now
+            // const fileName = ... 
 
-            const { data: { publicUrl } } = supabase.storage
-                .from('routes')
-                .getPublicUrl(filePath);
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
 
-            setFormData(prev => ({
-                ...prev,
-                image_url: publicUrl
-            }));
+            const data = await res.json();
 
-        } catch (error) {
+            if (!res.ok) {
+                throw new Error(data.error || "Upload failed");
+            }
+
+            if (data.url) {
+                setFormData(prev => ({
+                    ...prev,
+                    image_url: data.url
+                }));
+            }
+        } catch (error: any) {
             console.error("Error uploading image:", error);
-            alert("圖片上傳失敗，請確認 Storage Bucket 'routes' 是否存在並設定為公開。");
+            alert(`圖片上傳失敗: ${error.message || "未知錯誤"}\n請確認 Supabase 是否有建立 'routes' bucket。`);
         } finally {
             setUploading(false);
-            e.target.value = "";
+            e.target.value = ""; // Reset input
         }
     };
 
