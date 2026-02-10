@@ -93,16 +93,7 @@ export default function About() {
                             {desc}
                         </p>
 
-                        <div className="pt-4 grid grid-cols-2 gap-6">
-                            <div className="text-center p-4 bg-white rounded-xl shadow-sm border border-lanna-gold/20">
-                                <div className="text-3xl font-bold text-lanna-gold mb-1">10+</div>
-                                <div className="text-sm text-gray-500">Years Experience</div>
-                            </div>
-                            <div className="text-center p-4 bg-white rounded-xl shadow-sm border border-lanna-gold/20">
-                                <div className="text-3xl font-bold text-lanna-gold mb-1">5000+</div>
-                                <div className="text-sm text-gray-500">Happy Travelers</div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
