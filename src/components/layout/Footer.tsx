@@ -13,9 +13,11 @@ export default function Footer() {
     useEffect(() => {
         const fetchContact = async () => {
             try {
+                console.log("Fetching contact info..."); // Debug log
                 const res = await fetch(`/api/admin/content?key=contact_info&t=${Date.now()}`);
                 const data = await res.json();
                 if (data && data.key) {
+                    console.log("Contact info loaded:", data);
                     setContactInfo(data);
                 }
             } catch (error) {
