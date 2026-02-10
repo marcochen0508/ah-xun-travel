@@ -13,8 +13,20 @@ export default function Hero() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [bgImage, setBgImage] = useState("/images/banner-default.jpg"); // Default fallback
     const [isTransitioning, setIsTransitioning] = useState(false);
+    const [intervalMs, setIntervalMs] = useState(5000);
 
     useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch("/api/banner/settings");
+                const data = await res.json();
+                if (data.interval) setIntervalMs(data.interval);
+            } catch (e) {
+                console.error("Failed to fetch settings");
+            }
+        };
+        fetchSettings();
+
         const fetchBanner = async () => {
             try {
                 // Add timestamp to prevent caching
@@ -49,10 +61,10 @@ export default function Hero() {
                 setBgImage(bannerList[nextIndex].image_url);
                 return nextIndex;
             });
-        }, 5000);
+        }, intervalMs);
 
         return () => clearInterval(timer);
-    }, [bannerList]);
+    }, [bannerList, intervalMs]);
 
     return (
         <div className="relative h-screen w-full flex items-center justify-center overflow-hidden">

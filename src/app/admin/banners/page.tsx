@@ -20,10 +20,38 @@ export default function BannersPage() {
     const [endDate, setEndDate] = useState("");
     const [endTime, setEndTime] = useState("23:59");
     const [imageUrl, setImageUrl] = useState("");
+    const [rotationInterval, setRotationInterval] = useState(5); // Default 5s
 
     useEffect(() => {
         fetchBanners();
+        fetchSettings();
     }, []);
+
+    const fetchSettings = async () => {
+        try {
+            const res = await fetch("/api/banner/settings");
+            const data = await res.json();
+            if (data.interval) {
+                setRotationInterval(data.interval / 1000); // Convert ms to seconds
+            }
+        } catch (error) {
+            console.error("Failed to fetch settings");
+        }
+    };
+
+    const saveSettings = async () => {
+        try {
+            await fetch("/api/banner/settings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ interval: rotationInterval * 1000 }),
+            });
+            alert("輪播秒數已更新！");
+        } catch (error) {
+            alert("更新失敗");
+        }
+    };
+
 
     const fetchBanners = async () => {
         try {
@@ -189,7 +217,26 @@ export default function BannersPage() {
 
     return (
         <div>
-            <h2 className="text-2xl font-bold mb-6">首頁看板管理 (Banner)</h2>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">首頁看板管理 (Banner)</h2>
+                <div className="flex items-center gap-2 bg-gray-100 p-2 rounded">
+                    <span className="text-sm font-bold">輪播間隔(秒):</span>
+                    <input
+                        type="number"
+                        min="2"
+                        max="60"
+                        value={rotationInterval}
+                        onChange={(e) => setRotationInterval(Number(e.target.value))}
+                        className="w-16 border rounded px-2 py-1 text-center"
+                    />
+                    <button
+                        onClick={saveSettings}
+                        className="bg-black text-white text-xs px-3 py-1 rounded hover:bg-gray-800"
+                    >
+                        儲存
+                    </button>
+                </div>
+            </div>
 
             {/* Add/Edit Banner Form */}
             <div className={`p-6 rounded-lg shadow mb-8 transition-colors ${editId ? 'bg-blue-50 border-2 border-blue-200' : 'bg-white'}`}>
