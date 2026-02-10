@@ -25,14 +25,8 @@ export default function Footer() {
                     {/* Brand Section */}
                     <div className="col-span-1 md:col-span-1">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="relative w-12 h-12 bg-white rounded-full p-2">
-                                <Image
-                                    src="/globe.svg"
-                                    alt="Ah Xun Logo"
-                                    width={48}
-                                    height={48}
-                                    className="object-contain"
-                                />
+                            <div className="relative w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                                <span className="text-3xl">🐘</span>
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold font-serif leading-none">阿勛包車</h3>
@@ -41,13 +35,6 @@ export default function Footer() {
                         </div>
                         <div className="text-white/80 text-sm leading-relaxed mb-6 font-light line-clamp-3">
                             {t.about.content}
-                        </div>
-
-                        {/* Social Icons */}
-                        <div className="flex gap-4">
-                            <a href={contact.fb} target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-lanna-gold p-2 rounded-full transition-colors">
-                                <Facebook size={18} />
-                            </a>
                         </div>
                     </div>
 
