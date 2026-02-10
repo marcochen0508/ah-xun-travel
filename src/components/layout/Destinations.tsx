@@ -38,14 +38,16 @@ export default function Destinations() {
 
     useEffect(() => {
         const fetchRoutes = async () => {
-            const { data } = await supabase
-                .from("features_routes")
-                .select("*")
-                .eq("is_active", true)
-                .order("created_at", { ascending: false });
+            try {
+                const res = await fetch(`/api/routes?lang=${language}&t=${Date.now()}`);
+                const data = await res.json();
 
-            if (data && data.length > 0) {
-                setRoutes(data);
+                // Shuffle the array for random display order
+                const shuffled = data.sort(() => 0.5 - Math.random());
+
+                setRoutes(shuffled);
+            } catch (error) {
+                console.error("Failed to fetch routes:", error);
             }
         };
         fetchRoutes();
