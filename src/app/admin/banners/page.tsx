@@ -197,64 +197,90 @@ export default function BannersPage() {
                             />
                         </div>
 
-                        {/* Date Range - Always Visible */}
-                        <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-yellow-50 p-4 rounded border border-yellow-200">
-                            {/* Start Date */}
-                            <div className="space-y-2">
-                                <label className="block text-sm font-bold mb-1">
-                                    活動開始時間 <span className="text-red-500">*</span>
-                                </label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="date"
-                                        required
-                                        value={startDate}
-                                        onChange={(e) => setStartDate(e.target.value)}
-                                        className="flex-1 border rounded p-2"
-                                    />
-                                    <select
-                                        value={startTime}
-                                        onChange={(e) => setStartTime(e.target.value)}
-                                        className="w-32 border rounded p-2"
-                                    >
-                                        <option value="00:00">00:00 (開始)</option>
-                                        <option value="06:00">06:00 (早上)</option>
-                                        <option value="09:00">09:00 (上午)</option>
-                                        <option value="12:00">12:00 (中午)</option>
-                                        <option value="14:00">14:00 (下午)</option>
-                                        <option value="18:00">18:00 (晚上)</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {/* End Date */}
-                            <div className="space-y-2">
-                                <label className="block text-sm font-bold mb-1">
-                                    活動結束時間 <span className="text-red-500">*</span>
-                                </label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="date"
-                                        required
-                                        value={endDate}
-                                        onChange={(e) => setEndDate(e.target.value)}
-                                        className="flex-1 border rounded p-2"
-                                    />
-                                    <select
-                                        value={endTime}
-                                        onChange={(e) => setEndTime(e.target.value)}
-                                        className="w-32 border rounded p-2"
-                                    >
-                                        <option value="00:00">00:00 (開始)</option>
-                                        <option value="09:00">09:00 (上午)</option>
-                                        <option value="12:00">12:00 (中午)</option>
-                                        <option value="14:00">14:00 (下午)</option>
-                                        <option value="18:00">18:00 (晚上)</option>
-                                        <option value="23:59">23:59 (結束)</option>
-                                    </select>
-                                </div>
-                            </div>
+                        {/* Banner Type Selection */}
+                        <div className="md:col-span-2 flex gap-6 border-b pb-4">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="type"
+                                    checked={!isDefault}
+                                    onChange={() => setIsDefault(false)}
+                                    className="w-5 h-5 accent-lanna-green"
+                                />
+                                <span className="font-bold text-gray-800">活動排程 (特定日期顯示)</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="type"
+                                    checked={isDefault}
+                                    onChange={() => setIsDefault(true)}
+                                    className="w-5 h-5 accent-blue-500"
+                                />
+                                <span className="font-bold text-blue-600">隨機輪播 (平常沒活動時顯示)</span>
+                            </label>
                         </div>
+
+                        {/* Date Range - Only valid if NOT default */}
+                        {!isDefault && (
+                            <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-yellow-50 p-4 rounded border border-yellow-200">
+                                {/* Start Date */}
+                                <div className="space-y-2">
+                                    <label className="block text-sm font-bold mb-1">
+                                        活動開始時間 <span className="text-red-500">*</span>
+                                    </label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="date"
+                                            required={!isDefault}
+                                            value={startDate}
+                                            onChange={(e) => setStartDate(e.target.value)}
+                                            className="flex-1 border rounded p-2"
+                                        />
+                                        <select
+                                            value={startTime}
+                                            onChange={(e) => setStartTime(e.target.value)}
+                                            className="w-32 border rounded p-2"
+                                        >
+                                            <option value="00:00">00:00 (開始)</option>
+                                            <option value="06:00">06:00 (早上)</option>
+                                            <option value="09:00">09:00 (上午)</option>
+                                            <option value="12:00">12:00 (中午)</option>
+                                            <option value="14:00">14:00 (下午)</option>
+                                            <option value="18:00">18:00 (晚上)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* End Date */}
+                                <div className="space-y-2">
+                                    <label className="block text-sm font-bold mb-1">
+                                        活動結束時間 <span className="text-red-500">*</span>
+                                    </label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="date"
+                                            required={!isDefault}
+                                            value={endDate}
+                                            onChange={(e) => setEndDate(e.target.value)}
+                                            className="flex-1 border rounded p-2"
+                                        />
+                                        <select
+                                            value={endTime}
+                                            onChange={(e) => setEndTime(e.target.value)}
+                                            className="w-32 border rounded p-2"
+                                        >
+                                            <option value="00:00">00:00 (開始)</option>
+                                            <option value="09:00">09:00 (上午)</option>
+                                            <option value="12:00">12:00 (中午)</option>
+                                            <option value="14:00">14:00 (下午)</option>
+                                            <option value="18:00">18:00 (晚上)</option>
+                                            <option value="23:59">23:59 (結束)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Image Upload */}
