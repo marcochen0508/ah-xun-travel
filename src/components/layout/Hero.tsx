@@ -9,22 +9,50 @@ import { Banner } from "@/types/schema";
 
 export default function Hero() {
     const { t } = useLanguage();
-    const [bgImage, setBgImage] = useState("/hero-bg-new.jpg");
+    const [bannerList, setBannerList] = useState<Banner[]>([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [bgImage, setBgImage] = useState("/images/banner-default.jpg"); // Default fallback
+    const [isTransitioning, setIsTransitioning] = useState(false);
 
     useEffect(() => {
         const fetchBanner = async () => {
             try {
-                const res = await fetch("/api/banner", { cache: 'no-store' });
+                // Add timestamp to prevent caching
+                const res = await fetch(`/api/banner?t=${Date.now()}`, { cache: 'no-store' });
                 const data = await res.json();
-                if (data && data.image_url) {
-                    setBgImage(data.image_url);
+
+                if (Array.isArray(data) && data.length > 0) {
+                    console.log("Banners loaded:", data.length);
+                    setBannerList(data);
+                    setBgImage(data[0].image_url);
+                } else {
+                    console.log("No banners loaded.");
                 }
             } catch (error) {
                 console.error("Failed to fetch banner:", error);
             }
         };
+
         fetchBanner();
     }, []);
+
+    // Rotation Logic
+    useEffect(() => {
+        if (bannerList.length <= 1) return;
+
+        console.log("Setting up rotation for", bannerList.length, "items");
+
+        const timer = setInterval(() => {
+            setCurrentIndex((prev) => {
+                const nextIndex = (prev + 1) % bannerList.length;
+                console.log("Rotating to index:", nextIndex);
+                setBgImage(bannerList[nextIndex].image_url);
+                return nextIndex;
+            });
+        }, 5000);
+
+        return () => clearInterval(timer);
+    }, [bannerList]);
 
     return (
         <div className="relative h-screen w-full flex items-center justify-center overflow-hidden">

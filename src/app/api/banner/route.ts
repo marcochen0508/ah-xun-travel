@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
     try {
         const now = new Date().toISOString();
+        console.log(`[API] Fetching Banner at ${now}`);
 
         // 1. Try to find an active scheduled banner for current time
         const { data: scheduledBanners, error: scheduledError } = await supabase
@@ -17,13 +18,19 @@ export async function GET() {
             .gte('end_at', now)
             .order('start_at', { ascending: false });
 
-        if (scheduledError) throw scheduledError;
+        if (scheduledError) {
+            console.error('[API] Scheduled Banner Error:', scheduledError);
+        }
 
-        // If specific schedule exists, return IT (as an array, but standardizes response)
         if (scheduledBanners && scheduledBanners.length > 0) {
-            // Prioritize the top 1 if multiple overlap, but return as list
+            console.log(`[API] Found ${scheduledBanners.length} scheduled banners. Returning top 1.`);
+            // Return prioritized scheduled banner (as a single item array/or just strict mode)
+            // User wants priority: Scheduled > Random. 
+            // If scheduled exists, we usually just show THAT one (no rotation for scheduled unless requested).
             return NextResponse.json([scheduledBanners[0]]);
         }
+
+        console.log('[API] No scheduled banners found. Fetching defaults.');
 
         // 2. Fallback to ALL active default banners for rotation
         const { data: defaultBanners, error: defaultError } = await supabase
@@ -32,13 +39,16 @@ export async function GET() {
             .eq('is_active', true)
             .eq('is_default', true);
 
-        if (defaultError) throw defaultError;
+        if (defaultError) {
+            console.error('[API] Default Banner Error:', defaultError);
+        }
 
         if (defaultBanners && defaultBanners.length > 0) {
+            console.log(`[API] Found ${defaultBanners.length} default banners.`);
             return NextResponse.json(defaultBanners);
         }
 
-        // 3. Last resort: Return empty array (Frontend uses default static image)
+        console.log('[API] No banners found at all.');
         return NextResponse.json([]);
 
     } catch (error) {
