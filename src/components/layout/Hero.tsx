@@ -59,10 +59,11 @@ export default function Hero() {
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
                 <Image
+                    key={bgImage}
                     src={bgImage}
                     alt="Chiang Mai Landscape"
                     fill
-                    className="object-cover transition-opacity duration-1000"
+                    className="object-cover animate-fade-in"
                     priority
                 />
                 {/* Overlay for readability */}
