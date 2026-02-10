@@ -1,11 +1,10 @@
-import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(req: Request) {
-    const { searchParams } = new URL(req.url);
+export async function GET(req: NextRequest) {
+    const searchParams = req.nextUrl.searchParams;
     const key = searchParams.get('key');
 
     if (!key) {
@@ -13,13 +12,15 @@ export async function GET(req: Request) {
     }
 
     try {
-        const { data, error } = await supabase
+        // Use supabaseAdmin to bypass RLS and ensure data access
+        const { data, error } = await supabaseAdmin
             .from('general_content')
             .select('*')
             .eq('key', key)
             .single();
 
         if (error && error.code !== 'PGRST116') {
+            console.error("API Error:", error);
             throw error;
         }
 
@@ -27,6 +28,7 @@ export async function GET(req: Request) {
         return NextResponse.json(data || { key });
 
     } catch (error: any) {
+        console.error("API Exception:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
