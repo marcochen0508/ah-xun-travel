@@ -1,32 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function About() {
     const { t, language } = useLanguage();
-    const [dbContent, setDbContent] = useState<any>(null);
+    const [content, setContent] = useState<any>(null);
 
     useEffect(() => {
-        const fetchAbout = async () => {
-            const { data } = await supabase.from("about_info").select("*").eq("id", "about_us_main").single();
-            const fetchContent = async () => {
-                try {
-                    const { data } = await supabase
-                        .from('general_content')
-                        .select('*')
-                        .eq('key', 'about_us')
-                        .single();
+        const fetchContent = async () => {
+            try {
+                const { data } = await supabase
+                    .from('general_content')
+                    .select('*')
+                    .eq('key', 'about_us')
+                    .single();
 
-                    if (data) setContent(data);
-                } catch (error) {
-                    console.error("Failed to fetch about content");
-                }
-            };
-            fetchContent();
-        }, []);
+                if (data) setContent(data);
+            } catch (error) {
+                console.error("Failed to fetch about content", error);
+            }
+        };
+        fetchContent();
+    }, []);
 
     // Helper to get current language content
     const getLocalizedData = () => {
