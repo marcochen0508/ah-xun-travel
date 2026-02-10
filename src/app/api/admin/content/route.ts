@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
+// Disable caching
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
@@ -12,8 +15,8 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        // Use supabaseAdmin to bypass RLS and ensure data access
-        const { data, error } = await supabaseAdmin
+        // Use standard supabase client (RLS must allow public select)
+        const { data, error } = await supabase
             .from('general_content')
             .select('*')
             .eq('key', key)
