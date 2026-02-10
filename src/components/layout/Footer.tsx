@@ -3,73 +3,23 @@
 import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { Facebook, Phone, Mail, MapPin } from "lucide-react";
 
 export default function Footer() {
-    const { t, language } = useLanguage();
-    const [contactInfo, setContactInfo] = useState<any>(null);
+    const { t } = useLanguage();
 
-    useEffect(() => {
-        const fetchContact = async () => {
-            try {
-                console.log("Fetching contact info..."); // Debug log
-                const res = await fetch(`/api/admin/content?key=contact_info&t=${Date.now()}`);
-                const data = await res.json();
-                if (data && data.key) {
-                    console.log("Contact info loaded:", data);
-                    setContactInfo(data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch contact info", error);
-            }
-        };
-        fetchContact();
-    }, []);
-
-    const getContactData = () => {
-        // Default Fallbacks
-        const defaultPhone = "+66 81 234 5678";
-        const defaultLine = "ahxun.cm";
-        const defaultFb = "https://www.facebook.com/profile.php?id=100063943372295";
-
-        // If no DB data, use defaults
-        if (!contactInfo) {
-            return {
-                phone: defaultPhone,
-                line: defaultLine,
-                fb: defaultFb,
-                address: t.footer.address,
-                email: "",
-                whatsapp: "",
-                wechat: ""
-            };
-        }
-
-        // Address logic
-        let address;
-        if (language === 'th') address = contactInfo.content_th;
-        else if (language === 'zh-CN') address = contactInfo.content_zh_cn;
-        else address = contactInfo.content_zh_tw; // Default to ZH-TW
-
-        // Merge DB settings with defaults (only if DB is empty string)
-        const s = contactInfo.settings || {};
-
-        return {
-            phone: s.phone || defaultPhone,
-            line: s.line_id || defaultLine,
-            fb: s.facebook_url || defaultFb,
-            address: address || t.footer.address,
-            email: s.email || "",
-            whatsapp: s.whatsapp_id || "",
-            wechat: s.wechat_id || ""
-        };
+    // Static Contact Data (Restored to original/hardcoded)
+    const contact = {
+        phone: "0808530553 (TH)",
+        phoneLink: "tel:+66808530553",
+        line: "suchart74",
+        fb: "https://www.facebook.com/profile.php?id=100063943372295",
+        address: t.footer.address || "Chiang Mai, Thailand",
+        email: "ahxun.cm@gmail.com",
     };
 
-    const contact = getContactData();
-
     return (
-        <footer className="bg-lanna-green text-white pt-16 pb-8">
+        <footer className="bg-lanna-green text-white pt-16 pb-8" id="contact">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                     {/* Brand Section */}
@@ -128,18 +78,18 @@ export default function Footer() {
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <Phone size={18} className="text-lanna-gold shrink-0" />
-                                    <a href={`tel:${contact.phone}`} className="hover:text-white transition-colors">
+                                    <a href={contact.phoneLink} className="hover:text-white transition-colors">
                                         {contact.phone}
                                     </a>
                                 </div>
-                                {contact.email && (
-                                    <div className="flex items-center gap-3">
-                                        <Mail size={18} className="text-lanna-gold shrink-0" />
-                                        <a href={`mailto:${contact.email}`} className="hover:text-white transition-colors">
-                                            {contact.email}
-                                        </a>
-                                    </div>
-                                )}
+                                {/* 
+                                <div className="flex items-center gap-3">
+                                    <Mail size={18} className="text-lanna-gold shrink-0" />
+                                    <a href={`mailto:${contact.email}`} className="hover:text-white transition-colors">
+                                        {contact.email}
+                                    </a>
+                                </div>
+                                */}
                             </div>
 
                             {/* QR Codes Grid */}
@@ -150,22 +100,18 @@ export default function Footer() {
                                     </div>
                                     <p className="text-[10px] text-lanna-green font-bold truncate">Line: {contact.line}</p>
                                 </div>
-                                {contact.whatsapp && (
-                                    <div className="bg-white p-2 rounded-lg text-center">
-                                        <div className="relative aspect-square w-full mb-1">
-                                            <Image src="/whatsapp-qr.jpg" alt="WhatsApp QR" fill className="object-contain" />
-                                        </div>
-                                        <p className="text-[10px] text-lanna-green font-bold truncate">WhatsApp</p>
+                                <div className="bg-white p-2 rounded-lg text-center">
+                                    <div className="relative aspect-square w-full mb-1">
+                                        <Image src="/whatsapp-qr.jpg" alt="WhatsApp QR" fill className="object-contain" />
                                     </div>
-                                )}
-                                {contact.wechat && (
-                                    <div className="bg-white p-2 rounded-lg text-center">
-                                        <div className="relative aspect-square w-full mb-1">
-                                            <Image src="/wechat-qr.jpg" alt="WeChat QR" fill className="object-contain" />
-                                        </div>
-                                        <p className="text-[10px] text-lanna-green font-bold truncate">WeChat</p>
+                                    <p className="text-[10px] text-lanna-green font-bold truncate">WhatsApp</p>
+                                </div>
+                                <div className="bg-white p-2 rounded-lg text-center">
+                                    <div className="relative aspect-square w-full mb-1">
+                                        <Image src="/wechat-qr.jpg" alt="WeChat QR" fill className="object-contain" />
                                     </div>
-                                )}
+                                    <p className="text-[10px] text-lanna-green font-bold truncate">WeChat</p>
+                                </div>
                             </div>
                         </div>
                     </div>
