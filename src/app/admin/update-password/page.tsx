@@ -21,6 +21,16 @@ export default function UpdatePasswordPage() {
 
     const router = useRouter();
 
+    const translateAuthError = (errorMsg: string) => {
+        if (!errorMsg) return "發生未知錯誤";
+        if (errorMsg.includes("Email link is invalid or has expired")) return "連結無效或已過期，請重新發送重置信件";
+        if (errorMsg.includes("Password should be at least 6 characters")) return "密碼長度至少需 6 個字元";
+        if (errorMsg.includes("New password should be different from the old password")) return "新密碼不能與舊密碼相同";
+        if (errorMsg.includes("Auth session missing")) return "驗證階段失效，請重新操作";
+        if (errorMsg.includes("For security purposes, you can only request this once every 60 seconds")) return "基於安全考量，請稍後再試";
+        return errorMsg; // Fallback to original if no match
+    };
+
     useEffect(() => {
         // 1. Check current session immediately
         const checkSession = async () => {
@@ -46,7 +56,8 @@ export default function UpdatePasswordPage() {
         // 3. Handle URL errors
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         if (hashParams.get("error")) {
-            setError(hashParams.get("error_description") || "連結無效或已過期");
+            const errorDesc = hashParams.get("error_description") || "連結無效或已過期";
+            setError(translateAuthError(errorDesc));
             setCheckingSession(false);
         }
 
@@ -83,7 +94,7 @@ export default function UpdatePasswordPage() {
             });
 
             if (error) {
-                setError(error.message);
+                setError(translateAuthError(error.message));
             } else {
                 setMessage("密碼更新成功！正在跳轉至後台首頁...");
                 setTimeout(() => {
