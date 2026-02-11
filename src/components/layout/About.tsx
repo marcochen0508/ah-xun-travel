@@ -35,25 +35,27 @@ export default function About() {
             image: "/about-new.jpg"
         };
 
-        if (!content) return staticData;
+        if (!content || !content.settings) return staticData;
+
+        const s = content.settings;
 
         // Dynamic data from DB with Fallback Logic
-        // Priority: Current Lang -> zh-TW (DB) -> Static Default
-        let title = content.title_zh_tw; // Default to zh-TW
-        let desc = content.content_zh_tw; // Default to zh-TW
+        // Priority: Current Lang -> zh-TW (Default in DB) -> Static Default
+        let title = s.title; // Default (zh-TW)
+        let desc = s.content; // Default (zh-TW)
 
         if (language === 'th') {
-            if (content.title_th) title = content.title_th;
-            if (content.content_th) desc = content.content_th;
+            if (s.title_th) title = s.title_th;
+            if (s.content_th) desc = s.content_th;
         } else if (language === 'zh-CN') {
-            if (content.title_zh_cn) title = content.title_zh_cn;
-            if (content.content_zh_cn) desc = content.content_zh_cn;
+            if (s.title_cn) title = s.title_cn;
+            if (s.content_cn) desc = s.content_cn;
         }
 
         return {
             title: title || staticData.title,
             content: desc || staticData.content,
-            image: content.settings?.image_url || staticData.image
+            image: s.image_url || staticData.image
         };
     };
 
