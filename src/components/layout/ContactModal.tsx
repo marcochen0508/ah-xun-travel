@@ -46,7 +46,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         <div className="relative w-48 h-48 bg-gray-100 rounded-lg mx-auto border-4 border-[#00C300]/20 flex items-center justify-center overflow-hidden">
                             <Image src="/line-qr.jpg" alt="LINE QR" fill className="object-cover" />
                         </div>
-                        <p className="text-sm text-gray-500 mt-2">ID: @ahxun.chiangmai</p>
+                        <p className="text-sm text-gray-500 mt-2">ID: suchart74</p>
                     </div>
 
                     <div className="w-full h-px bg-gray-100"></div>
