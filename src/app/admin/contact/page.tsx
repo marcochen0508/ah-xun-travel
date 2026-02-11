@@ -53,7 +53,7 @@ export default function ContactPage() {
 
         const uploadFormData = new FormData();
         uploadFormData.append('file', file);
-        uploadFormData.append('bucket', 'settings');
+        uploadFormData.append('bucket', 'banners'); // Use existing bucket
 
         try {
             const response = await fetch('/api/upload', {
