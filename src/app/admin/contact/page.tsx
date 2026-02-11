@@ -210,7 +210,17 @@ export default function ContactPage() {
                                     <img src={formData.line_qr} alt="Line QR" className="object-cover w-full h-full" />
                                 </div>
                             )}
-                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'line_qr')} className="text-xs" />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleFileUpload(e, 'line_qr')}
+                                className="block w-full text-sm text-slate-500
+                                  file:mr-4 file:cursor-pointer file:py-2 file:px-4
+                                  file:rounded-full file:border-0
+                                  file:text-sm file:font-semibold
+                                  file:bg-green-50 file:text-green-700
+                                  hover:file:bg-green-100"
+                            />
                         </div>
 
                         {/* WhatsApp QR */}
@@ -221,7 +231,17 @@ export default function ContactPage() {
                                     <img src={formData.whatsapp_qr} alt="WhatsApp QR" className="object-cover w-full h-full" />
                                 </div>
                             )}
-                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'whatsapp_qr')} className="text-xs" />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleFileUpload(e, 'whatsapp_qr')}
+                                className="block w-full text-sm text-slate-500
+                                  file:mr-4 file:cursor-pointer file:py-2 file:px-4
+                                  file:rounded-full file:border-0
+                                  file:text-sm file:font-semibold
+                                  file:bg-green-50 file:text-green-700
+                                  hover:file:bg-green-100"
+                            />
                         </div>
 
                         {/* WeChat QR */}
@@ -232,7 +252,17 @@ export default function ContactPage() {
                                     <img src={formData.wechat_qr} alt="WeChat QR" className="object-cover w-full h-full" />
                                 </div>
                             )}
-                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'wechat_qr')} className="text-xs" />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleFileUpload(e, 'wechat_qr')}
+                                className="block w-full text-sm text-slate-500
+                                  file:mr-4 file:cursor-pointer file:py-2 file:px-4
+                                  file:rounded-full file:border-0
+                                  file:text-sm file:font-semibold
+                                  file:bg-green-50 file:text-green-700
+                                  hover:file:bg-green-100"
+                            />
                         </div>
                     </div>
                 </div>
