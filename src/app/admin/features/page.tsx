@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Save, Armchair, Languages, Map, Car, Clock, User, Star, Heart, Shield, Smile, Edit2 } from "lucide-react";
+import { Save, Armchair, Languages, Map, Car, Clock, User, Star, Heart, Shield, Smile, Edit2, Globe } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 
 // Available icons for selection
@@ -21,20 +21,48 @@ const ICON_OPTIONS = [
 interface FeatureItem {
     id: string; // unique id for key
     icon: string;
+
+    // Traditional Chinese (Default)
     title: string;
     sub: string;
     description: string;
+
+    // Simplified Chinese
+    title_cn?: string;
+    sub_cn?: string;
+    description_cn?: string;
+
+    // Thai
+    title_th?: string;
+    sub_th?: string;
+    description_th?: string;
 }
 
 export default function FeaturesPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [activeLang, setActiveLang] = useState<'tw' | 'cn' | 'th'>('tw');
 
     // Default 3 features
     const [features, setFeatures] = useState<FeatureItem[]>([
-        { id: "f1", icon: "Armchair", title: "VIP 保母車", sub: "10-SEATER VIP", description: "提供頂級 Toyota Commuter 10人座車型，寬敞舒適的獨立座椅。" },
-        { id: "f2", icon: "Languages", title: "中文司機", sub: "CHINESE SPEAKING", description: "全程中文溝通無障礙，在地人帶路，深入體驗清邁文化。" },
-        { id: "f3", icon: "Map", title: "客製化行程", sub: "CUSTOM ITINERARY", description: "想去哪就去哪，彈性規劃路線，不趕時間的慢活旅遊。" }
+        {
+            id: "f1", icon: "Armchair",
+            title: "VIP 保母車", sub: "10-SEATER VIP", description: "提供頂級 Toyota Commuter 10人座車型，寬敞舒適的獨立座椅。",
+            title_cn: "VIP 保姆车", sub_cn: "10-SEATER VIP", description_cn: "提供顶级 Toyota Commuter 10人座车型，宽敞舒适的独立座椅。",
+            title_th: "รถตู้ VIP 10 ที่นั่ง", sub_th: "10-SEATER VIP", description_th: "ห้องโดยสารกว้างขวาง สะดวกสบายระดับ VIP ตอบโจทย์ทุกการเดินทาง ทั้งครอบครัวและหมู่คณะ"
+        },
+        {
+            id: "f2", icon: "Languages",
+            title: "中文司機", sub: "CHINESE SPEAKING", description: "全程中文溝通無障礙，在地人帶路，深入體驗清邁文化。",
+            title_cn: "中文司机", sub_cn: "CHINESE SPEAKING", description_cn: "全程中文沟通无障碍，在地人带路，深入体验清迈文化。",
+            title_th: "คนขับพูดจีนได้", sub_th: "CHINESE SPEAKING", description_th: "คนขับมืออาชีพ สุภาพและเป็นกันเอง สื่อสารภาษาจีนได้ดีเยี่ยม พร้อมแนะนำที่เที่ยว"
+        },
+        {
+            id: "f3", icon: "Map",
+            title: "客製化行程", sub: "CUSTOM ITINERARY", description: "想去哪就去哪，彈性規劃路線，不趕時間的慢活旅遊。",
+            title_cn: "客制化行程", sub_cn: "CUSTOM ITINERARY", description_cn: "想去哪就去哪，弹性规划路线，不赶时间的慢活旅游。",
+            title_th: "จัดแผนเที่ยวตามใจ", sub_th: "CUSTOM ITINERARY", description_th: "จัดทริปได้ตามความต้องการ ยืดหยุ่นเวลาได้ เราพร้อมช่วยวางแผนเส้นทางที่ดีที่สุดให้คุณ"
+        }
     ]);
 
     useEffect(() => {
@@ -111,6 +139,28 @@ export default function FeaturesPage() {
                 </button>
             </div>
 
+            {/* Language Tabs */}
+            <div className="flex gap-2 mb-6 border-b border-gray-200 pb-1">
+                <button
+                    onClick={() => setActiveLang('tw')}
+                    className={`px-4 py-2 rounded-t-lg font-bold transition-colors ${activeLang === 'tw' ? 'bg-lanna-green text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                >
+                    繁體中文 (預設)
+                </button>
+                <button
+                    onClick={() => setActiveLang('cn')}
+                    className={`px-4 py-2 rounded-t-lg font-bold transition-colors ${activeLang === 'cn' ? 'bg-lanna-green text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                >
+                    简体中文
+                </button>
+                <button
+                    onClick={() => setActiveLang('th')}
+                    className={`px-4 py-2 rounded-t-lg font-bold transition-colors ${activeLang === 'th' ? 'bg-lanna-green text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                >
+                    泰文 (Thai)
+                </button>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {features.map((feature, index) => (
                     <div key={feature.id} className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 relative">
@@ -118,6 +168,7 @@ export default function FeaturesPage() {
                             {index + 1}
                         </div>
 
+                        {/* Icon Selection (Language Independent) */}
                         <div className="mb-4">
                             <label className="block text-sm font-bold text-gray-700 mb-1">圖示 (Icon)</label>
                             <div className="grid grid-cols-5 gap-2 bg-gray-50 p-2 rounded-lg border">
@@ -135,38 +186,108 @@ export default function FeaturesPage() {
                             </div>
                         </div>
 
-                        <div className="mb-4">
-                            <label className="block text-sm font-bold text-gray-700 mb-1">主標題 (Title)</label>
-                            <input
-                                type="text"
-                                value={feature.title}
-                                onChange={(e) => handleFeatureChange(index, "title", e.target.value)}
-                                className="w-full border rounded p-2 focus:ring-2 focus:ring-lanna-green/20 outline-none"
-                                placeholder="例如: VIP 包車"
-                            />
+                        {/* Traditional Chinese Fields */}
+                        <div className={activeLang === 'tw' ? 'block' : 'hidden'}>
+                            <div className="mb-4">
+                                <label className="block text-sm font-bold text-gray-700 mb-1">主標題 (繁體)</label>
+                                <input
+                                    type="text"
+                                    value={feature.title}
+                                    onChange={(e) => handleFeatureChange(index, "title", e.target.value)}
+                                    className="w-full border rounded p-2 focus:ring-2 focus:ring-lanna-green/20 outline-none"
+                                    placeholder="例如: VIP 包車"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-bold text-gray-700 mb-1">副標題 (Subtitle)</label>
+                                <input
+                                    type="text"
+                                    value={feature.sub}
+                                    onChange={(e) => handleFeatureChange(index, "sub", e.target.value)}
+                                    className="w-full border rounded p-2 focus:ring-2 focus:ring-lanna-green/20 outline-none font-mono text-sm"
+                                    placeholder="例如: VIP SERVICE"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-bold text-gray-700 mb-1">描述內文 (繁體)</label>
+                                <textarea
+                                    rows={4}
+                                    value={feature.description}
+                                    onChange={(e) => handleFeatureChange(index, "description", e.target.value)}
+                                    className="w-full border rounded p-2 focus:ring-2 focus:ring-lanna-green/20 outline-none resize-none"
+                                    placeholder="簡短說明..."
+                                />
+                            </div>
                         </div>
 
-                        <div className="mb-4">
-                            <label className="block text-sm font-bold text-gray-700 mb-1">副標題 (Subtitle)</label>
-                            <input
-                                type="text"
-                                value={feature.sub}
-                                onChange={(e) => handleFeatureChange(index, "sub", e.target.value)}
-                                className="w-full border rounded p-2 focus:ring-2 focus:ring-lanna-green/20 outline-none font-mono text-sm"
-                                placeholder="例如: VIP SERVICE"
-                            />
+                        {/* Simplified Chinese Fields */}
+                        <div className={activeLang === 'cn' ? 'block' : 'hidden'}>
+                            <div className="mb-4 bg-orange-50 p-2 rounded">
+                                <label className="block text-sm font-bold text-orange-800 mb-1">主标题 (简体)</label>
+                                <input
+                                    type="text"
+                                    value={feature.title_cn || ""}
+                                    onChange={(e) => handleFeatureChange(index, "title_cn", e.target.value)}
+                                    className="w-full border border-orange-200 rounded p-2 focus:ring-2 focus:ring-orange-200 outline-none"
+                                    placeholder="同繁體則免填"
+                                />
+                            </div>
+                            <div className="mb-4 bg-orange-50 p-2 rounded">
+                                <label className="block text-sm font-bold text-orange-800 mb-1">副标题 (Subtitle)</label>
+                                <input
+                                    type="text"
+                                    value={feature.sub_cn || ""}
+                                    onChange={(e) => handleFeatureChange(index, "sub_cn", e.target.value)}
+                                    className="w-full border border-orange-200 rounded p-2 focus:ring-2 focus:ring-orange-200 outline-none font-mono text-sm"
+                                    placeholder="预设使用英文"
+                                />
+                            </div>
+                            <div className="mb-4 bg-orange-50 p-2 rounded">
+                                <label className="block text-sm font-bold text-orange-800 mb-1">描述内文 (简体)</label>
+                                <textarea
+                                    rows={4}
+                                    value={feature.description_cn || ""}
+                                    onChange={(e) => handleFeatureChange(index, "description_cn", e.target.value)}
+                                    className="w-full border border-orange-200 rounded p-2 focus:ring-2 focus:ring-orange-200 outline-none resize-none"
+                                    placeholder="同繁體則免填"
+                                />
+                            </div>
                         </div>
 
-                        <div className="mb-4">
-                            <label className="block text-sm font-bold text-gray-700 mb-1">描述內文 (Description)</label>
-                            <textarea
-                                rows={4}
-                                value={feature.description}
-                                onChange={(e) => handleFeatureChange(index, "description", e.target.value)}
-                                className="w-full border rounded p-2 focus:ring-2 focus:ring-lanna-green/20 outline-none resize-none"
-                                placeholder="簡短說明..."
-                            />
+                        {/* Thai Fields */}
+                        <div className={activeLang === 'th' ? 'block' : 'hidden'}>
+                            <div className="mb-4 bg-purple-50 p-2 rounded">
+                                <label className="block text-sm font-bold text-purple-800 mb-1">主標題 (泰文)</label>
+                                <input
+                                    type="text"
+                                    value={feature.title_th || ""}
+                                    onChange={(e) => handleFeatureChange(index, "title_th", e.target.value)}
+                                    className="w-full border border-purple-200 rounded p-2 focus:ring-2 focus:ring-purple-200 outline-none"
+                                    placeholder="同繁體則免填"
+                                />
+                            </div>
+                            <div className="mb-4 bg-purple-50 p-2 rounded">
+                                <label className="block text-sm font-bold text-purple-800 mb-1">副標題 (Subtitle)</label>
+                                <input
+                                    type="text"
+                                    value={feature.sub_th || ""}
+                                    onChange={(e) => handleFeatureChange(index, "sub_th", e.target.value)}
+                                    className="w-full border border-purple-200 rounded p-2 focus:ring-2 focus:ring-purple-200 outline-none font-mono text-sm"
+                                    placeholder="預設使用英文"
+                                />
+                            </div>
+                            <div className="mb-4 bg-purple-50 p-2 rounded">
+                                <label className="block text-sm font-bold text-purple-800 mb-1">描述內文 (泰文)</label>
+                                <textarea
+                                    rows={4}
+                                    value={feature.description_th || ""}
+                                    onChange={(e) => handleFeatureChange(index, "description_th", e.target.value)}
+                                    className="w-full border border-purple-200 rounded p-2 focus:ring-2 focus:ring-purple-200 outline-none resize-none"
+                                    placeholder="同繁體則免填"
+                                />
+                            </div>
                         </div>
+
                     </div>
                 ))}
             </div>
@@ -177,9 +298,8 @@ export default function FeaturesPage() {
                     提示：
                 </p>
                 <ul className="list-disc list-inside mt-1 ml-1 opacity-80">
-                    <li>您可以修改每個區塊的圖示、標題與文字。</li>
-                    <li>建議保持三個區塊的文字長度相當，排列會比較美觀。</li>
-                    <li>修改後請記得點擊「儲存設定」。</li>
+                    <li>使用上方分頁切換不同語言進行編輯。</li>
+                    <li>若簡體或泰文欄位留空，前台將自動使用繁體中文(或預設值)顯示。</li>
                 </ul>
             </div>
         </div>
