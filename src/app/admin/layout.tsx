@@ -38,13 +38,7 @@ export default function AdminLayout({
                         <Newspaper size={20} />
                         <span>最新消息管理</span>
                     </Link>
-                    <Link
-                        href="/admin/about"
-                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
-                    >
-                        <Info size={20} />
-                        <span>關於我們編輯</span>
-                    </Link>
+
                     <Link
                         href="/admin/routes"
                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"

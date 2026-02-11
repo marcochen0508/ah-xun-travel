@@ -128,7 +128,7 @@ export default function FeaturesPage() {
     return (
         <div className="max-w-5xl mx-auto">
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">服務特色管理 (Features)</h2>
+                <h2 className="text-2xl font-bold">特色服務管理 (Features)</h2>
                 <button
                     onClick={handleSubmit}
                     disabled={saving}
