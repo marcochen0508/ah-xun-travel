@@ -67,7 +67,7 @@ export default function About() {
                 <div className="flex flex-col md:flex-row items-center gap-12">
                     {/* Image Side */}
                     <div className="w-full md:w-1/2">
-                        <div className="relative h-[400px] w-full rounded-2xl overflow-hidden shadow-xl transform hover:scale-[1.02] transition-transform duration-500">
+                        <div className="relative h-[400px] md:h-[600px] w-full rounded-2xl overflow-hidden shadow-xl transform hover:scale-[1.02] transition-transform duration-500">
                             <Image
                                 src={image}
                                 alt="About Ah Xun Travel"
