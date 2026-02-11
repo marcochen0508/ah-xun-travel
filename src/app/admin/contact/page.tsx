@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Save, Phone, Facebook, Mail, MapPin } from "lucide-react";
+import { Save, Phone, Facebook, Mail, MapPin, FileText } from "lucide-react";
 
 export default function ContactPage() {
     const [loading, setLoading] = useState(true);
@@ -16,7 +16,10 @@ export default function ContactPage() {
         email: "",
         line_qr: "",
         whatsapp_qr: "",
-        wechat_qr: ""
+        wechat_qr: "",
+        footer_desc: "",
+        footer_desc_cn: "",
+        footer_desc_th: ""
     });
 
     useEffect(() => {
@@ -37,7 +40,10 @@ export default function ContactPage() {
                     email: data.settings?.email || "",
                     line_qr: data.settings?.line_qr || "",
                     whatsapp_qr: data.settings?.whatsapp_qr || "",
-                    wechat_qr: data.settings?.wechat_qr || ""
+                    wechat_qr: data.settings?.wechat_qr || "",
+                    footer_desc: data.settings?.footer_desc || "",
+                    footer_desc_cn: data.settings?.footer_desc_cn || "",
+                    footer_desc_th: data.settings?.footer_desc_th || ""
                 });
             }
         } catch (error) {
@@ -94,7 +100,10 @@ export default function ContactPage() {
                     email: formData.email,
                     line_qr: formData.line_qr,
                     whatsapp_qr: formData.whatsapp_qr,
-                    wechat_qr: formData.wechat_qr
+                    wechat_qr: formData.wechat_qr,
+                    footer_desc: formData.footer_desc,
+                    footer_desc_cn: formData.footer_desc_cn,
+                    footer_desc_th: formData.footer_desc_th
                 }
             };
 
@@ -264,6 +273,57 @@ export default function ContactPage() {
                                   hover:file:bg-green-100"
                             />
                         </div>
+                    </div>
+                </div>
+
+                {/* Footer Description Section */}
+                <div>
+                    <h3 className="text-lg font-bold mb-4 border-b pb-2 flex items-center gap-2">
+                        <FileText size={20} /> 頁尾簡介 (Footer Description)
+                    </h3>
+
+                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Traditional Chinese */}
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">簡介內文 (繁體)</label>
+                                <textarea
+                                    rows={5}
+                                    name="footer_desc"
+                                    value={formData.footer_desc || ""}
+                                    onChange={handleChange}
+                                    className="w-full border rounded p-2 focus:ring-2 focus:ring-lanna-green/20 outline-none resize-none text-sm"
+                                    placeholder="顯示於頁尾左下角的公司簡介..."
+                                />
+                            </div>
+
+                            {/* Simplified Chinese */}
+                            <div>
+                                <label className="block text-sm font-bold text-orange-800 mb-1">简介内文 (简体)</label>
+                                <textarea
+                                    rows={5}
+                                    name="footer_desc_cn"
+                                    value={formData.footer_desc_cn || ""}
+                                    onChange={handleChange}
+                                    className="w-full border border-orange-200 rounded p-2 focus:ring-2 focus:ring-orange-200 outline-none resize-none text-sm bg-orange-50"
+                                    placeholder="同繁體則免填"
+                                />
+                            </div>
+
+                            {/* Thai */}
+                            <div>
+                                <label className="block text-sm font-bold text-purple-800 mb-1">簡介內文 (泰文)</label>
+                                <textarea
+                                    rows={5}
+                                    name="footer_desc_th"
+                                    value={formData.footer_desc_th || ""}
+                                    onChange={handleChange}
+                                    className="w-full border border-purple-200 rounded p-2 focus:ring-2 focus:ring-purple-200 outline-none resize-none text-sm bg-purple-50"
+                                    placeholder="同繁體則免填"
+                                />
+                            </div>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">提示：此處設定的文字將會顯示於網站所有頁面的頁尾左下角。</p>
                     </div>
                 </div>
 

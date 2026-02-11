@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Phone, Mail } from "lucide-react";
 
 export default function Footer() {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [contact, setContact] = useState({
         phone: "0808530553",
         phoneLink: "tel:+66808530553",
@@ -18,7 +18,8 @@ export default function Footer() {
         whatsapp_qr: "/whatsapp-qr.jpg",
         whatsapp_id: "",
         wechat_qr: "/wechat-qr.jpg",
-        wechat_id: ""
+        wechat_id: "",
+        footer_desc: t.about.content // Default fallback
     });
 
     useEffect(() => {
@@ -27,17 +28,25 @@ export default function Footer() {
                 const res = await fetch("/api/admin/content?key=contact_info");
                 const data = await res.json();
                 if (data.key && data.settings) {
+                    const s = data.settings;
+
+                    // Determine footer description based on language
+                    let desc = s.footer_desc || t.about.content;
+                    if (language === 'th' && s.footer_desc_th) desc = s.footer_desc_th;
+                    if (language === 'zh-CN' && s.footer_desc_cn) desc = s.footer_desc_cn;
+
                     setContact({
-                        phone: data.settings.phone || "0808530553",
-                        phoneLink: `tel:${data.settings.phone?.replace(/\s/g, '')}` || "tel:+66808530553",
-                        line: data.settings.line_id || "suchart74",
-                        fb: data.settings.facebook_url || "https://www.facebook.com/suchart74",
-                        email: data.settings.email || "ahxun.cm@gmail.com",
-                        line_qr: data.settings.line_qr || "/line-qr.jpg",
-                        whatsapp_qr: data.settings.whatsapp_qr || "/whatsapp-qr.jpg",
-                        whatsapp_id: data.settings.whatsapp_id || "",
-                        wechat_qr: data.settings.wechat_qr || "/wechat-qr.jpg",
-                        wechat_id: data.settings.wechat_id || ""
+                        phone: s.phone || "0808530553",
+                        phoneLink: `tel:${s.phone?.replace(/\s/g, '')}` || "tel:+66808530553",
+                        line: s.line_id || "suchart74",
+                        fb: s.facebook_url || "https://www.facebook.com/suchart74",
+                        email: s.email || "ahxun.cm@gmail.com",
+                        line_qr: s.line_qr || "/line-qr.jpg",
+                        whatsapp_qr: s.whatsapp_qr || "/whatsapp-qr.jpg",
+                        whatsapp_id: s.whatsapp_id || "",
+                        wechat_qr: s.wechat_qr || "/wechat-qr.jpg",
+                        wechat_id: s.wechat_id || "",
+                        footer_desc: desc
                     });
                 }
             } catch (e) {
@@ -45,7 +54,7 @@ export default function Footer() {
             }
         };
         fetchContact();
-    }, []);
+    }, [language]); // Re-fetch or re-calc when language changes
 
     return (
         <footer className="bg-lanna-green text-white pt-16 pb-8" id="contact">
@@ -62,8 +71,8 @@ export default function Footer() {
                                 <p className="text-xs text-white/70 tracking-widest mt-1">CHIANG MAI</p>
                             </div>
                         </div>
-                        <div className="text-white/80 text-sm leading-relaxed mb-6 font-light line-clamp-3">
-                            {t.about.content}
+                        <div className="text-white/80 text-sm leading-relaxed mb-6 font-light whitespace-pre-line">
+                            {contact.footer_desc}
                         </div>
                     </div>
 
