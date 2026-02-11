@@ -38,7 +38,11 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     // Protect /admin routes
-    if (request.nextUrl.pathname.startsWith("/admin") && !request.nextUrl.pathname.startsWith("/admin/login")) {
+    const isLoginPage = request.nextUrl.pathname.startsWith("/admin/login");
+    const isForgotPasswordPage = request.nextUrl.pathname.startsWith("/admin/forgot-password");
+    const isUpdatePasswordPage = request.nextUrl.pathname.startsWith("/admin/update-password");
+
+    if (request.nextUrl.pathname.startsWith("/admin") && !isLoginPage && !isForgotPasswordPage && !isUpdatePasswordPage) {
         if (!user) {
             const url = request.nextUrl.clone();
             url.pathname = "/admin/login";
