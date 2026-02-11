@@ -37,17 +37,17 @@ export default function About() {
 
         if (!content) return staticData;
 
-        // Dynamic data from DB
-        let title, desc;
+        // Dynamic data from DB with Fallback Logic
+        // Priority: Current Lang -> zh-TW (DB) -> Static Default
+        let title = content.title_zh_tw; // Default to zh-TW
+        let desc = content.content_zh_tw; // Default to zh-TW
+
         if (language === 'th') {
-            title = content.title_th;
-            desc = content.content_th;
+            if (content.title_th) title = content.title_th;
+            if (content.content_th) desc = content.content_th;
         } else if (language === 'zh-CN') {
-            title = content.title_zh_cn;
-            desc = content.content_zh_cn;
-        } else {
-            title = content.title_zh_tw;
-            desc = content.content_zh_tw;
+            if (content.title_zh_cn) title = content.title_zh_cn;
+            if (content.content_zh_cn) desc = content.content_zh_cn;
         }
 
         return {

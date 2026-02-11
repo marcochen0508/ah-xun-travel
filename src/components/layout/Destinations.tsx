@@ -93,8 +93,16 @@ export default function Destinations() {
     const getLocalizedContent = (dest: any) => {
         let title, desc, image;
         if (dest.created_at) { // It's from DB
-            title = language === "th" ? dest.title_th : (language === "zh-CN" ? dest.title_zh_cn : dest.title_zh_tw);
-            desc = language === "th" ? dest.description_th : (language === "zh-CN" ? dest.description_zh_cn : dest.description_zh_tw);
+            // Title Fallback: Current Lang -> zh-TW -> English (if available) -> Empty
+            title = (language === "th" && dest.title_th) ? dest.title_th :
+                ((language === "zh-CN" && dest.title_zh_cn) ? dest.title_zh_cn :
+                    (dest.title_zh_tw || ""));
+
+            // Description Fallback
+            desc = (language === "th" && dest.description_th) ? dest.description_th :
+                ((language === "zh-CN" && dest.description_zh_cn) ? dest.description_zh_cn :
+                    (dest.description_zh_tw || ""));
+
             image = dest.image_url || "/dest-1.jpg";
         } else { // Static Fallback
             title = language === "th" ? dest.thTitle : (language === "zh-CN" ? dest.zhCnTitle : dest.zhTitle);
