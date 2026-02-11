@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { LayoutDashboard, Map, Newspaper, Info, LogOut, FileText, MessageSquare, Image as ImageIcon, Phone } from "lucide-react";
+import { LayoutDashboard, Map, Newspaper, Info, FileText, MessageSquare, Image as ImageIcon } from "lucide-react";
+import LogoutButton from "@/components/admin/LogoutButton";
 
 export default function AdminLayout({
     children,
@@ -60,6 +61,14 @@ export default function AdminLayout({
                     </Link>
 
                     <Link
+                        href="/admin/users"
+                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
+                    >
+                        <FileText size={20} />
+                        <span>帳號管理</span>
+                    </Link>
+
+                    <Link
                         href="/admin/notes"
                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
                     >
@@ -69,10 +78,7 @@ export default function AdminLayout({
                 </nav>
 
                 <div className="p-4 border-t border-white/10">
-                    <button className="flex items-center gap-3 p-3 rounded-lg hover:bg-black/20 transition-colors w-full text-left text-red-200">
-                        <LogOut size={20} />
-                        <span>登出</span>
-                    </button>
+                    <LogoutButton />
                 </div>
             </aside>
 
@@ -86,6 +92,6 @@ export default function AdminLayout({
                     {children}
                 </div>
             </main>
-        </div>
+        </div >
     );
 }
