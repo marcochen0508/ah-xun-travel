@@ -10,10 +10,10 @@ export default function Footer() {
 
     // Static Contact Data (Restored to original/hardcoded)
     const contact = {
-        phone: "0808530553 (TH)",
+        phone: "0808530553",
         phoneLink: "tel:+66808530553",
         line: "suchart74",
-        fb: "https://www.facebook.com/profile.php?id=100063943372295",
+        fb: "https://www.facebook.com/suchart74",
         address: t.footer.address || "Chiang Mai, Thailand",
         email: "ahxun.cm@gmail.com",
     };

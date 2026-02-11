@@ -54,7 +54,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     {/* Social Links */}
                     <div className="w-full space-y-4">
                         <a
-                            href="https://facebook.com"
+                            href="https://www.facebook.com/suchart74"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center justify-center gap-3 w-full bg-[#1877F2] text-white py-3 rounded-xl font-bold hover:bg-[#1877F2]/90 transition-colors shadow-lg shadow-blue-200"
@@ -64,11 +64,11 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         </a>
 
                         <a
-                            href="tel:+66999999999"
+                            href="tel:+66808530553"
                             className="flex items-center justify-center gap-3 w-full bg-lanna-gold text-white py-3 rounded-xl font-bold hover:bg-lanna-gold/90 transition-colors shadow-lg shadow-yellow-200"
                         >
                             <Phone size={20} />
-                            {t.contact.phone}
+                            080-853-0553
                         </a>
                     </div>
                 </div>
