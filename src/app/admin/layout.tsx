@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Map, Newspaper, Info, FileText, MessageSquare, Image as ImageIcon } from "lucide-react";
+import { LayoutDashboard, Map, Newspaper, Info, FileText, MessageSquare, Image as ImageIcon, Phone } from "lucide-react";
 import LogoutButton from "@/components/admin/LogoutButton";
 
 export default function AdminLayout({
@@ -74,6 +74,13 @@ export default function AdminLayout({
                     >
                         <FileText size={20} />
                         <span>包車注意事項</span>
+                    </Link>
+                    <Link
+                        href="/admin/contact"
+                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
+                    >
+                        <Phone size={20} />
+                        <span>聯絡資訊管理</span>
                     </Link>
                 </nav>
 
