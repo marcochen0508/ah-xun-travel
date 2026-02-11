@@ -13,6 +13,15 @@ export default function Reviews() {
     const { t } = useLanguage();
     const [reviews, setReviews] = useState<CustomerReview[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false);
+    const [reviewForm, setReviewForm] = useState({
+        name: "",
+        content: "",
+        rating: 5,
+        photos: [] as string[]
+    });
+
     const [selectedReview, setSelectedReview] = useState<CustomerReview | null>(null);
 
     // Embla Carousel Setup
@@ -60,6 +69,65 @@ export default function Reviews() {
         setSelectedReview(review);
     };
 
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+
+        const files = Array.from(e.target.files);
+        const newPhotos: string[] = [];
+
+        try {
+            setSubmitLoading(true);
+            for (const file of files) {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('bucket', 'reviews');
+
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error);
+                newPhotos.push(result.url);
+            }
+
+            setReviewForm(prev => ({
+                ...prev,
+                photos: [...prev.photos, ...newPhotos]
+            }));
+        } catch (error) {
+            console.error("Upload failed", error);
+            alert("圖片上傳失敗，請稍後再試");
+        } finally {
+            setSubmitLoading(false);
+        }
+    };
+
+    const handleSubmitReview = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSubmitLoading(true);
+
+        try {
+            const response = await fetch('/api/reviews/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reviewForm)
+            });
+
+            if (!response.ok) throw new Error("Submission failed");
+
+            alert("留言已送出！待管理者審核通過後將顯示於頁面。");
+            setIsWriteModalOpen(false);
+            setReviewForm({ name: "", content: "", rating: 5, photos: [] });
+        } catch (error) {
+            console.error(error);
+            alert("送出失敗，請稍後再試");
+        } finally {
+            setSubmitLoading(false);
+        }
+    };
+
     return (
         <section id="reviews" className="py-24 bg-white relative overflow-hidden">
             <div className="container mx-auto px-4">
@@ -70,9 +138,16 @@ export default function Reviews() {
                     <h2 className="text-3xl md:text-5xl font-serif font-bold text-lanna-coffee mb-6">
                         {t.nav.reviews}
                     </h2>
-                    <div className="w-24 h-1 bg-lanna-gold mx-auto"></div>
+
+                    <button
+                        onClick={() => setIsWriteModalOpen(true)}
+                        className="mt-4 px-8 py-3 bg-lanna-gold text-white rounded-full font-bold hover:bg-lanna-gold/90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    >
+                        我要留言
+                    </button>
                 </div>
 
+                {/* ... (Existing Carousel Code) ... */}
                 {loading ? (
                     <div className="flex justify-center py-12">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-lanna-gold"></div>
@@ -176,7 +251,7 @@ export default function Reviews() {
                 )}
             </div>
 
-            {/* Detail Modal */}
+            {/* Read Modal */}
             {selectedReview && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-all" onClick={() => toggleModal(null)}>
                     <div
@@ -229,6 +304,102 @@ export default function Reviews() {
                                     ))}
                                 </div>
                             )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Write Review Modal */}
+            {isWriteModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-all" onClick={() => setIsWriteModalOpen(false)}>
+                    <div
+                        className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative shadow-2xl animate-in zoom-in-95 duration-200"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className="p-6">
+                            <h3 className="text-2xl font-bold text-lanna-coffee mb-4">撰寫評論</h3>
+
+                            <form onSubmit={handleSubmitReview} className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">您的姓名 / 匿稱 <span className="text-red-500">*</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-lanna-gold outline-none"
+                                        value={reviewForm.name}
+                                        onChange={e => setReviewForm({ ...reviewForm, name: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">評分</label>
+                                    <div className="flex gap-2">
+                                        {[1, 2, 3, 4, 5].map(star => (
+                                            <button
+                                                type="button"
+                                                key={star}
+                                                onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                                                className="focus:outline-none transition-transform hover:scale-110"
+                                            >
+                                                <Star
+                                                    size={28}
+                                                    fill={star <= reviewForm.rating ? "#D4AF37" : "none"}
+                                                    className={star <= reviewForm.rating ? "text-lanna-gold" : "text-gray-300"}
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">評論內容 <span className="text-red-500">*</span></label>
+                                    <textarea
+                                        required
+                                        rows={4}
+                                        className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-lanna-gold outline-none"
+                                        value={reviewForm.content}
+                                        onChange={e => setReviewForm({ ...reviewForm, content: e.target.value })}
+                                        placeholder="分享您的旅遊體驗..."
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">上傳照片 (選填)</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleFileUpload}
+                                        className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-lanna-gold/10 file:text-lanna-gold hover:file:bg-lanna-gold/20"
+                                    />
+                                    {reviewForm.photos.length > 0 && (
+                                        <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
+                                            {reviewForm.photos.map((photo, i) => (
+                                                <div key={i} className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden border">
+                                                    <Image src={photo} alt="preview" fill className="object-cover" />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="flex justify-end gap-2 pt-4 border-t">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsWriteModalOpen(false)}
+                                        className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                                    >
+                                        取消
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={submitLoading}
+                                        className="px-6 py-2 bg-lanna-gold text-white rounded-lg font-bold hover:bg-lanna-gold/90 disabled:opacity-50"
+                                    >
+                                        {submitLoading ? "送出中..." : "送出評論"}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

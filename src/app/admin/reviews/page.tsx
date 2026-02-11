@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, Edit, Trash2, Search } from "lucide-react";
+import { Plus, Edit, Trash2, Search, Check } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { CustomerReview } from "@/types/schema";
 import Image from "next/image";
@@ -11,6 +11,7 @@ export default function ReviewsPage() {
     const [reviews, setReviews] = useState<CustomerReview[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [activeTab, setActiveTab] = useState<'all' | 'published' | 'pending'>('all');
 
     useEffect(() => {
         fetchReviews();
@@ -32,6 +33,24 @@ export default function ReviewsPage() {
         }
     };
 
+    const handleApprove = async (id: string) => {
+        try {
+            const { error } = await supabase
+                .from("customer_reviews")
+                .update({ show_on_home: true })
+                .eq("id", id);
+
+            if (error) throw error;
+
+            // Update local state
+            setReviews(reviews.map(r => r.id === id ? { ...r, show_on_home: true } : r));
+            alert("已核准並發佈！");
+        } catch (error) {
+            console.error("Error approving review:", error);
+            alert("更新失敗");
+        }
+    };
+
     const handleDelete = async (id: string) => {
         if (!confirm("確定要刪除此評論嗎？此動作無法復原。")) return;
 
@@ -49,10 +68,18 @@ export default function ReviewsPage() {
         }
     };
 
-    const filteredReviews = reviews.filter(r =>
-        r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        r.content.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredReviews = reviews.filter(r => {
+        const matchesSearch = r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            r.content.toLowerCase().includes(searchTerm.toLowerCase());
+
+        if (!matchesSearch) return false;
+
+        if (activeTab === 'published') return r.show_on_home;
+        if (activeTab === 'pending') return !r.show_on_home;
+        return true;
+    });
+
+    const pendingCount = reviews.filter(r => !r.show_on_home).length;
 
     return (
         <div className="space-y-6">
@@ -67,16 +94,35 @@ export default function ReviewsPage() {
                 </Link>
             </div>
 
-            {/* Search */}
-            <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                    type="text"
-                    placeholder="搜尋姓名或內容..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lanna-green outline-none"
-                />
+            {/* Tabs & Search */}
+            <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+                <div className="flex bg-gray-100 p-1 rounded-lg w-full md:w-auto">
+                    {(['all', 'published', 'pending'] as const).map((tab) => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === tab
+                                ? 'bg-white text-lanna-green shadow-sm'
+                                : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            {tab === 'all' && '全部'}
+                            {tab === 'published' && '已發佈'}
+                            {tab === 'pending' && `待審核 (${pendingCount})`}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="relative w-full md:w-64">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                    <input
+                        type="text"
+                        placeholder="搜尋姓名或內容..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lanna-green outline-none"
+                    />
+                </div>
             </div>
 
             {/* List Table */}
@@ -99,7 +145,7 @@ export default function ReviewsPage() {
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {filteredReviews.map((review) => (
-                                    <tr key={review.id} className="hover:bg-gray-50">
+                                    <tr key={review.id} className={`hover:bg-gray-50 ${!review.show_on_home ? 'bg-yellow-50/50' : ''}`}>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="h-12 w-12 rounded bg-gray-100 relative overflow-hidden border">
                                                 {review.photos && review.photos.length > 0 ? (
@@ -122,13 +168,22 @@ export default function ReviewsPage() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${review.show_on_home ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                            <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${review.show_on_home ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                                                 }`}>
-                                                {review.show_on_home ? '顯示中' : '已隱藏'}
+                                                {review.show_on_home ? '已發佈' : '待審核'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex justify-end gap-2">
+                                                {!review.show_on_home && (
+                                                    <button
+                                                        onClick={() => handleApprove(review.id)}
+                                                        className="text-green-600 hover:text-green-900 bg-green-50 p-2 rounded-full"
+                                                        title="核准發佈"
+                                                    >
+                                                        <Check size={16} />
+                                                    </button>
+                                                )}
                                                 <Link
                                                     href={`/admin/reviews/${review.id}`}
                                                     className="text-blue-600 hover:text-blue-900 bg-blue-50 p-2 rounded-full"
