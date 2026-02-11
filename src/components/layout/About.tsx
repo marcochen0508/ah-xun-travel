@@ -79,10 +79,6 @@ export default function About() {
 
                     {/* Content Side */}
                     <div className="w-full md:w-1/2 space-y-6">
-                        <div className="inline-block px-4 py-1 bg-lanna-gold/10 text-lanna-gold rounded-full text-sm font-bold tracking-wider mb-2">
-                            EST. 2015
-                        </div>
-
                         <h2 className="text-3xl md:text-4xl font-serif font-bold text-lanna-green leading-tight">
                             {title}
                         </h2>
