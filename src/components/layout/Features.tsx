@@ -1,31 +1,52 @@
 "use client";
 
-import { Armchair, Languages, Map } from "lucide-react";
+import { useEffect, useState } from "react";
+import * as LucideIcons from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Features() {
     const { t } = useLanguage();
-
-    const features = [
+    const [features, setFeatures] = useState([
         {
-            icon: Armchair,
+            icon: "Armchair",
             title: t.features.vipTitle,
-            description: t.features.vipDesc,
-            sub: "10-SEATER VIP"
+            sub: "10-SEATER VIP",
+            description: t.features.vipDesc
         },
         {
-            icon: Languages,
+            icon: "Languages",
             title: t.features.driverTitle,
-            description: t.features.driverDesc,
-            sub: "CHINESE SPEAKING"
+            sub: "CHINESE SPEAKING",
+            description: t.features.driverDesc
         },
         {
-            icon: Map,
+            icon: "Map",
             title: t.features.customTitle,
-            description: t.features.customDesc,
-            sub: "CUSTOM ITINERARY"
-        },
-    ];
+            sub: "CUSTOM ITINERARY",
+            description: t.features.customDesc
+        }
+    ]);
+
+    useEffect(() => {
+        const fetchFeatures = async () => {
+            try {
+                const res = await fetch("/api/admin/content?key=features");
+                const data = await res.json();
+                if (data.key && data.settings && Array.isArray(data.settings)) {
+                    setFeatures(data.settings);
+                }
+            } catch (error) {
+                console.error("Failed to fetch features");
+            }
+        };
+        fetchFeatures();
+    }, []);
+
+    // Helper to render dynamic icon
+    const renderIcon = (iconName: string, size = 32) => {
+        const IconComponent = (LucideIcons as any)[iconName] || LucideIcons.HelpCircle;
+        return <IconComponent size={size} strokeWidth={1.5} />;
+    };
 
     return (
         <section id="services" className="py-20 bg-lanna-cream text-lanna-coffee">
@@ -37,7 +58,7 @@ export default function Features() {
                             className="flex flex-col items-center text-center p-6 rounded-lg hover:shadow-lg transition-shadow bg-white/50 border border-lanna-gold/10"
                         >
                             <div className="w-16 h-16 rounded-full bg-lanna-gold/10 flex items-center justify-center mb-6 text-lanna-gold">
-                                <feature.icon size={32} strokeWidth={1.5} />
+                                {renderIcon(feature.icon)}
                             </div>
                             <h3 className="text-xl font-bold mb-2 tracking-wider text-lanna-coffee">
                                 {feature.title}
