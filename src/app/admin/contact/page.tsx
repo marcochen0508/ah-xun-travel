@@ -8,18 +8,15 @@ export default function ContactPage() {
     const [saving, setSaving] = useState(false);
 
     const [formData, setFormData] = useState({
-        // Address (Multi-language)
-        address_zh_tw: "",
-        address_zh_cn: "",
-        address_th: "",
-
-        // Settings (Contact Details)
         phone: "",
         line_id: "",
         facebook_url: "",
         whatsapp_id: "",
         wechat_id: "",
-        email: ""
+        email: "",
+        line_qr: "",
+        whatsapp_qr: "",
+        wechat_qr: ""
     });
 
     useEffect(() => {
@@ -32,22 +29,46 @@ export default function ContactPage() {
             const data = await res.json();
             if (data.key) {
                 setFormData({
-                    address_zh_tw: data.content_zh_tw || "",
-                    address_zh_cn: data.content_zh_cn || "",
-                    address_th: data.content_th || "",
-
                     phone: data.settings?.phone || "",
                     line_id: data.settings?.line_id || "",
                     facebook_url: data.settings?.facebook_url || "",
                     whatsapp_id: data.settings?.whatsapp_id || "",
                     wechat_id: data.settings?.wechat_id || "",
-                    email: data.settings?.email || ""
+                    email: data.settings?.email || "",
+                    line_qr: data.settings?.line_qr || "",
+                    whatsapp_qr: data.settings?.whatsapp_qr || "",
+                    wechat_qr: data.settings?.wechat_qr || ""
                 });
             }
         } catch (error) {
             console.error("Failed to fetch contact info");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        const file = e.target.files[0];
+
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', file);
+        uploadFormData.append('bucket', 'settings');
+
+        try {
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: uploadFormData
+            });
+            const result = await response.json();
+            if (response.ok) {
+                setFormData(prev => ({ ...prev, [field]: result.url }));
+            } else {
+                alert("上傳失敗: " + result.error);
+            }
+        } catch (error) {
+            console.error("Upload error:", error);
+            alert("上傳發生錯誤");
         }
     };
 
@@ -63,17 +84,17 @@ export default function ContactPage() {
         try {
             const payload = {
                 key: "contact_info",
-                title_zh_tw: "聯絡資訊", // Fixed title
-                content_zh_tw: formData.address_zh_tw,
-                content_zh_cn: formData.address_zh_cn,
-                content_th: formData.address_th,
+                title_zh_tw: "聯絡資訊",
                 settings: {
                     phone: formData.phone,
                     line_id: formData.line_id,
                     facebook_url: formData.facebook_url,
                     whatsapp_id: formData.whatsapp_id,
                     wechat_id: formData.wechat_id,
-                    email: formData.email
+                    email: formData.email,
+                    line_qr: formData.line_qr,
+                    whatsapp_qr: formData.whatsapp_qr,
+                    wechat_qr: formData.wechat_qr
                 }
             };
 
@@ -153,7 +174,7 @@ export default function ContactPage() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-green-500 mb-1">WhatsApp ID</label>
+                            <label className="block text-sm font-bold text-green-500 mb-1">WhatsApp (Tel/ID)</label>
                             <input
                                 type="text"
                                 name="whatsapp_id"
@@ -175,43 +196,43 @@ export default function ContactPage() {
                     </div>
                 </div>
 
-                {/* Address Section */}
+                {/* QR Codes Section */}
                 <div>
                     <h3 className="text-lg font-bold mb-4 border-b pb-2 flex items-center gap-2">
-                        <MapPin size={20} /> 公司地址 (Address)
+                        <Save size={20} /> QR Codes 上傳
                     </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* LINE QR */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-bold text-green-600">LINE QR Code</label>
+                            {formData.line_qr && (
+                                <div className="relative w-32 h-32 border rounded overflow-hidden mb-2">
+                                    <img src={formData.line_qr} alt="Line QR" className="object-cover w-full h-full" />
+                                </div>
+                            )}
+                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'line_qr')} className="text-xs" />
+                        </div>
 
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium mb-1">地址 (繁體中文)</label>
-                            <input
-                                type="text"
-                                name="address_zh_tw"
-                                value={formData.address_zh_tw}
-                                onChange={handleChange}
-                                className="w-full border rounded p-2"
-                                placeholder="請輸入中文地址..."
-                            />
+                        {/* WhatsApp QR */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-bold text-green-500">WhatsApp QR Code</label>
+                            {formData.whatsapp_qr && (
+                                <div className="relative w-32 h-32 border rounded overflow-hidden mb-2">
+                                    <img src={formData.whatsapp_qr} alt="WhatsApp QR" className="object-cover w-full h-full" />
+                                </div>
+                            )}
+                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'whatsapp_qr')} className="text-xs" />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">地址 (簡體中文)</label>
-                            <input
-                                type="text"
-                                name="address_zh_cn"
-                                value={formData.address_zh_cn}
-                                onChange={handleChange}
-                                className="w-full border rounded p-2"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">地址 (泰文)</label>
-                            <input
-                                type="text"
-                                name="address_th"
-                                value={formData.address_th}
-                                onChange={handleChange}
-                                className="w-full border rounded p-2"
-                            />
+
+                        {/* WeChat QR */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-bold text-green-700">WeChat QR Code</label>
+                            {formData.wechat_qr && (
+                                <div className="relative w-32 h-32 border rounded overflow-hidden mb-2">
+                                    <img src={formData.wechat_qr} alt="WeChat QR" className="object-cover w-full h-full" />
+                                </div>
+                            )}
+                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'wechat_qr')} className="text-xs" />
                         </div>
                     </div>
                 </div>

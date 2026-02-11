@@ -1,22 +1,47 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail } from "lucide-react";
 
 export default function Footer() {
     const { t } = useLanguage();
-
-    // Static Contact Data (Restored to original/hardcoded)
-    const contact = {
+    const [contact, setContact] = useState({
         phone: "0808530553",
         phoneLink: "tel:+66808530553",
         line: "suchart74",
         fb: "https://www.facebook.com/suchart74",
-        address: t.footer.address || "Chiang Mai, Thailand",
         email: "ahxun.cm@gmail.com",
-    };
+        line_qr: "/line-qr.jpg",
+        whatsapp_qr: "/whatsapp-qr.jpg",
+        wechat_qr: "/wechat-qr.jpg"
+    });
+
+    useEffect(() => {
+        const fetchContact = async () => {
+            try {
+                const res = await fetch("/api/admin/content?key=contact_info");
+                const data = await res.json();
+                if (data.key && data.settings) {
+                    setContact({
+                        phone: data.settings.phone || "0808530553",
+                        phoneLink: `tel:${data.settings.phone?.replace(/\s/g, '')}` || "tel:+66808530553",
+                        line: data.settings.line_id || "suchart74",
+                        fb: data.settings.facebook_url || "https://www.facebook.com/suchart74",
+                        email: data.settings.email || "ahxun.cm@gmail.com",
+                        line_qr: data.settings.line_qr || "/line-qr.jpg",
+                        whatsapp_qr: data.settings.whatsapp_qr || "/whatsapp-qr.jpg",
+                        wechat_qr: data.settings.wechat_qr || "/wechat-qr.jpg"
+                    });
+                }
+            } catch (e) {
+                console.error("Failed to fetch contact footer");
+            }
+        };
+        fetchContact();
+    }, []);
 
     return (
         <footer className="bg-lanna-green text-white pt-16 pb-8" id="contact">
@@ -59,43 +84,55 @@ export default function Footer() {
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                             <div className="space-y-4 text-sm text-white/80">
-                                <div className="flex items-start gap-3">
-                                    <MapPin size={18} className="mt-1 text-lanna-gold shrink-0" />
-                                    <span>{contact.address}</span>
-                                </div>
                                 <div className="flex items-center gap-3">
                                     <Phone size={18} className="text-lanna-gold shrink-0" />
                                     <a href={contact.phoneLink} className="hover:text-white transition-colors">
                                         {contact.phone}
                                     </a>
                                 </div>
-                                {/* 
                                 <div className="flex items-center gap-3">
                                     <Mail size={18} className="text-lanna-gold shrink-0" />
                                     <a href={`mailto:${contact.email}`} className="hover:text-white transition-colors">
                                         {contact.email}
                                     </a>
                                 </div>
-                                */}
                             </div>
 
                             {/* QR Codes Grid */}
                             <div className="grid grid-cols-3 gap-2">
                                 <div className="bg-white p-2 rounded-lg text-center">
                                     <div className="relative aspect-square w-full mb-1">
-                                        <Image src="/line-qr.jpg" alt="Line QR" fill className="object-contain" />
+                                        <Image
+                                            src={contact.line_qr}
+                                            alt="Line QR"
+                                            fill
+                                            className="object-contain"
+                                            unoptimized={contact.line_qr.startsWith('http')}
+                                        />
                                     </div>
                                     <p className="text-[10px] text-lanna-green font-bold truncate">Line: {contact.line}</p>
                                 </div>
                                 <div className="bg-white p-2 rounded-lg text-center">
                                     <div className="relative aspect-square w-full mb-1">
-                                        <Image src="/whatsapp-qr.jpg" alt="WhatsApp QR" fill className="object-contain" />
+                                        <Image
+                                            src={contact.whatsapp_qr}
+                                            alt="WhatsApp QR"
+                                            fill
+                                            className="object-contain"
+                                            unoptimized={contact.whatsapp_qr.startsWith('http')}
+                                        />
                                     </div>
                                     <p className="text-[10px] text-lanna-green font-bold truncate">WhatsApp</p>
                                 </div>
                                 <div className="bg-white p-2 rounded-lg text-center">
                                     <div className="relative aspect-square w-full mb-1">
-                                        <Image src="/wechat-qr.jpg" alt="WeChat QR" fill className="object-contain" />
+                                        <Image
+                                            src={contact.wechat_qr}
+                                            alt="WeChat QR"
+                                            fill
+                                            className="object-contain"
+                                            unoptimized={contact.wechat_qr.startsWith('http')}
+                                        />
                                     </div>
                                     <p className="text-[10px] text-lanna-green font-bold truncate">WeChat</p>
                                 </div>

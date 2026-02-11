@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { X, Facebook, Phone, Download } from "lucide-react";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
@@ -11,6 +12,36 @@ interface ContactModalProps {
 
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     const { t } = useLanguage();
+    const [contact, setContact] = useState({
+        phone: "080-853-0553",
+        phoneLink: "tel:+66808530553",
+        line_id: "suchart74",
+        facebook_url: "https://www.facebook.com/suchart74",
+        line_qr: "/line-qr.jpg"
+    });
+
+    useEffect(() => {
+        if (isOpen) {
+            const fetchContact = async () => {
+                try {
+                    const res = await fetch("/api/admin/content?key=contact_info");
+                    const data = await res.json();
+                    if (data.key && data.settings) {
+                        setContact({
+                            phone: data.settings.phone || "080-853-0553",
+                            phoneLink: `tel:${data.settings.phone?.replace(/\s/g, '')}` || "tel:+66808530553",
+                            line_id: data.settings.line_id || "suchart74",
+                            facebook_url: data.settings.facebook_url || "https://www.facebook.com/suchart74",
+                            line_qr: data.settings.line_qr || "/line-qr.jpg"
+                        });
+                    }
+                } catch (e) {
+                    console.error("Failed to fetch contact");
+                }
+            };
+            fetchContact();
+        }
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -44,9 +75,15 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                             {t.contact.scanLine}
                         </p>
                         <div className="relative w-48 h-48 bg-gray-100 rounded-lg mx-auto border-4 border-[#00C300]/20 flex items-center justify-center overflow-hidden">
-                            <Image src="/line-qr.jpg" alt="LINE QR" fill className="object-cover" />
+                            <Image
+                                src={contact.line_qr}
+                                alt="LINE QR"
+                                fill
+                                className="object-cover"
+                                unoptimized={contact.line_qr.startsWith('http')}
+                            />
                         </div>
-                        <p className="text-sm text-gray-500 mt-2">ID: suchart74</p>
+                        <p className="text-sm text-gray-500 mt-2">ID: {contact.line_id}</p>
                     </div>
 
                     <div className="w-full h-px bg-gray-100"></div>
@@ -54,7 +91,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     {/* Social Links */}
                     <div className="w-full space-y-4">
                         <a
-                            href="https://www.facebook.com/suchart74"
+                            href={contact.facebook_url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center justify-center gap-3 w-full bg-[#1877F2] text-white py-3 rounded-xl font-bold hover:bg-[#1877F2]/90 transition-colors shadow-lg shadow-blue-200"
@@ -64,11 +101,11 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         </a>
 
                         <a
-                            href="tel:+66808530553"
+                            href={contact.phoneLink}
                             className="flex items-center justify-center gap-3 w-full bg-lanna-gold text-white py-3 rounded-xl font-bold hover:bg-lanna-gold/90 transition-colors shadow-lg shadow-yellow-200"
                         >
                             <Phone size={20} />
-                            080-853-0553
+                            {contact.phone}
                         </a>
                     </div>
                 </div>
