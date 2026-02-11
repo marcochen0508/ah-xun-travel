@@ -38,7 +38,7 @@ async function getCurrentUser() {
 
 // Get Super Admins List
 const getSuperAdmins = () => {
-    const envEmails = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAILS || "";
+    const envEmails = process.env.SUPER_ADMIN_EMAILS || "";
     return envEmails.split(",").map(e => e.trim().toLowerCase()).filter(e => e);
 }
 
