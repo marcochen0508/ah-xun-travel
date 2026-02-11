@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
 export default function AdminLogin() {
@@ -87,13 +88,13 @@ export default function AdminLogin() {
                     >
                         {loading ? <Loader2 className="animate-spin" /> : "登入"}
                     </button>
-
-                    <div className="text-center mt-4">
-                        <a href="/admin/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-500">
-                            忘記密碼？
-                        </a>
-                    </div>
                 </form>
+
+                <div className="text-center mt-4">
+                    <Link href="/admin/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-500">
+                        忘記密碼？
+                    </Link>
+                </div>
             </div>
         </div>
     );
