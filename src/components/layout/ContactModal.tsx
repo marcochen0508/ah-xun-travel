@@ -17,7 +17,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         phoneLink: "tel:+66808530553",
         line_id: "suchart74",
         facebook_url: "https://www.facebook.com/suchart74",
-        line_qr: "/line-qr.jpg"
+        line_qr: "/line-qr.jpg",
+        whatsapp_id: "",
+        wechat_id: ""
     });
 
     useEffect(() => {
@@ -32,7 +34,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                             phoneLink: `tel:${data.settings.phone?.replace(/\s/g, '')}` || "tel:+66808530553",
                             line_id: data.settings.line_id || "suchart74",
                             facebook_url: data.settings.facebook_url || "https://www.facebook.com/suchart74",
-                            line_qr: data.settings.line_qr || "/line-qr.jpg"
+                            line_qr: data.settings.line_qr || "/line-qr.jpg",
+                            whatsapp_id: data.settings.whatsapp_id || "",
+                            wechat_id: data.settings.wechat_id || ""
                         });
                     }
                 } catch (e) {
@@ -90,6 +94,18 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
                     {/* Social Links */}
                     <div className="w-full space-y-4">
+                        {/* WhatsApp & WeChat Info */}
+                        <div className="grid grid-cols-2 gap-4 text-center">
+                            <div className="bg-green-50 p-2 rounded-lg">
+                                <p className="text-xs text-gray-500 font-bold mb-1">WhatsApp</p>
+                                <p className="text-sm font-bold text-green-700 select-all">{contact.whatsapp_id}</p>
+                            </div>
+                            <div className="bg-green-50 p-2 rounded-lg">
+                                <p className="text-xs text-gray-500 font-bold mb-1">WeChat</p>
+                                <p className="text-sm font-bold text-green-700 select-all">{contact.wechat_id}</p>
+                            </div>
+                        </div>
+
                         <a
                             href={contact.facebook_url}
                             target="_blank"

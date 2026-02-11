@@ -16,7 +16,9 @@ export default function Footer() {
         email: "ahxun.cm@gmail.com",
         line_qr: "/line-qr.jpg",
         whatsapp_qr: "/whatsapp-qr.jpg",
-        wechat_qr: "/wechat-qr.jpg"
+        whatsapp_id: "",
+        wechat_qr: "/wechat-qr.jpg",
+        wechat_id: ""
     });
 
     useEffect(() => {
@@ -33,7 +35,9 @@ export default function Footer() {
                         email: data.settings.email || "ahxun.cm@gmail.com",
                         line_qr: data.settings.line_qr || "/line-qr.jpg",
                         whatsapp_qr: data.settings.whatsapp_qr || "/whatsapp-qr.jpg",
-                        wechat_qr: data.settings.wechat_qr || "/wechat-qr.jpg"
+                        whatsapp_id: data.settings.whatsapp_id || "",
+                        wechat_qr: data.settings.wechat_qr || "/wechat-qr.jpg",
+                        wechat_id: data.settings.wechat_id || ""
                     });
                 }
             } catch (e) {
@@ -122,7 +126,7 @@ export default function Footer() {
                                             unoptimized={contact.whatsapp_qr.startsWith('http')}
                                         />
                                     </div>
-                                    <p className="text-[10px] text-lanna-green font-bold truncate">WhatsApp</p>
+                                    <p className="text-[10px] text-lanna-green font-bold truncate">WA: {contact.whatsapp_id}</p>
                                 </div>
                                 <div className="bg-white p-2 rounded-lg text-center">
                                     <div className="relative aspect-square w-full mb-1">
@@ -134,7 +138,7 @@ export default function Footer() {
                                             unoptimized={contact.wechat_qr.startsWith('http')}
                                         />
                                     </div>
-                                    <p className="text-[10px] text-lanna-green font-bold truncate">WeChat</p>
+                                    <p className="text-[10px] text-lanna-green font-bold truncate">WC: {contact.wechat_id}</p>
                                 </div>
                             </div>
                         </div>
