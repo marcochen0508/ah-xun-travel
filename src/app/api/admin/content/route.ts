@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { supabase } from '@/lib/supabase';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
@@ -54,6 +55,9 @@ export async function POST(req: Request) {
             }, { onConflict: 'key' });
 
         if (error) throw error;
+
+        // Revalidate the root layout to update metadata
+        revalidatePath('/', 'layout');
 
         return NextResponse.json({ success: true });
     } catch (error: any) {
