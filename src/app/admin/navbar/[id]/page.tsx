@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import NavbarForm, { NavigationLink } from "@/components/admin/NavbarForm";
+import NavbarForm from "@/components/admin/NavbarForm";
+import { NavigationLink } from "@/types/schema";
 
 export default function EditNavbarLinkPage() {
     const params = useParams();

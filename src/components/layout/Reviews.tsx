@@ -7,7 +7,8 @@ import { supabase } from "@/lib/supabase";
 import { CustomerReview } from "@/types/schema";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, X, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Reviews() {
     const { t } = useLanguage();
@@ -105,6 +106,13 @@ export default function Reviews() {
         }
     };
 
+    const handleRemovePhoto = (indexToRemove: number) => {
+        setReviewForm(prev => ({
+            ...prev,
+            photos: prev.photos.filter((_, index) => index !== indexToRemove)
+        }));
+    };
+
     const handleSubmitReview = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -118,12 +126,14 @@ export default function Reviews() {
 
             if (!response.ok) throw new Error("Submission failed");
 
-            alert("留言已送出！待管理者審核通過後將顯示於頁面。");
+            // alert("留言已送出！待管理者審核通過後將顯示於頁面。");
+            toast.success(t.reviews.successMessage);
             setIsWriteModalOpen(false);
             setReviewForm({ name: "", content: "", rating: 5, photos: [] });
         } catch (error) {
             console.error(error);
-            alert("送出失敗，請稍後再試");
+            // alert("送出失敗，請稍後再試");
+            toast.error(t.reviews.errorMessage);
         } finally {
             setIsSubmitting(false);
         }
@@ -144,7 +154,7 @@ export default function Reviews() {
                         onClick={() => setIsWriteModalOpen(true)}
                         className="mt-4 px-8 py-3 bg-lanna-gold text-white rounded-full font-bold hover:bg-lanna-gold/90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                     >
-                        我要留言
+                        {t.reviews.writeBtn}
                     </button>
                 </div>
 
@@ -318,11 +328,11 @@ export default function Reviews() {
                         onClick={e => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h3 className="text-2xl font-bold text-lanna-coffee mb-4">撰寫評論</h3>
+                            <h3 className="text-2xl font-bold text-lanna-coffee mb-4">{t.reviews.modalTitle}</h3>
 
                             <form onSubmit={handleSubmitReview} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">您的姓名 / 匿稱 <span className="text-red-500">*</span></label>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">{t.reviews.nameLabel} <span className="text-red-500">*</span></label>
                                     <input
                                         type="text"
                                         required
@@ -333,7 +343,7 @@ export default function Reviews() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">評分</label>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">{t.reviews.ratingLabel}</label>
                                     <div className="flex gap-2">
                                         {[1, 2, 3, 4, 5].map(star => (
                                             <button
@@ -353,19 +363,19 @@ export default function Reviews() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">評論內容 <span className="text-red-500">*</span></label>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">{t.reviews.contentLabel} <span className="text-red-500">*</span></label>
                                     <textarea
                                         required
                                         rows={4}
                                         className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-lanna-gold outline-none"
                                         value={reviewForm.content}
                                         onChange={e => setReviewForm({ ...reviewForm, content: e.target.value })}
-                                        placeholder="分享您的旅遊體驗..."
+                                        placeholder=""
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">上傳照片 (選填)</label>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">{t.reviews.photoLabel}</label>
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -376,8 +386,15 @@ export default function Reviews() {
                                     {reviewForm.photos.length > 0 && (
                                         <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
                                             {reviewForm.photos.map((photo, i) => (
-                                                <div key={i} className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden border">
+                                                <div key={i} className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden border group">
                                                     <Image src={photo} alt="preview" fill className="object-cover" />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemovePhoto(i)}
+                                                        className="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    >
+                                                        <X size={12} />
+                                                    </button>
                                                 </div>
                                             ))}
                                         </div>
@@ -390,14 +407,15 @@ export default function Reviews() {
                                         onClick={() => setIsWriteModalOpen(false)}
                                         className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
                                     >
-                                        取消
+                                        {t.contact.close}
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={isSubmitting || isUploading}
-                                        className="px-6 py-2 bg-lanna-gold text-white rounded-lg font-bold hover:bg-lanna-gold/90 disabled:opacity-50"
+                                        className="px-6 py-2 bg-lanna-gold text-white rounded-lg font-bold hover:bg-lanna-gold/90 disabled:opacity-50 flex items-center gap-2"
                                     >
-                                        {isUploading ? "照片上傳中..." : (isSubmitting ? "送出中..." : "送出評論")}
+                                        {(isUploading || isSubmitting) && <Loader2 size={16} className="animate-spin" />}
+                                        {isUploading ? t.reviews.uploading : (isSubmitting ? t.reviews.submitting : t.reviews.submitBtn)}
                                     </button>
                                 </div>
                             </form>

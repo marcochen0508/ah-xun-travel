@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus, Edit, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { NavigationLink } from "@/components/admin/NavbarForm";
+import { NavigationLink } from "@/types/schema";
+
+
 
 export default function NavbarListPage() {
     const [links, setLinks] = useState<NavigationLink[]>([]);
