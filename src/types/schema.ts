@@ -62,3 +62,13 @@ export interface Banner {
     is_active: boolean;
     created_at?: string;
 };
+export type NavigationLink = {
+    id: string;
+    label: string;
+    label_zh_tw?: string;
+    label_zh_cn?: string;
+    label_th?: string;
+    url: string;
+    sort_order: number;
+    is_active: boolean;
+};

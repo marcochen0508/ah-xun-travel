@@ -4,17 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Save } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-
-export interface NavigationLink {
-    id: string;
-    label: string;
-    label_zh_cn?: string;
-    label_th?: string;
-    label_zh_tw?: string;
-    url: string;
-    sort_order: number;
-    is_active: boolean;
-}
+import { NavigationLink } from "@/types/schema";
 
 interface NavbarFormProps {
     initialData?: NavigationLink;
@@ -43,7 +33,7 @@ export default function NavbarForm({ initialData, isEdit = false }: NavbarFormPr
     // Initialize link type based on existing URL
     useEffect(() => {
         if (initialData?.url) {
-            const internalLinks = ["/", "#services", "#destinations", "#about", "#reviews", "#contact"];
+            const internalLinks = ["/", "#services", "#destinations", "#about", "#reviews", "#contact", "charter-notes"];
             if (internalLinks.includes(initialData.url)) {
                 setLinkType("internal");
             } else {
@@ -101,6 +91,7 @@ export default function NavbarForm({ initialData, isEdit = false }: NavbarFormPr
         { label: "特色行程 (Destinations)", value: "#destinations" },
         { label: "關於我們 (About)", value: "#about" },
         { label: "客戶評價 (Reviews)", value: "#reviews" },
+        { label: "包車注意事項 (Notes)", value: "charter-notes" },
         { label: "聯絡我們 (Contact)", value: "#contact" },
     ];
 
