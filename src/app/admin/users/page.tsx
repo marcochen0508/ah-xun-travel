@@ -22,6 +22,7 @@ export default function UsersPage() {
     // Form State
     const [newEmail, setNewEmail] = useState("");
     const [newPassword, setNewPassword] = useState("");
+    const [newIsSuperAdmin, setNewIsSuperAdmin] = useState(false);
     const [creating, setCreating] = useState(false);
     const [actionSuccess, setActionSuccess] = useState<string | null>(null);
 
@@ -70,13 +71,18 @@ export default function UsersPage() {
             const res = await fetch("/api/admin/users", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: newEmail, password: newPassword }),
+                body: JSON.stringify({
+                    email: newEmail,
+                    password: newPassword,
+                    isSuperAdmin: newIsSuperAdmin
+                }),
             });
             const data = await res.json();
             if (res.ok) {
                 setActionSuccess(`使用者 ${data.user.email} 已建立！`);
                 setNewEmail("");
                 setNewPassword("");
+                setNewIsSuperAdmin(false);
                 fetchUsers();
             } else {
                 setError(data.error);
@@ -201,6 +207,21 @@ export default function UsersPage() {
                             minLength={6}
                         />
                     </div>
+                    {/* Only Godotchen can create Super Admins */}
+                    {currentUserEmail === "godotchen@hotmail.com" && (
+                        <div className="flex items-center gap-2 mb-3">
+                            <input
+                                type="checkbox"
+                                id="isSuperAdmin"
+                                checked={newIsSuperAdmin}
+                                onChange={e => setNewIsSuperAdmin(e.target.checked)}
+                                className="w-4 h-4 text-lanna-green border-gray-300 rounded focus:ring-lanna-green"
+                            />
+                            <label htmlFor="isSuperAdmin" className="text-sm font-medium text-purple-700 flex items-center gap-1">
+                                <ShieldCheck size={16} /> 設定為超級管理員
+                            </label>
+                        </div>
+                    )}
                     <button
                         type="submit"
                         disabled={creating}
@@ -277,8 +298,14 @@ export default function UsersPage() {
                                                 onClick={() => handleDeleteUser(user.id)}
                                                 className="text-red-600 hover:text-red-900 disabled:opacity-30 disabled:cursor-not-allowed"
                                                 title="刪除使用者"
-                                                // Cannot delete self AND cannot delete Super Admin
-                                                disabled={user.email === currentUserEmail || user.isSuperAdmin}
+                                                // Only Super Admin can delete.
+                                                // Cannot delete self.
+                                                // Only Root (godotchen) can delete other Super Admins.
+                                                disabled={
+                                                    !users.find(u => u.email === currentUserEmail)?.isSuperAdmin || // Must be Super Admin
+                                                    user.email === currentUserEmail || // Cannot delete self
+                                                    (user.isSuperAdmin && currentUserEmail !== "godotchen@hotmail.com") // Cannot delete Super Admin unless Root
+                                                }
                                             >
                                                 <Trash2 size={18} />
                                             </button>

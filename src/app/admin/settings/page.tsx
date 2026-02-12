@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { Save, Globe, Search } from "lucide-react";
 
+import { supabase } from "@/lib/supabase";
+import { Lock, Unlock, AlertTriangle } from "lucide-react";
+
 export default function SettingsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -15,9 +18,36 @@ export default function SettingsPage() {
         og_description: "",
     });
 
+    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+    const [maintenanceMode, setMaintenanceMode] = useState(false);
+    const [togglingMaintenance, setTogglingMaintenance] = useState(false);
+
     useEffect(() => {
+        checkUserRole();
         fetchContent();
+        fetchMaintenanceStatus();
     }, []);
+
+    const checkUserRole = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const email = user.email?.toLowerCase();
+            const envSuperAdmins = ["ahxun@example.com", "admin@ahxun.com", "godotchen@hotmail.com"]; // Hardcoded for client-side check visual
+            const isEnv = email && envSuperAdmins.includes(email);
+            const isMeta = user.app_metadata?.is_super_admin === true;
+            setIsSuperAdmin(!!(isEnv || isMeta));
+        }
+    };
+
+    const fetchMaintenanceStatus = async () => {
+        try {
+            const res = await fetch("/api/settings/maintenance");
+            const data = await res.json();
+            setMaintenanceMode(data.maintenance_mode);
+        } catch (e) {
+            console.error("Failed to fetch maintenance status");
+        }
+    };
 
     const fetchContent = async () => {
         try {
@@ -82,6 +112,31 @@ export default function SettingsPage() {
         }
     };
 
+    const toggleMaintenance = async () => {
+        if (!confirm(maintenanceMode ? "確定要關閉維護模式嗎？網站將恢復公開訪問。" : "確定要開啟維護模式嗎？前台將被隱藏。")) return;
+
+        setTogglingMaintenance(true);
+        try {
+            const res = await fetch("/api/settings/maintenance", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ enabled: !maintenanceMode }),
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                setMaintenanceMode(data.maintenance_mode);
+                alert(data.maintenance_mode ? "維護模式已開啟" : "維護模式已關閉");
+            } else {
+                alert(data.error || "操作失敗");
+            }
+        } catch (error) {
+            alert("發生錯誤");
+        } finally {
+            setTogglingMaintenance(false);
+        }
+    };
+
     if (loading) return <div className="p-8">載入中...</div>;
 
     return (
@@ -89,6 +144,40 @@ export default function SettingsPage() {
             <h2 className="text-2xl font-bold mb-6">網站基本設定 (SEO Settings)</h2>
 
             <form onSubmit={handleSubmit} className="space-y-8 bg-white p-6 rounded-lg shadow">
+
+                {/* Maintenance Mode (Super Admin Only) */}
+                {isSuperAdmin && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+                        <h3 className="text-lg font-bold mb-2 flex items-center gap-2 text-red-800">
+                            <AlertTriangle size={20} /> 系統維護模式 (Maintenance Mode)
+                        </h3>
+                        <p className="text-sm text-red-600 mb-4">
+                            開啟後，前台頁面將被強制隱藏（蓋上白色遮罩），僅後台可正常訪問。請僅在系統維護或緊急狀況下使用。
+                        </p>
+                        <div className="flex items-center gap-4">
+                            <button
+                                type="button"
+                                onClick={toggleMaintenance}
+                                disabled={togglingMaintenance}
+                                className={`flex items-center gap-2 px-6 py-2 rounded-lg font-bold text-white transition-colors shadow-md ${maintenanceMode ? "bg-red-600 hover:bg-red-700" : "bg-gray-500 hover:bg-gray-600"
+                                    }`}
+                            >
+                                {togglingMaintenance ? (
+                                    "處理中..."
+                                ) : maintenanceMode ? (
+                                    <>
+                                        <Lock size={18} /> 維護模式：開啟中 (ON)
+                                    </>
+                                ) : (
+                                    <>
+                                        <Unlock size={18} /> 維護模式：已關閉 (OFF)
+                                    </>
+                                )}
+                            </button>
+                            {maintenanceMode && <span className="text-red-700 font-bold animate-pulse">⚠️ 網站目前處於維護狀態</span>}
+                        </div>
+                    </div>
+                )}
 
                 {/* Basic SEO */}
                 <div>

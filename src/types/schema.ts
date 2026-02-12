@@ -54,6 +54,7 @@ export interface CustomerReview {
 export interface Banner {
     id: string;
     title?: string;
+    internal_note?: string;
     image_url: string;
     is_default: boolean;
     start_at?: string;

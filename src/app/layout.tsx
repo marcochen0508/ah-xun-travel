@@ -110,6 +110,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import JsonLd from "@/components/JsonLd";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import MaintenanceBlocker from "@/components/MaintenanceBlocker";
 
 export default function RootLayout({
   children,
@@ -122,6 +123,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <LanguageProvider>
+          <MaintenanceBlocker />
           <JsonLd />
           {children}
           <Analytics />

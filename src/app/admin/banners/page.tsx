@@ -20,6 +20,7 @@ export default function BannersPage() {
     const [endDate, setEndDate] = useState("");
     const [endTime, setEndTime] = useState("23:59");
     const [imageUrl, setImageUrl] = useState("");
+    const [internalNote, setInternalNote] = useState("");
     const [rotationInterval, setRotationInterval] = useState(5); // Default 5s
 
     useEffect(() => {
@@ -68,6 +69,7 @@ export default function BannersPage() {
     const handleEdit = (banner: Banner) => {
         setEditId(banner.id);
         setTitle(banner.title || "");
+        setInternalNote(banner.internal_note || "");
         setImageUrl(banner.image_url);
         setIsDefault(!!banner.is_default);
 
@@ -96,6 +98,7 @@ export default function BannersPage() {
     const handleCancelEdit = () => {
         setEditId(null);
         setTitle("");
+        setInternalNote("");
         setImageUrl("");
         setIsDefault(false);
         setStartDate("");
@@ -154,6 +157,7 @@ export default function BannersPage() {
 
         const payload: any = {
             title,
+            internal_note: internalNote,
             image_url: imageUrl,
             is_default: isDefault,
             is_active: true,
@@ -263,6 +267,18 @@ export default function BannersPage() {
                                 onChange={(e) => setTitle(e.target.value)}
                                 className="w-full border rounded p-2"
                                 placeholder="例如：水燈節活動 or 預設風景圖1"
+                            />
+                        </div>
+
+                        {/* Internal Note */}
+                        <div>
+                            <label className="block text-sm font-bold mb-1">內部備註 (僅管理員可見)</label>
+                            <input
+                                type="text"
+                                value={internalNote}
+                                onChange={(e) => setInternalNote(e.target.value)}
+                                className="w-full border rounded p-2"
+                                placeholder="內部紀錄筆記..."
                             />
                         </div>
 
@@ -428,6 +444,12 @@ export default function BannersPage() {
                                         {new Date(banner.start_at).toLocaleString()} <br />- {new Date(banner.end_at!).toLocaleString()}
                                     </div>
                                 )
+                            )}
+
+                            {banner.internal_note && (
+                                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-100 rounded text-xs text-yellow-800">
+                                    <span className="font-bold">內部備註:</span> {banner.internal_note}
+                                </div>
                             )}
 
                             <div className="flex gap-2 mt-4">

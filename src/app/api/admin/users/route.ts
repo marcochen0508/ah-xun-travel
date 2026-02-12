@@ -36,11 +36,19 @@ async function getCurrentUser() {
     return user;
 }
 
-// Get Super Admins List
-const getSuperAdmins = () => {
-    const envEmails = process.env.SUPER_ADMIN_EMAILS || "";
-    return envEmails.split(",").map(e => e.trim().toLowerCase()).filter(e => e);
-}
+// Helper to check if a user is a super admin based on email (env) or metadata
+const isSuperAdmin = (user: any) => {
+    const envEmails = (process.env.SUPER_ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase()).filter(e => e);
+    const email = user.email?.toLowerCase();
+    const isEnvSuperAdmin = email && envEmails.includes(email);
+    const isMetadataSuperAdmin = user.app_metadata?.is_super_admin === true;
+    return isEnvSuperAdmin || isMetadataSuperAdmin;
+};
+
+// Helper: Check if user is THE Root Admin (Godotchen)
+const isRootAdmin = (email: string | undefined) => {
+    return email?.toLowerCase() === "godotchen@hotmail.com";
+};
 
 export async function GET(req: NextRequest) {
     // 1. Verify User is logged in
@@ -55,10 +63,9 @@ export async function GET(req: NextRequest) {
     }
 
     // 3. Mark Super Admins in response
-    const superAdmins = getSuperAdmins();
     const enrichedUsers = users.users.map(u => ({
         ...u,
-        isSuperAdmin: superAdmins.includes(u.email?.toLowerCase() || "")
+        isSuperAdmin: isSuperAdmin(u)
     }));
 
     return NextResponse.json({ users: enrichedUsers });
@@ -69,16 +76,22 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { email, password } = body;
+    const { email, password, isSuperAdmin: makeSuperAdmin } = body;
 
     if (!email || !password) {
         return NextResponse.json({ error: "Missing email or password" }, { status: 400 });
     }
 
+    // Only Root Admin can create Super Admins
+    if (makeSuperAdmin && !isRootAdmin(user.email)) {
+        return NextResponse.json({ error: "Only the Root Admin can create Super Admins." }, { status: 403 });
+    }
+
     const { data, error } = await supabaseAdmin.auth.admin.createUser({
         email,
         password,
-        email_confirm: true, // Auto-confirm
+        email_confirm: true,
+        app_metadata: makeSuperAdmin ? { is_super_admin: true } : undefined
     });
 
     if (error) {
@@ -102,17 +115,31 @@ export async function DELETE(req: NextRequest) {
         return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // 2. Super Admin Protection: Prevent deletion if email is in list
-    const superAdmins = getSuperAdmins();
+    // 2. Permission Checks
+    const currentUserEmail = currentUser.email?.toLowerCase();
     const targetEmail = targetUser.email?.toLowerCase();
 
-    if (targetEmail && superAdmins.includes(targetEmail)) {
-        return NextResponse.json({ error: "Cannot delete a Super Admin account." }, { status: 403 });
+    // Config
+    const amISuper = isSuperAdmin(currentUser);
+    const amIRoot = isRootAdmin(currentUserEmail);
+    const isTargetSuper = isSuperAdmin(targetUser);
+
+    // Rule 1: Only Super Admins can delete users
+    if (!amISuper) {
+        return NextResponse.json({ error: "Only Super Admins can delete users." }, { status: 403 });
     }
 
-    // 3. Prevent self-deletion via UI (though UI should block it too)
+    // Rule 2: Cannot delete yourself
     if (currentUser.id === userId) {
         return NextResponse.json({ error: "Cannot delete your own account." }, { status: 403 });
+    }
+
+    // Rule 3: Handling Super Admin Deletion
+    if (isTargetSuper) {
+        // Only Root Admin can delete other Super Admins
+        if (!amIRoot) {
+            return NextResponse.json({ error: "Only the Root Admin can delete other Super Admins." }, { status: 403 });
+        }
     }
 
     // 4. Delete
@@ -140,12 +167,7 @@ export async function PUT(req: NextRequest) {
     }
 
     // 2. Super Admin Protection Logic
-    const superAdmins = getSuperAdmins();
-    const targetEmail = targetUser.email?.toLowerCase();
-    const currentUserEmail = currentUser.email?.toLowerCase();
-
-    const isTargetSuperAdmin = targetEmail && superAdmins.includes(targetEmail);
-    const amISuperAdmin = currentUserEmail && superAdmins.includes(currentUserEmail);
+    const isTargetSuperAdmin = isSuperAdmin(targetUser);
 
     // If target is Super Admin:
     // Only the owner of that account can change their password.
