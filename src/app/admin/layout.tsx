@@ -24,20 +24,8 @@ export default function AdminLayout({
                         <LayoutDashboard size={20} />
                         <span>總覽 (Dashboard)</span>
                     </Link>
-                    <Link
-                        href="/admin/navbar"
-                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
-                    >
-                        <List size={20} />
-                        <span>選單連結管理</span>
-                    </Link>
-                    <Link
-                        href="/admin/banners"
-                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
-                    >
-                        <ImageIcon size={20} />
-                        <span>首頁看板管理</span>
-                    </Link>
+
+                    {/* Operational */}
                     <Link
                         href="/admin/news"
                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
@@ -45,7 +33,6 @@ export default function AdminLayout({
                         <Newspaper size={20} />
                         <span>最新消息管理</span>
                     </Link>
-
                     <Link
                         href="/admin/routes"
                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
@@ -60,29 +47,17 @@ export default function AdminLayout({
                         <MessageSquare size={20} />
                         <span>顧客回饋</span>
                     </Link>
-
                     <Link
-                        href="/admin/users"
+                        href="/admin/banners"
                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
                     >
-                        <FileText size={20} />
-                        <span>帳號管理</span>
+                        <ImageIcon size={20} />
+                        <span>首頁看板管理</span>
                     </Link>
 
-                    <Link
-                        href="/admin/notes"
-                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
-                    >
-                        <FileText size={20} />
-                        <span>包車注意事項</span>
-                    </Link>
-                    <Link
-                        href="/admin/contact"
-                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
-                    >
-                        <Phone size={20} />
-                        <span>聯絡資訊管理</span>
-                    </Link>
+                    <div className="border-t border-white/10 my-2"></div>
+
+                    {/* Content */}
                     <Link
                         href="/admin/features"
                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
@@ -96,6 +71,38 @@ export default function AdminLayout({
                     >
                         <User size={20} />
                         <span>關於我們管理</span>
+                    </Link>
+                    <Link
+                        href="/admin/contact"
+                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
+                    >
+                        <Phone size={20} />
+                        <span>聯絡資訊管理</span>
+                    </Link>
+
+                    <div className="border-t border-white/10 my-2"></div>
+
+                    {/* System */}
+                    <Link
+                        href="/admin/notes"
+                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
+                    >
+                        <FileText size={20} />
+                        <span>包車注意事項</span>
+                    </Link>
+                    <Link
+                        href="/admin/users"
+                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
+                    >
+                        <User size={20} />
+                        <span>帳號管理</span>
+                    </Link>
+                    <Link
+                        href="/admin/navbar"
+                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
+                    >
+                        <List size={20} />
+                        <span>選單連結管理</span>
                     </Link>
                     <Link
                         href="/admin/settings"
