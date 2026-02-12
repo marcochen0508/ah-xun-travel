@@ -112,6 +112,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import MaintenanceBlocker from "@/components/MaintenanceBlocker";
 import { Toaster } from "sonner";
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 export default function RootLayout({
   children,
@@ -131,7 +132,9 @@ export default function RootLayout({
           <Analytics />
           <SpeedInsights />
         </LanguageProvider>
+        </LanguageProvider>
       </body>
-    </html>
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ""} />
+    </html >
   );
 }

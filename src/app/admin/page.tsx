@@ -7,7 +7,7 @@ export default function AdminDashboard() {
     const [counts, setCounts] = useState({
         routes: 0,
         news: 0,
-        visitors: 128 // Mock for now
+        reviews: 0 // Previously visitors
     });
 
     useEffect(() => {
@@ -21,10 +21,15 @@ export default function AdminDashboard() {
                 .select("*", { count: "exact", head: true })
                 .eq("is_active", true);
 
+            const { count: reviewsCount } = await supabase
+                .from("customer_reviews")
+                .select("*", { count: "exact", head: true });
+
             setCounts(prev => ({
                 ...prev,
                 routes: routesCount || 0,
-                news: newsCount || 0
+                news: newsCount || 0,
+                reviews: reviewsCount || 0
             }));
         };
         fetchCounts();
@@ -48,8 +53,8 @@ export default function AdminDashboard() {
 
                 {/* Stats Card 3 */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 className="text-gray-500 text-sm font-medium">今日訪客</h3>
-                    <p className="text-4xl font-bold text-lanna-coffee mt-2">{counts.visitors}</p>
+                    <h3 className="text-gray-500 text-sm font-medium">累積評論總數</h3>
+                    <p className="text-4xl font-bold text-lanna-coffee mt-2">{counts.reviews}</p>
                 </div>
             </div>
 
