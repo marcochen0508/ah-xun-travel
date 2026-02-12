@@ -1,4 +1,3 @@
-"use strict";
 "use client";
 
 import { useEffect, useState } from "react";
@@ -208,7 +207,7 @@ export default function UsersPage() {
                         />
                     </div>
                     {/* Only Godotchen can create Super Admins */}
-                    {currentUserEmail === "godotchen@hotmail.com" && (
+                    {currentUserEmail?.toLowerCase() === "godotchen@hotmail.com" && (
                         <div className="flex items-center gap-2 mb-3">
                             <input
                                 type="checkbox"
