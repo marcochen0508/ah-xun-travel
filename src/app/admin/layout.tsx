@@ -13,7 +13,7 @@ export default function AdminLayout({
             <aside className="w-64 bg-lanna-green text-white flex flex-col">
                 <div className="p-6 border-b border-white/10">
                     <h1 className="text-2xl font-bold font-serif">阿勛後台管理</h1>
-                    <p className="text-xs opacity-70">AH XUN Admin System</p>
+                    <p className="text-xs opacity-70">AH XUN Admin System (v2.0)</p>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">
