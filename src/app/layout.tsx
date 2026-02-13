@@ -65,6 +65,9 @@ export async function generateMetadata(): Promise<Metadata> {
         alternates: {
           canonical: "https://ah-xun-travel.vercel.app",
         },
+        verification: {
+          google: "6S4svXElRJhj6-r34DhLdMirRkPV05GjN_szmtzSjSg",
+        },
       };
     }
   } catch (e) {
@@ -102,6 +105,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: "https://ah-xun-travel.vercel.app",
+    },
+    verification: {
+      google: "6S4svXElRJhj6-r34DhLdMirRkPV05GjN_szmtzSjSg",
     },
   };
 }
