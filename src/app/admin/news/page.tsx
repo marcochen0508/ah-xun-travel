@@ -54,6 +54,24 @@ export default function NewsPage() {
         }
     };
 
+    const handleDelete = async (id: string) => {
+        if (!confirm("確定要刪除此最新消息嗎？此動作無法復原。")) return;
+
+        try {
+            const response = await fetch(`/api/admin/news?id=${id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) throw new Error('Delete failed');
+
+            setNews(news.filter(n => n.id !== id));
+            alert("刪除成功");
+        } catch (error) {
+            console.error("Error deleting news:", error);
+            alert("刪除失敗");
+        }
+    };
+
     const getStatus = (item: NewsEvent) => {
         const now = new Date();
         const start = item.start_date ? new Date(item.start_date) : null;
@@ -109,6 +127,13 @@ export default function NewsPage() {
                                         <Link href={`/admin/news/${item.id}`} className="text-gray-400 hover:text-lanna-gold">
                                             <Edit size={18} />
                                         </Link>
+                                        <button
+                                            onClick={() => handleDelete(item.id)}
+                                            className="ml-3 text-red-300 hover:text-red-600 transition-colors"
+                                            title="刪除"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
                                     </td>
                                 </tr>
                             )
