@@ -114,6 +114,8 @@ import MaintenanceBlocker from "@/components/MaintenanceBlocker";
 import { Toaster } from "sonner";
 import { GoogleAnalytics } from '@next/third-parties/google';
 
+export const revalidate = 60; // Revalidate every 60 seconds
+
 export default function RootLayout({
   children,
 }: Readonly<{

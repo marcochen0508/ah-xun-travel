@@ -9,6 +9,8 @@ import Footer from "@/components/layout/Footer";
 
 import { supabase } from "@/lib/supabase";
 
+export const revalidate = 60; // Revalidate every 60 seconds
+
 async function getSiteSettings() {
   try {
     const { data } = await supabase
