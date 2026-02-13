@@ -7,11 +7,32 @@ import Destinations from "@/components/layout/Destinations";
 import Reviews from "@/components/layout/Reviews";
 import Footer from "@/components/layout/Footer";
 
-export default function Home() {
+import { supabase } from "@/lib/supabase";
+
+async function getSiteSettings() {
+  try {
+    const { data } = await supabase
+      .from('general_content')
+      .select('settings')
+      .eq('key', 'site_settings')
+      .single();
+    return data?.settings || {};
+  } catch (e) {
+    console.error("Failed to fetch site settings", e);
+    return {};
+  }
+}
+
+export default async function Home() {
+  const settings = await getSiteSettings();
+
   return (
     <main className="min-h-screen bg-lanna-cream/20 font-sans">
       <Navbar />
-      <Hero />
+      <Hero
+        customTitle={settings.home_h1}
+        customSubtitle={settings.home_h2}
+      />
       <News />
       <Features />
       <About />

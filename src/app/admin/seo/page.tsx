@@ -14,6 +14,8 @@ type SeoSettings = {
     og_title: string;
     og_description: string;
     og_image: string;
+    home_h1?: string;
+    home_h2?: string;
 };
 
 const DEFAULT_SETTINGS: SeoSettings = {
@@ -22,7 +24,9 @@ const DEFAULT_SETTINGS: SeoSettings = {
     site_keywords: "清邁包車, 泰北旅遊, 中文司機, VIP包車",
     og_title: "",
     og_description: "",
-    og_image: "/og-image.jpg"
+    og_image: "/og-image.jpg",
+    home_h1: "",
+    home_h2: ""
 };
 
 export default function SeoSettingsPage() {
@@ -206,6 +210,38 @@ export default function SeoSettingsPage() {
                             <p className="text-xs text-gray-400 mt-1">
                                 請用逗號分隔每個關鍵字。
                             </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 className="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-gray-100">
+                        首頁看板文字 (Banner Text)
+                    </h2>
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                主標題 (Hero Title)
+                            </label>
+                            <input
+                                type="text"
+                                value={settings.home_h1 || ""}
+                                onChange={(e) => setSettings({ ...settings, home_h1: e.target.value })}
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-lanna-green/20 outline-none"
+                                placeholder="預設：阿勛・清邁包車旅遊規劃"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                副標題 (Hero Subtitle)
+                            </label>
+                            <textarea
+                                value={settings.home_h2 || ""}
+                                onChange={(e) => setSettings({ ...settings, home_h2: e.target.value })}
+                                rows={2}
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-lanna-green/20 outline-none resize-none"
+                                placeholder="預設：探索清邁蘭納文化與自然之美..."
+                            />
                         </div>
                     </div>
                 </div>

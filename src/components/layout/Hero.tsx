@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Banner } from "@/types/schema";
 
-export default function Hero() {
+export default function Hero({ customTitle, customSubtitle }: { customTitle?: string, customSubtitle?: string }) {
     const { t } = useLanguage();
     const [bannerList, setBannerList] = useState<Banner[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -85,10 +85,10 @@ export default function Hero() {
             {/* Content */}
             <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto mt-20">
                 <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 drop-shadow-lg leading-tight">
-                    {t.hero.title}
+                    {customTitle || t.hero.title}
                 </h1>
                 <h2 className="text-xl md:text-2xl font-light mb-8 drop-shadow-md tracking-wide whitespace-pre-line">
-                    {t.hero.subtitle}
+                    {customSubtitle || t.hero.subtitle}
                 </h2>
 
                 <Link
