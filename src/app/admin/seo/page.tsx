@@ -66,42 +66,23 @@ export default function SeoSettingsPage() {
     const handleSave = async () => {
         setSaving(true);
         try {
-            // Check if record exists
-            const { data: existing } = await supabase
+            const { error } = await supabase
                 .from('general_content')
-                .select('id')
-                .eq('key', 'site_settings')
-                .single();
-
-            let error;
-            if (existing) {
-                const { error: updateError } = await supabase
-                    .from('general_content')
-                    .update({
-                        settings: settings,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('key', 'site_settings');
-                error = updateError;
-            } else {
-                const { error: insertError } = await supabase
-                    .from('general_content')
-                    .insert({
-                        key: 'site_settings',
-                        settings: settings,
-                        title_zh_tw: 'Website SEO Settings', // Metadata for admin readability
-                        is_active: true
-                    });
-                error = insertError;
-            }
+                .upsert({
+                    key: 'site_settings',
+                    settings: settings,
+                    title_zh_tw: 'Website SEO Settings',
+                    is_active: true,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'key' });
 
             if (error) throw error;
 
             toast.success("SEO 設定已更新");
-            router.refresh(); // Refresh to potentially update layout if it re-fetches
-        } catch (error) {
+            router.refresh();
+        } catch (error: any) {
             console.error('Error saving settings:', error);
-            toast.error("儲存失敗，請稍後再試");
+            toast.error(`儲存失敗: ${error.message || "未知錯誤"}`);
         } finally {
             setSaving(false);
         }
