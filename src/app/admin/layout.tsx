@@ -105,7 +105,7 @@ export default function AdminLayout({
                         <span>選單連結管理</span>
                     </Link>
                     <Link
-                        href="/admin/settings"
+                        href="/admin/seo"
                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
                     >
                         <Settings size={20} />

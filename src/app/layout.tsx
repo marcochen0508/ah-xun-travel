@@ -47,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
           siteName: "Ah Xun Chiang Mai Travel",
           images: [
             {
-              url: "/og-image.jpg",
+              url: s.og_image || "/og-image.jpg",
               width: 1200,
               height: 630,
               alt: s.site_title || defaultMeta.title,
@@ -60,7 +60,7 @@ export async function generateMetadata(): Promise<Metadata> {
           card: "summary_large_image",
           title: s.og_title || s.site_title || defaultMeta.og_title,
           description: s.og_description || s.site_description || defaultMeta.og_description,
-          images: ["/og-image.jpg"],
+          images: [s.og_image || "/og-image.jpg"],
         },
         alternates: {
           canonical: "https://ah-xun-travel.vercel.app",
