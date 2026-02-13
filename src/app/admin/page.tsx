@@ -18,7 +18,7 @@ export default function AdminDashboard() {
             try {
                 // Get Routes count
                 const { count: routesCount } = await supabase
-                    .from("feature_routes")
+                    .from("features_routes")
                     .select("*", { count: "exact", head: true });
 
                 // Get News count
