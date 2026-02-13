@@ -124,16 +124,18 @@ export default function NewsPage() {
                                         {item.start_date || "即日起"} ~ {item.end_date || "永久"}
                                     </td>
                                     <td className="p-4 text-right">
-                                        <Link href={`/admin/news/${item.id}`} className="text-gray-400 hover:text-lanna-gold">
-                                            <Edit size={18} />
-                                        </Link>
-                                        <button
-                                            onClick={() => handleDelete(item.id)}
-                                            className="ml-3 text-red-300 hover:text-red-600 transition-colors"
-                                            title="刪除"
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
+                                        <div className="flex justify-end items-center gap-2">
+                                            <Link href={`/admin/news/${item.id}`} className="text-gray-400 hover:text-lanna-gold p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                                <Edit size={18} />
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDelete(item.id)}
+                                                className="text-red-300 hover:text-red-600 p-2 hover:bg-red-50 rounded-full transition-colors"
+                                                title="刪除"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             )
