@@ -2,13 +2,6 @@ import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
 // Allow larger files and longer timeouts
-export const config = {
-    api: {
-        bodyParser: {
-            sizeLimit: '10mb',
-        },
-    },
-};
 export const maxDuration = 60; // Increase to 60 seconds
 
 export async function POST(request: Request) {
