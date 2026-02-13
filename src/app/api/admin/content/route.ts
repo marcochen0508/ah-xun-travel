@@ -2,10 +2,32 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { supabase } from '@/lib/supabase';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
 // Disable caching
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+// Helper to get current session user
+async function getCurrentUser() {
+    const cookieStore = await cookies();
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll() {
+                    return cookieStore.getAll();
+                },
+                setAll(cookiesToSet) {
+                },
+            },
+        }
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+}
 
 export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
@@ -24,7 +46,8 @@ export async function GET(req: NextRequest) {
             .single();
 
         if (error && error.code !== 'PGRST116') {
-            console.error("API Error:", error);
+            const now = new Date().toISOString();
+            console.error(`[API Error ${now}]:`, error);
             throw error;
         }
 
@@ -32,12 +55,16 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(data || { key });
 
     } catch (error: any) {
-        console.error("API Exception:", error);
+        const now = new Date().toISOString();
+        console.error(`[API Exception ${now}]:`, error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
 
 export async function POST(req: Request) {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     try {
         const body = await req.json();
         const { key, ...contentData } = body;
