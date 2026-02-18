@@ -17,6 +17,7 @@ export default function RoutesPage() {
             title_zh_tw: "素帖山雙龍寺半日遊",
             description_zh_tw: "清邁必訪地標，俯瞰古城全景。",
             is_active: true,
+            is_pinned: false,
             image_url: "/dest-1.jpg"
         },
         {
@@ -24,6 +25,7 @@ export default function RoutesPage() {
             title_zh_tw: "茵他濃國家公園一日遊",
             description_zh_tw: "泰國最高峰，探索瀑布與寒帶植物。",
             is_active: false,
+            is_pinned: false,
             image_url: "/dest-2.jpg"
         }
     ];
@@ -112,7 +114,14 @@ export default function RoutesPage() {
                                         />
                                     </td>
                                     <td className="p-4 font-medium text-gray-800">
-                                        {route.title_zh_tw}
+                                        <div className="flex items-center gap-2">
+                                            {route.is_pinned && (
+                                                <span className="bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full font-bold">
+                                                    置頂
+                                                </span>
+                                            )}
+                                            {route.title_zh_tw}
+                                        </div>
                                     </td>
                                     <td className="p-4 text-gray-500 text-sm max-w-xs truncate">
                                         {route.description_zh_tw || "-"}

@@ -44,9 +44,15 @@ export default function Destinations() {
 
                 // Ensure data is an array before using
                 if (Array.isArray(data)) {
-                    // Shuffle the array for random display order
-                    const shuffled = data.sort(() => 0.5 - Math.random());
-                    setRoutes(shuffled);
+                    // Separate pinned and unpinned
+                    const pinned = data.filter((item: any) => item.is_pinned);
+                    const unpinned = data.filter((item: any) => !item.is_pinned);
+
+                    // Shuffle only the unpinned items
+                    const shuffledUnpinned = unpinned.sort(() => 0.5 - Math.random());
+
+                    // Combine: Pinned first, then shuffled unpinned
+                    setRoutes([...pinned, ...shuffledUnpinned]);
                 } else {
                     console.error("API returned non-array:", data);
                     setRoutes([]);

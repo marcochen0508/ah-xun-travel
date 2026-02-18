@@ -27,6 +27,7 @@ export default function RouteForm({ initialData, isEdit = false }: RouteFormProp
             pdf_link: "",
             video_link: "",
             is_active: true,
+            is_pinned: false,
         }
     );
 
@@ -122,18 +123,35 @@ export default function RouteForm({ initialData, isEdit = false }: RouteFormProp
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Status */}
-                <div className="flex items-center gap-3">
-                    <span className="font-bold text-gray-700">狀態：</span>
-                    <button
-                        type="button"
-                        onClick={handleToggle}
-                        className={`px-4 py-1 rounded-full text-sm font-bold transition-colors ${formData.is_active
-                            ? "bg-green-100 text-green-700 hover:bg-green-200"
-                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                            }`}
-                    >
-                        {formData.is_active ? "上架中" : "已下架"}
-                    </button>
+                {/* Status & Pin */}
+                <div className="flex flex-wrap items-center gap-6">
+                    <div className="flex items-center gap-3">
+                        <span className="font-bold text-gray-700">狀態：</span>
+                        <button
+                            type="button"
+                            onClick={handleToggle}
+                            className={`px-4 py-1 rounded-full text-sm font-bold transition-colors ${formData.is_active
+                                ? "bg-green-100 text-green-700 hover:bg-green-200"
+                                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                                }`}
+                        >
+                            {formData.is_active ? "上架中" : "已下架"}
+                        </button>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <span className="font-bold text-gray-700">置頂：</span>
+                        <button
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, is_pinned: !prev.is_pinned }))}
+                            className={`px-4 py-1 rounded-full text-sm font-bold transition-colors flex items-center gap-1 ${formData.is_pinned
+                                ? "bg-orange-100 text-orange-700 hover:bg-orange-200"
+                                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                                }`}
+                        >
+                            {formData.is_pinned ? "🔥 已置頂" : "一般排序"}
+                        </button>
+                    </div>
                 </div>
 
                 {/* Basic Info (Traditional Chinese - Main) */}

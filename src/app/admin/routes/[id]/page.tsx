@@ -29,6 +29,7 @@ export default function EditRoutePage() {
                     title_zh_tw: "素帖山雙龍寺半日遊",
                     description_zh_tw: "清邁必訪地標，俯瞰古城全景。",
                     is_active: true,
+                    is_pinned: false,
                     image_url: "/dest-1.jpg",
                     pdf_link: "https://google.com"
                 });

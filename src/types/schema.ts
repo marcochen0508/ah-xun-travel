@@ -10,6 +10,7 @@ export type FeatureRoute = {
     pdf_link?: string;
     video_link?: string;
     is_active: boolean;
+    is_pinned: boolean; // New field
 };
 
 export type NewsEvent = {
