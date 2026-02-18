@@ -16,6 +16,7 @@ export default function NewsPage() {
             id: "mock-news-1",
             title: "2026 春節包車早鳥優惠",
             is_active: true,
+            is_pinned: false,
             start_date: "2025-12-01",
             end_date: "2026-02-28",
             content: "即日起預訂春節期間包車，享9折優惠！"
@@ -24,6 +25,7 @@ export default function NewsPage() {
             id: "mock-news-2",
             title: "清邁潑水節特別通告",
             is_active: false,
+            is_pinned: false,
             start_date: "2026-04-01",
             end_date: "2026-04-15"
         }
@@ -118,7 +120,16 @@ export default function NewsPage() {
                                             {status.label}
                                         </span>
                                     </td>
-                                    <td className="p-4 font-medium">{item.title}</td>
+                                    <td className="p-4 font-medium">
+                                        <div className="flex items-center gap-2">
+                                            {item.is_pinned && (
+                                                <span className="bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full font-bold">
+                                                    置頂
+                                                </span>
+                                            )}
+                                            {item.title}
+                                        </div>
+                                    </td>
                                     <td className="p-4 text-sm text-gray-500 flex items-center gap-2">
                                         <Calendar size={14} />
                                         {item.start_date || "即日起"} ~ {item.end_date || "永久"}

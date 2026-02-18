@@ -25,6 +25,7 @@ export type NewsEvent = {
     content_th?: string;
     image_url?: string;
     is_active: boolean;
+    is_pinned: boolean; // New field
     start_date?: string;
     end_date?: string;
 };

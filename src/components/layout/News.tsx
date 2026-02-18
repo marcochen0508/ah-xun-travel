@@ -30,15 +30,25 @@ export default function News() {
                     return today >= start && today <= end;
                 });
 
-                // Sort: Earliest end_date first (expires sooner -> left)
-                // Permanent items (no end_date) go to the end
-                validNews.sort((a, b) => {
+                // Separate pinned and unpinned
+                const pinned = validNews.filter(item => item.is_pinned);
+                const unpinned = validNews.filter(item => !item.is_pinned);
+
+                // Sort Pinned: Earliest end_date first (or create another logic if needed)
+                pinned.sort((a, b) => {
                     const dateA = a.end_date || "9999-12-31";
                     const dateB = b.end_date || "9999-12-31";
                     return dateA.localeCompare(dateB);
                 });
 
-                setNews(validNews);
+                // Sort Unpinned: Earliest end_date first
+                unpinned.sort((a, b) => {
+                    const dateA = a.end_date || "9999-12-31";
+                    const dateB = b.end_date || "9999-12-31";
+                    return dateA.localeCompare(dateB);
+                });
+
+                setNews([...pinned, ...unpinned]);
             }
         };
         fetchNews();
