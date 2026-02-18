@@ -24,7 +24,6 @@ export default function NewsForm({ initialData, isEdit = false }: NewsFormProps)
             content_zh_tw: "",
             content_zh_cn: "",
             content_th: "",
-            content_th: "",
             image_url: "",
             is_active: true,
             is_pinned: false,
