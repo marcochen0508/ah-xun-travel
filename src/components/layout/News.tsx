@@ -68,6 +68,31 @@ export default function News() {
         return { title, content };
     };
 
+    // Helper to auto-link URLs in text
+    const renderContentWithLinks = (text: string) => {
+        if (!text) return null;
+        // Match http/https URLs
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const parts = text.split(urlRegex);
+
+        return parts.map((part, i) => {
+            if (part.match(urlRegex)) {
+                return (
+                    <a
+                        key={i}
+                        href={part}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-lanna-gold hover:underline font-medium break-all"
+                    >
+                        {part}
+                    </a>
+                );
+            }
+            return <span key={i}>{part}</span>;
+        });
+    };
+
     return (
         <section className="py-16 bg-white">
             <div className="container mx-auto px-4 md:px-8">
@@ -92,9 +117,9 @@ export default function News() {
                             <h3 className="text-2xl font-bold text-gray-800 mb-4">
                                 {getLocalizedContent(news[0]).title}
                             </h3>
-                            <p className="text-gray-600 mb-6 line-clamp-3">
-                                {getLocalizedContent(news[0]).content}
-                            </p>
+                            <div className="text-gray-600 mb-6 line-clamp-3">
+                                {renderContentWithLinks(getLocalizedContent(news[0]).content)}
+                            </div>
                             <button
                                 onClick={() => setExpandedNews(news[0])}
                                 className="text-lanna-gold font-bold hover:underline"
@@ -117,9 +142,9 @@ export default function News() {
                                     <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 min-h-[3.5rem]">
                                         {title}
                                     </h3>
-                                    <p className="text-gray-600 line-clamp-3 text-sm flex-grow mb-4">
-                                        {content}
-                                    </p>
+                                    <div className="text-gray-600 line-clamp-3 text-sm flex-grow mb-4">
+                                        {renderContentWithLinks(content)}
+                                    </div>
                                     <div className="pt-4 border-t border-gray-100 mt-auto">
                                         <button
                                             onClick={() => setExpandedNews(item)}
@@ -156,8 +181,8 @@ export default function News() {
                                 {getLocalizedContent(expandedNews).title}
                             </h3>
 
-                            <div className="prose prose-stone max-w-none text-gray-600 leading-relaxed whitespace-pre-wrap">
-                                {getLocalizedContent(expandedNews).content}
+                            <div className="prose prose-stone max-w-none text-gray-600 leading-relaxed whitespace-pre-wrap break-words">
+                                {renderContentWithLinks(getLocalizedContent(expandedNews).content)}
                             </div>
 
                             <div className="mt-8 pt-6 border-t flex justify-end">
