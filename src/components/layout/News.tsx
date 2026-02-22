@@ -1,15 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Calendar, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Calendar, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/context/LanguageContext";
 import { NewsEvent } from "@/types/schema";
 
 export default function News() {
     const { t, language } = useLanguage();
+    const { t, language } = useLanguage();
     const [news, setNews] = useState<NewsEvent[]>([]);
     const [expandedNews, setExpandedNews] = useState<NewsEvent | null>(null);
+    const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(true);
+
+    const handleScroll = () => {
+        if (scrollContainerRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+            setCanScrollLeft(scrollLeft > 0);
+            setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5); // 5px buffer
+        }
+    };
+
+    const scrollLeft = () => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({ left: -scrollContainerRef.current.clientWidth, behavior: 'smooth' });
+        }
+    };
+
+    const scrollRight = () => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({ left: scrollContainerRef.current.clientWidth, behavior: 'smooth' });
+        }
+    };
 
     useEffect(() => {
         const fetchNews = async () => {
@@ -129,33 +153,64 @@ export default function News() {
                         </div>
                     </div>
                 ) : (
-                    // Multiple Items Layout - Grid
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {news.map((item) => {
-                            const { title, content } = getLocalizedContent(item);
-                            return (
-                                <div key={item.id} className="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col h-full">
-                                    <div className="flex items-center gap-2 text-lanna-gold mb-3 text-sm font-medium">
-                                        <Calendar size={16} />
-                                        <span>{item.start_date}</span>
+                    // Multiple Items Layout - Carousel on Desktop, Stack on Mobile
+                    <div className="relative group">
+                        {/* Navigation Arrows (Desktop Only) */}
+                        {news.length > 3 && (
+                            <>
+                                <button
+                                    onClick={scrollLeft}
+                                    className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 z-10 p-2 md:p-3 rounded-full bg-white text-lanna-coffee shadow-lg hover:bg-lanna-cream transition-all hidden md:flex ${!canScrollLeft && "opacity-0 pointer-events-none"
+                                        }`}
+                                    aria-label="Previous"
+                                >
+                                    <ChevronLeft size={24} />
+                                </button>
+                                <button
+                                    onClick={scrollRight}
+                                    className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 z-10 p-2 md:p-3 rounded-full bg-white text-lanna-coffee shadow-lg hover:bg-lanna-cream transition-all hidden md:flex ${!canScrollRight && "opacity-0 pointer-events-none"
+                                        }`}
+                                    aria-label="Next"
+                                >
+                                    <ChevronRight size={24} />
+                                </button>
+                            </>
+                        )}
+
+                        <div
+                            ref={scrollContainerRef}
+                            onScroll={handleScroll}
+                            className={`flex flex-col md:flex-row gap-8 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-8 pt-4 -px-4 hide-scrollbar`}
+                        >
+                            {news.map((item) => {
+                                const { title, content } = getLocalizedContent(item);
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className="snap-start shrink-0 w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.33rem)] bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col h-full"
+                                    >
+                                        <div className="flex items-center gap-2 text-lanna-gold mb-3 text-sm font-medium">
+                                            <Calendar size={16} />
+                                            <span>{item.start_date}</span>
+                                        </div>
+                                        <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 min-h-[3.5rem]">
+                                            {title}
+                                        </h3>
+                                        <div className="text-gray-600 line-clamp-3 text-sm flex-grow mb-4">
+                                            {renderContentWithLinks(content)}
+                                        </div>
+                                        <div className="pt-4 border-t border-gray-100 mt-auto">
+                                            <button
+                                                onClick={() => setExpandedNews(item)}
+                                                className="text-lanna-gold font-bold hover:underline text-sm"
+                                            >
+                                                {t.news?.readMore || "Read More"} &rarr;
+                                            </button>
+                                        </div>
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 min-h-[3.5rem]">
-                                        {title}
-                                    </h3>
-                                    <div className="text-gray-600 line-clamp-3 text-sm flex-grow mb-4">
-                                        {renderContentWithLinks(content)}
-                                    </div>
-                                    <div className="pt-4 border-t border-gray-100 mt-auto">
-                                        <button
-                                            onClick={() => setExpandedNews(item)}
-                                            className="text-lanna-gold font-bold hover:underline text-sm"
-                                        >
-                                            {t.news?.readMore || "Read More"} &rarr;
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
                     </div>
                 )}
             </div>
