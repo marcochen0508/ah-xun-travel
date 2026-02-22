@@ -8,7 +8,6 @@ import { NewsEvent } from "@/types/schema";
 
 export default function News() {
     const { t, language } = useLanguage();
-    const { t, language } = useLanguage();
     const [news, setNews] = useState<NewsEvent[]>([]);
     const [expandedNews, setExpandedNews] = useState<NewsEvent | null>(null);
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
