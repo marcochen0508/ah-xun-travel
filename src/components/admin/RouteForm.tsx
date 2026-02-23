@@ -155,7 +155,7 @@ export default function RouteForm({ initialData, isEdit = false }: RouteFormProp
                 </div>
 
                 {/* Basic Info (Traditional Chinese - Main) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-6">
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">
                             行程名稱 (繁體中文) <span className="text-red-500">*</span>
@@ -169,6 +169,22 @@ export default function RouteForm({ initialData, isEdit = false }: RouteFormProp
                             className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-lanna-gold outline-none"
                         />
                     </div>
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                            簡介 (繁體中文)
+                        </label>
+                        <textarea
+                            name="description_zh_tw"
+                            rows={3}
+                            value={formData.description_zh_tw || ""}
+                            onChange={handleChange}
+                            className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-lanna-gold outline-none"
+                        />
+                    </div>
+                </div>
+
+                {/* External Links */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">
                             外部 PDF 連結 (Google Drive)
@@ -195,20 +211,6 @@ export default function RouteForm({ initialData, isEdit = false }: RouteFormProp
                             className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-lanna-gold outline-none"
                         />
                     </div>
-                </div>
-
-                {/* Descriptions */}
-                <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                        簡介 (繁體中文)
-                    </label>
-                    <textarea
-                        name="description_zh_tw"
-                        rows={3}
-                        value={formData.description_zh_tw || ""}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-lanna-gold outline-none"
-                    />
                 </div>
 
                 {/* Image Upload */}
