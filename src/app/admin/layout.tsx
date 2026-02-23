@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LayoutDashboard, Map, Newspaper, Info, FileText, MessageSquare, Image as ImageIcon, Phone, Settings, Star, User, List } from "lucide-react";
 import LogoutButton from "@/components/admin/LogoutButton";
+import AdminGreeting from "@/components/admin/AdminGreeting";
 
 export default function AdminLayout({
     children,
@@ -122,7 +123,7 @@ export default function AdminLayout({
             <main className="flex-1 overflow-y-auto">
                 <header className="bg-white shadow-sm p-4 flex justify-between items-center">
                     <h2 className="text-xl font-bold text-gray-800">管理面板</h2>
-                    <div className="text-sm text-gray-500">管理員，您好</div>
+                    <AdminGreeting />
                 </header>
                 <div className="p-8">
                     {children}
