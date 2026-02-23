@@ -288,8 +288,14 @@ export default function UsersPage() {
                                                 onClick={() => openPasswordModal(user.id)}
                                                 className="text-indigo-600 hover:text-indigo-900 disabled:opacity-30 disabled:cursor-not-allowed"
                                                 title="修改密碼"
-                                                // Can change if self OR if target is NOT super admin
-                                                disabled={user.isSuperAdmin && user.email !== currentUserEmail}
+                                                // 1. Logged in user can change their own password.
+                                                // 2. Super admins can change anyone's password.
+                                                disabled={
+                                                    !(
+                                                        user.email === currentUserEmail ||
+                                                        (users.find(u => u.email === currentUserEmail)?.isSuperAdmin || false)
+                                                    )
+                                                }
                                             >
                                                 <KeyRound size={18} />
                                             </button>
