@@ -10,6 +10,9 @@ type User = {
     created_at: string;
     last_sign_in_at: string;
     isSuperAdmin?: boolean;
+    user_metadata?: {
+        nickname?: string;
+    };
 };
 
 export default function UsersPage() {
@@ -21,15 +24,18 @@ export default function UsersPage() {
     // Form State
     const [newEmail, setNewEmail] = useState("");
     const [newPassword, setNewPassword] = useState("");
+    const [newNickname, setNewNickname] = useState("");
     const [newIsSuperAdmin, setNewIsSuperAdmin] = useState(false);
     const [creating, setCreating] = useState(false);
     const [actionSuccess, setActionSuccess] = useState<string | null>(null);
 
-    // Password Reset Modal State
+    // Password & Info Modal State
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+    const [selectedUserEmail, setSelectedUserEmail] = useState<string>("");
     const [resetPassword, setResetPassword] = useState("");
     const [resetConfirmPassword, setResetConfirmPassword] = useState("");
+    const [editNickname, setEditNickname] = useState("");
     const [updatingPassword, setUpdatingPassword] = useState(false);
 
     useEffect(() => {
@@ -73,6 +79,7 @@ export default function UsersPage() {
                 body: JSON.stringify({
                     email: newEmail,
                     password: newPassword,
+                    nickname: newNickname,
                     isSuperAdmin: newIsSuperAdmin
                 }),
             });
@@ -81,6 +88,7 @@ export default function UsersPage() {
                 setActionSuccess(`使用者 ${data.user.email} 已建立！`);
                 setNewEmail("");
                 setNewPassword("");
+                setNewNickname("");
                 setNewIsSuperAdmin(false);
                 fetchUsers();
             } else {
@@ -117,31 +125,35 @@ export default function UsersPage() {
         }
     };
 
-    const openPasswordModal = (userId: string) => {
-        setSelectedUserId(userId);
+    const openEditModal = (user: User) => {
+        setSelectedUserId(user.id);
+        setSelectedUserEmail(user.email);
         setResetPassword("");
         setResetConfirmPassword("");
+        setEditNickname(user.user_metadata?.nickname || "");
         setError(null);
         setActionSuccess(null);
         setIsPasswordModalOpen(true);
     };
 
-    const closePasswordModal = () => {
+    const closeEditModal = () => {
         setIsPasswordModalOpen(false);
         setSelectedUserId(null);
+        setSelectedUserEmail("");
         setResetPassword("");
         setResetConfirmPassword("");
+        setEditNickname("");
     };
 
-    const submitPasswordUpdate = async (e: React.FormEvent) => {
+    const submitUserUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedUserId) return;
 
-        if (resetPassword !== resetConfirmPassword) {
+        if (resetPassword && resetPassword !== resetConfirmPassword) {
             alert("兩次密碼輸入不一致");
             return;
         }
-        if (resetPassword.length < 6) {
+        if (resetPassword && resetPassword.length < 6) {
             alert("密碼長度至少需 6 個字元");
             return;
         }
@@ -154,18 +166,23 @@ export default function UsersPage() {
             const res = await fetch("/api/admin/users", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId: selectedUserId, password: resetPassword }),
+                body: JSON.stringify({
+                    userId: selectedUserId,
+                    password: resetPassword || undefined,
+                    nickname: editNickname || undefined
+                }),
             });
 
             if (res.ok) {
-                setActionSuccess("密碼更新成功");
-                closePasswordModal();
+                setActionSuccess("使用者資料更新成功");
+                closeEditModal();
+                fetchUsers();
             } else {
                 const data = await res.json();
                 setError(data.error);
             }
         } catch (err) {
-            setError("更新密碼失敗");
+            setError("更新使用者失敗");
         } finally {
             setUpdatingPassword(false);
         }
@@ -184,26 +201,36 @@ export default function UsersPage() {
                 </h3>
                 <form onSubmit={handleCreateUser} className="flex gap-4 items-end flex-wrap">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">電子郵件 (Email)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">電子郵件 (Email) <span className="text-red-500">*</span></label>
                         <input
                             type="email"
                             required
                             value={newEmail}
                             onChange={e => setNewEmail(e.target.value)}
-                            className="border border-gray-300 rounded px-3 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-lanna-green"
+                            className="border border-gray-300 rounded px-3 py-2 w-56 focus:outline-none focus:ring-2 focus:ring-lanna-green"
                             placeholder="user@example.com"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">密碼 (Password)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">密碼 (Password) <span className="text-red-500">*</span></label>
                         <input
                             type="text"
                             required
                             value={newPassword}
                             onChange={e => setNewPassword(e.target.value)}
-                            className="border border-gray-300 rounded px-3 py-2 w-48 focus:outline-none focus:ring-2 focus:ring-lanna-green"
+                            className="border border-gray-300 rounded px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-lanna-green"
                             placeholder="password123"
                             minLength={6}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">顯示暱稱 (Nickname)</label>
+                        <input
+                            type="text"
+                            value={newNickname}
+                            onChange={e => setNewNickname(e.target.value)}
+                            className="border border-gray-300 rounded px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-lanna-green"
+                            placeholder="阿勛"
                         />
                     </div>
                     {/* Only Godotchen can create Super Admins */}
@@ -254,6 +281,7 @@ export default function UsersPage() {
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">電子郵件</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">暱稱</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">建立日期</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">最後登入</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">權限</th>
@@ -266,6 +294,9 @@ export default function UsersPage() {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {user.email}
                                         {user.email === currentUserEmail && <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">您</span>}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {user.user_metadata?.nickname || <span className="text-gray-300 italic">未設定</span>}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {new Date(user.created_at).toLocaleDateString()}
@@ -285,9 +316,9 @@ export default function UsersPage() {
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div className="flex justify-end gap-3">
                                             <button
-                                                onClick={() => openPasswordModal(user.id)}
+                                                onClick={() => openEditModal(user)}
                                                 className="text-indigo-600 hover:text-indigo-900 disabled:opacity-30 disabled:cursor-not-allowed"
-                                                title="修改密碼"
+                                                title="編輯/修改密碼"
                                                 // 1. Logged in user can change their own password.
                                                 // 2. Super admins can change anyone's password.
                                                 disabled={
@@ -328,41 +359,61 @@ export default function UsersPage() {
                 )}
             </div>
 
-            {/* Password Reset Modal */}
+            {/* Edit / Password Reset Modal */}
             {isPasswordModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                     <div className="bg-white rounded-lg shadow-xl w-full max-w-sm overflow-hidden">
                         <div className="p-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4">修改密碼</h3>
-                            <form onSubmit={submitPasswordUpdate} className="space-y-4">
+                            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+                                <KeyRound size={20} className="text-lanna-green" /> 編輯使用者
+                            </h3>
+                            <p className="text-sm text-gray-500 mb-4">{selectedUserEmail}</p>
+
+                            <form onSubmit={submitUserUpdate} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">新密碼</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">暱稱 (Nickname)</label>
+                                    <input
+                                        type="text"
+                                        value={editNickname}
+                                        onChange={(e) => setEditNickname(e.target.value)}
+                                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-lanna-green"
+                                        placeholder="修改暱稱..."
+                                    />
+                                </div>
+
+                                <div className="border-t pt-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">重設密碼 (選填)</label>
                                     <input
                                         type="password"
-                                        required
+                                        autoComplete="new-password"
                                         value={resetPassword}
                                         onChange={(e) => setResetPassword(e.target.value)}
                                         className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-lanna-green"
-                                        placeholder="請輸入新密碼"
+                                        placeholder="留白代表不修改"
                                         minLength={6}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">確認新密碼</label>
-                                    <input
-                                        type="password"
-                                        required
-                                        value={resetConfirmPassword}
-                                        onChange={(e) => setResetConfirmPassword(e.target.value)}
-                                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-lanna-green"
-                                        placeholder="請再次輸入新密碼"
-                                        minLength={6}
-                                    />
-                                </div>
+
+                                {resetPassword && (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">確認新密碼</label>
+                                        <input
+                                            type="password"
+                                            autoComplete="new-password"
+                                            value={resetConfirmPassword}
+                                            onChange={(e) => setResetConfirmPassword(e.target.value)}
+                                            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-lanna-green"
+                                            placeholder="請再次輸入新密碼"
+                                            minLength={6}
+                                            required
+                                        />
+                                    </div>
+                                )}
+
                                 <div className="flex justify-end gap-3 mt-6">
                                     <button
                                         type="button"
-                                        onClick={closePasswordModal}
+                                        onClick={closeEditModal}
                                         className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200 transition-colors"
                                         disabled={updatingPassword}
                                     >

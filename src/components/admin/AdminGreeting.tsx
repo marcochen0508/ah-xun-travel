@@ -10,8 +10,13 @@ export default function AdminGreeting() {
         const fetchUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (user?.email) {
-                const namePart = user.email.split('@')[0];
-                setPrefix(namePart);
+                const nickname = user.user_metadata?.nickname;
+                if (nickname) {
+                    setPrefix(nickname);
+                } else {
+                    const namePart = user.email.split('@')[0];
+                    setPrefix(namePart);
+                }
             }
         };
         fetchUser();

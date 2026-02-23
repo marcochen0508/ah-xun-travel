@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { email, password, isSuperAdmin: makeSuperAdmin } = body;
+    const { email, password, nickname, isSuperAdmin: makeSuperAdmin } = body;
 
     if (!email || !password) {
         return NextResponse.json({ error: "Missing email or password" }, { status: 400 });
@@ -91,6 +91,7 @@ export async function POST(req: NextRequest) {
         email,
         password,
         email_confirm: true,
+        user_metadata: nickname ? { nickname } : undefined,
         app_metadata: makeSuperAdmin ? { is_super_admin: true } : undefined
     });
 
@@ -157,7 +158,7 @@ export async function PUT(req: NextRequest) {
     if (!currentUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { userId, password } = body;
+    const { userId, password, nickname } = body;
 
     // 1. Get user to be updated
     const { data: { user: targetUser }, error: fetchError } = await supabaseAdmin.auth.admin.getUserById(userId);
@@ -178,10 +179,12 @@ export async function PUT(req: NextRequest) {
         }
     }
 
-    // 3. Update Password
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-        password: password
-    });
+    // 3. Update Password or Nickname
+    const updateData: any = {};
+    if (password) updateData.password = password;
+    if (nickname !== undefined) updateData.user_metadata = { ...targetUser.user_metadata, nickname };
+
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, updateData);
 
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
