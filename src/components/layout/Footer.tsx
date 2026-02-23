@@ -4,7 +4,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, Mail } from "lucide-react";
+import { Phone, Mail, Facebook } from "lucide-react";
 
 export default function Footer() {
     const { t, language } = useLanguage();
@@ -109,6 +109,14 @@ export default function Footer() {
                                         {contact.email}
                                     </a>
                                 </div>
+                                {contact.fb && (
+                                    <div className="flex items-center gap-3">
+                                        <Facebook size={18} className="text-lanna-gold shrink-0" />
+                                        <a href={contact.fb} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                                            Facebook
+                                        </a>
+                                    </div>
+                                )}
                             </div>
 
                             {/* QR Codes Grid */}
