@@ -1,10 +1,8 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    // Use VERCEL_URL if available, otherwise localhost for dev
-    const baseUrl = process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000";
+    // Use NEXT_PUBLIC_SITE_URL or hardcoded production URL
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ah-xun-travel.vercel.app";
 
     return [
         {
