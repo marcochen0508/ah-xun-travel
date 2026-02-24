@@ -48,7 +48,7 @@ export async function POST(request: Request) {
         // 1. Send Email via Google Apps Script (if configured)
         if (GAS_EMAIL_URL) {
             try {
-                const gasResponse = await fetch(GAS_EMAIL_URL, {
+                const gasResponse = await fetch(GAS_EMAIL_URL.trim(), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
