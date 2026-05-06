@@ -74,7 +74,7 @@ export default function Features() {
     return (
         <section id="services" className="py-20 bg-lanna-cream text-lanna-coffee">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 max-w-4xl mx-auto">
                     {features.map((feature: any, index) => {
                         const content = getLocalizedContent(feature);
                         return (
