@@ -169,13 +169,13 @@ export async function PUT(req: NextRequest) {
 
     // 2. Super Admin Protection Logic
     const isTargetSuperAdmin = isSuperAdmin(targetUser);
+    const amIRootAdmin = isRootAdmin(currentUser.email);
 
     // If target is Super Admin:
-    // Only the owner of that account can change their password.
-    // Even another Super Admin cannot change it (safest policy).
+    // Only the owner of that account OR the Root Admin can change their password.
     if (isTargetSuperAdmin) {
-        if (currentUser.id !== userId) {
-            return NextResponse.json({ error: "Super Admin passwords can only be changed by themselves." }, { status: 403 });
+        if (currentUser.id !== userId && !amIRootAdmin) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
     }
 
