@@ -91,6 +91,12 @@ export async function GET(req: NextRequest) {
         // Total views in past 7 days
         let totalViewsPast7Days = 0;
 
+        // Today's stats (Bangkok Time)
+        const nowBangkok = new Date(new Date().getTime() + (new Date().getTimezoneOffset() * 60000) + (3600000 * 7));
+        const todayStr = nowBangkok.toISOString().slice(0, 10);
+        let todayViews = 0;
+        const todayUniqueVisitors = new Set<string>();
+
         (recentViews || []).forEach(row => {
             totalViewsPast7Days += 1;
             // Bangkok local time (UTC+7)
@@ -116,6 +122,12 @@ export async function GET(req: NextRequest) {
 
             // Global unique visitors count
             if (row.ip_hash) totalUniqueVisitors.add(row.ip_hash);
+
+            // Today's count
+            if (dateStr === todayStr) {
+                todayViews += 1;
+                if (row.ip_hash) todayUniqueVisitors.add(row.ip_hash);
+            }
         });
 
         // Convert sets/objects to array format for easy frontend usage
@@ -135,6 +147,8 @@ export async function GET(req: NextRequest) {
             totalViews: totalViews || 0,
             totalUniqueVisitors: totalUniqueVisitors.size,
             totalViewsPast7Days,
+            todayViews,
+            todayUniqueVisitors: todayUniqueVisitors.size,
             past7Days,
             hourlyStats,
             topCountries

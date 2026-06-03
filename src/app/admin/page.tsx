@@ -164,14 +164,18 @@ CREATE POLICY "Allow authenticated read" ON page_views
                 ) : analytics ? (
                     <div className="space-y-6">
                         {/* Traffic Overview Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
                                 <div>
-                                    <h4 className="text-gray-500 text-sm font-medium">歷史累積總瀏覽量 (Pageviews)</h4>
-                                    <p className="text-3xl font-bold text-indigo-600 mt-1">{analytics.totalViews}</p>
+                                    <h4 className="text-gray-500 text-sm font-medium">今日即時瀏覽 (今日訪客)</h4>
+                                    <p className="text-3xl font-bold text-red-600 mt-1">
+                                        {analytics.todayViews} <span className="text-sm font-normal text-gray-500">點閱</span>
+                                        <span className="text-lg font-semibold text-gray-400 ml-2">/</span>
+                                        <span className="text-xl font-semibold text-amber-600 ml-2">{analytics.todayUniqueVisitors} <span className="text-xs font-normal text-gray-400">人</span></span>
+                                    </p>
                                 </div>
-                                <div className="p-3 bg-indigo-50 rounded-lg text-indigo-500">
-                                    <Eye size={24} />
+                                <div className="p-3 bg-red-50 rounded-lg text-red-500">
+                                    <Clock size={24} />
                                 </div>
                             </div>
 
@@ -187,11 +191,21 @@ CREATE POLICY "Allow authenticated read" ON page_views
 
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
                                 <div>
-                                    <h4 className="text-gray-500 text-sm font-medium">過去 7 天不重複訪客 (Visitors)</h4>
+                                    <h4 className="text-gray-500 text-sm font-medium">過去 7 天不重複訪客</h4>
                                     <p className="text-3xl font-bold text-amber-600 mt-1">{analytics.totalUniqueVisitors}</p>
                                 </div>
                                 <div className="p-3 bg-amber-50 rounded-lg text-amber-500">
                                     <Users size={24} />
+                                </div>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                                <div>
+                                    <h4 className="text-gray-500 text-sm font-medium">歷史累積總瀏覽量 (Pageviews)</h4>
+                                    <p className="text-3xl font-bold text-indigo-600 mt-1">{analytics.totalViews}</p>
+                                </div>
+                                <div className="p-3 bg-indigo-50 rounded-lg text-indigo-500">
+                                    <Eye size={24} />
                                 </div>
                             </div>
                         </div>
