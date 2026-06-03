@@ -256,8 +256,8 @@ CREATE POLICY "Allow authenticated read" ON page_views
                                                     <span className="text-xs font-bold text-gray-400 w-4">#{index + 1}</span>
                                                     <span className="text-sm font-semibold text-gray-700">{c.country}</span>
                                                 </div>
-                                                <span className="text-sm font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
-                                                    {c.views} 次點閱
+                                                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
+                                                    {c.views} 次點閱 / {c.visitors} 位訪客
                                                 </span>
                                             </div>
                                         ))

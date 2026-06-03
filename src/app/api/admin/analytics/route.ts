@@ -115,7 +115,7 @@ export async function GET(req: NextRequest) {
         const hourlyStats = Array.from({ length: 24 }, (_, i) => ({ hour: i, views: 0 }));
 
         // Process country stats
-        const countryCount: { [key: string]: number } = {};
+        const countryCount: { [key: string]: { views: number; visitors: Set<string> } } = {};
 
         // Unique visitors overall in past 7 days
         const totalUniqueVisitors = new Set<string>();
@@ -150,7 +150,13 @@ export async function GET(req: NextRequest) {
 
             // Country count
             const country = normalizeCountry(row.country);
-            countryCount[country] = (countryCount[country] || 0) + 1;
+            if (!countryCount[country]) {
+                countryCount[country] = { views: 0, visitors: new Set() };
+            }
+            countryCount[country].views += 1;
+            if (row.ip_hash) {
+                countryCount[country].visitors.add(row.ip_hash);
+            }
 
             // Global unique visitors count
             if (row.ip_hash) totalUniqueVisitors.add(row.ip_hash);
@@ -171,7 +177,8 @@ export async function GET(req: NextRequest) {
 
         const topCountries = Object.keys(countryCount).map(c => ({
             country: c,
-            views: countryCount[c]
+            views: countryCount[c].views,
+            visitors: countryCount[c].visitors.size
         })).sort((a, b) => b.views - a.views).slice(0, 5);
 
         return NextResponse.json({
