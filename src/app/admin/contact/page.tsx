@@ -14,6 +14,7 @@ export default function ContactPage() {
         whatsapp_id: "",
         wechat_id: "",
         email: "",
+        show_email: true,
         line_qr: "",
         whatsapp_qr: "",
         wechat_qr: "",
@@ -38,6 +39,7 @@ export default function ContactPage() {
                     whatsapp_id: data.settings?.whatsapp_id || "",
                     wechat_id: data.settings?.wechat_id || "",
                     email: data.settings?.email || "",
+                    show_email: data.settings?.show_email !== false,
                     line_qr: data.settings?.line_qr || "",
                     whatsapp_qr: data.settings?.whatsapp_qr || "",
                     wechat_qr: data.settings?.wechat_qr || "",
@@ -98,6 +100,7 @@ export default function ContactPage() {
                     whatsapp_id: formData.whatsapp_id,
                     wechat_id: formData.wechat_id,
                     email: formData.email,
+                    show_email: formData.show_email,
                     line_qr: formData.line_qr,
                     whatsapp_qr: formData.whatsapp_qr,
                     wechat_qr: formData.wechat_qr,
@@ -152,14 +155,25 @@ export default function ContactPage() {
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-1">電子信箱 (Email)</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className="w-full border rounded p-2"
-                                placeholder="e.g. contact@example.com"
-                            />
+                            <div className="flex items-center gap-4">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className="flex-1 border rounded p-2"
+                                    placeholder="e.g. contact@example.com"
+                                />
+                                <label className="flex items-center gap-2 cursor-pointer select-none text-sm font-semibold text-gray-600 bg-gray-50 border px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors shrink-0">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.show_email}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, show_email: e.target.checked }))}
+                                        className="w-4 h-4 rounded text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
+                                    />
+                                    顯示於頁尾
+                                </label>
+                            </div>
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-green-600 mb-1">LINE ID</label>

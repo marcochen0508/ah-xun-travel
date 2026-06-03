@@ -14,6 +14,7 @@ export default function Footer() {
         line: "suchart74",
         fb: "https://www.facebook.com/suchart74",
         email: "ahxun.cm@gmail.com",
+        show_email: true,
         line_qr: "/line-qr.jpg",
         whatsapp_qr: "/whatsapp-qr.jpg",
         whatsapp_id: "",
@@ -41,6 +42,7 @@ export default function Footer() {
                         line: s.line_id || "suchart74",
                         fb: s.facebook_url || "https://www.facebook.com/suchart74",
                         email: s.email || "ahxun.cm@gmail.com",
+                        show_email: s.show_email !== false,
                         line_qr: s.line_qr || "/line-qr.jpg",
                         whatsapp_qr: s.whatsapp_qr || "/whatsapp-qr.jpg",
                         whatsapp_id: s.whatsapp_id || "",
@@ -103,12 +105,14 @@ export default function Footer() {
                                         {contact.phone}
                                     </a>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <Mail size={18} className="text-lanna-gold shrink-0" />
-                                    <a href={`mailto:${contact.email}`} className="hover:text-white transition-colors">
-                                        {contact.email}
-                                    </a>
-                                </div>
+                                {contact.show_email && contact.email && (
+                                    <div className="flex items-center gap-3">
+                                        <Mail size={18} className="text-lanna-gold shrink-0" />
+                                        <a href={`mailto:${contact.email}`} className="hover:text-white transition-colors">
+                                            {contact.email}
+                                        </a>
+                                    </div>
+                                )}
                                 {contact.fb && (
                                     <div className="flex items-center gap-3">
                                         <Facebook size={18} className="text-lanna-gold shrink-0" />
