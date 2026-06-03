@@ -272,12 +272,12 @@ CREATE POLICY "Allow authenticated read" ON page_views
                                     熱門瀏覽時段分佈 (清邁/泰國時間)
                                 </h3>
                                 <p className="text-xs text-gray-400 mb-6">了解客人都集中在哪些時段上網（顯示清邁當地時區 UTC+7）</p>
-                                <div className="flex justify-between items-end h-40 pt-6 px-2 border-b border-gray-200">
+                                <div className="flex justify-between items-end h-32 pt-6 px-2 border-b border-gray-200">
                                     {analytics.hourlyStats.map((item: any) => {
                                         const maxViews = Math.max(...analytics.hourlyStats.map((h: any) => h.views || 1));
                                         const heightPercent = maxViews > 0 ? (item.views / maxViews) * 100 : 0;
                                         return (
-                                            <div key={item.hour} className="flex-1 flex flex-col items-center group relative">
+                                            <div key={item.hour} className="flex-1 flex flex-col items-center group relative h-full justify-end">
                                                 {/* Tooltip on hover */}
                                                 <span className="absolute -top-8 hidden group-hover:block bg-gray-800 text-white text-[10px] px-2 py-1 rounded shadow-md z-10 whitespace-nowrap">
                                                     {item.views} 次點閱
@@ -286,10 +286,14 @@ CREATE POLICY "Allow authenticated read" ON page_views
                                                     className="bg-amber-500/80 group-hover:bg-amber-500 w-3 md:w-6 rounded-t-md transition-all duration-300"
                                                     style={{ height: `${Math.max(item.views > 0 ? 5 : 0, heightPercent)}%` }}
                                                 />
-                                                <span className="text-[10px] text-gray-400 mt-2 font-mono">{String(item.hour).padStart(2, '0')}</span>
                                             </div>
                                         );
                                     })}
+                                </div>
+                                <div className="flex justify-between text-[10px] text-gray-400 mt-2 px-2">
+                                    {analytics.hourlyStats.map((item: any) => (
+                                        <span key={item.hour} className="flex-1 text-center font-mono">{String(item.hour).padStart(2, '0')}</span>
+                                    ))}
                                 </div>
                                 <div className="flex justify-between text-[10px] text-gray-400 mt-2 px-1">
                                     <span>凌晨 00:00</span>
