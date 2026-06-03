@@ -186,6 +186,31 @@ export async function GET(req: NextRequest) {
             visitors: countryCount[c].visitors.size
         })).sort((a, b) => b.views - a.views).slice(0, 5);
 
+        // Fetch all time country data
+        const { data: allTimeViews, error: allTimeErr } = await supabase
+            .from('page_views')
+            .select('country, ip_hash');
+        
+        if (allTimeErr) throw allTimeErr;
+
+        const allTimeCountryCount: { [key: string]: { views: number; visitors: Set<string> } } = {};
+        (allTimeViews || []).forEach(row => {
+            const country = normalizeCountry(row.country);
+            if (!allTimeCountryCount[country]) {
+                allTimeCountryCount[country] = { views: 0, visitors: new Set() };
+            }
+            allTimeCountryCount[country].views += 1;
+            if (row.ip_hash) {
+                allTimeCountryCount[country].visitors.add(row.ip_hash);
+            }
+        });
+
+        const topCountriesAllTime = Object.keys(allTimeCountryCount).map(c => ({
+            country: c,
+            views: allTimeCountryCount[c].views,
+            visitors: allTimeCountryCount[c].visitors.size
+        })).sort((a, b) => b.views - a.views).slice(0, 5);
+
         return NextResponse.json({
             setupRequired: false,
             totalViews: totalViews || 0,
@@ -195,7 +220,8 @@ export async function GET(req: NextRequest) {
             todayUniqueVisitors: todayUniqueVisitors.size,
             past7Days,
             hourlyStats,
-            topCountries
+            topCountries,
+            topCountriesAllTime
         });
 
     } catch (err: any) {

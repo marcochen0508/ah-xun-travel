@@ -15,6 +15,7 @@ export default function AdminDashboard() {
     const [analytics, setAnalytics] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [analyticsLoading, setAnalyticsLoading] = useState(true);
+    const [countryRange, setCountryRange] = useState<"7days" | "alltime">("7days");
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -242,15 +243,41 @@ CREATE POLICY "Allow authenticated read" ON page_views
 
                             {/* Top Countries */}
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                                <h3 className="text-gray-800 text-lg font-bold mb-4 flex items-center gap-2">
-                                    <Globe2 size={20} className="text-green-500" />
-                                    前五大瀏覽國家/地區
-                                </h3>
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-gray-800 text-lg font-bold flex items-center gap-2">
+                                        <Globe2 size={20} className="text-green-500" />
+                                        前五大瀏覽國家/地區
+                                    </h3>
+                                    <div className="flex bg-gray-100 p-0.5 rounded-lg text-xs font-semibold">
+                                        <button
+                                            type="button"
+                                            onClick={() => setCountryRange("7days")}
+                                            className={`px-2.5 py-1 rounded-md transition-colors ${
+                                                countryRange === "7days"
+                                                    ? "bg-white text-gray-800 shadow-sm"
+                                                    : "text-gray-500 hover:text-gray-800"
+                                            }`}
+                                        >
+                                            7天內
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setCountryRange("alltime")}
+                                            className={`px-2.5 py-1 rounded-md transition-colors ${
+                                                countryRange === "alltime"
+                                                    ? "bg-white text-gray-800 shadow-sm"
+                                                    : "text-gray-500 hover:text-gray-800"
+                                            }`}
+                                        >
+                                            累計
+                                        </button>
+                                    </div>
+                                </div>
                                 <div className="space-y-4">
-                                    {analytics.topCountries.length === 0 ? (
+                                    {((countryRange === "7days" ? analytics.topCountries : analytics.topCountriesAllTime) || []).length === 0 ? (
                                         <p className="text-sm text-gray-400 italic">尚無地區數據</p>
                                     ) : (
-                                        analytics.topCountries.map((c: any, index: number) => (
+                                        ((countryRange === "7days" ? analytics.topCountries : analytics.topCountriesAllTime) || []).map((c: any, index: number) => (
                                             <div key={c.country} className="flex items-center justify-between border-b border-gray-50 pb-2">
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-xs font-bold text-gray-400 w-4">#{index + 1}</span>
