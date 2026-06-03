@@ -186,14 +186,16 @@ export async function GET(req: NextRequest) {
             visitors: countryCount[c].visitors.size
         })).sort((a, b) => b.views - a.views).slice(0, 5);
 
-        // Fetch all time country data
+        // Fetch all time data for countries and hourly stats
         const { data: allTimeViews, error: allTimeErr } = await supabase
             .from('page_views')
-            .select('country, ip_hash');
+            .select('created_at, country, ip_hash');
         
         if (allTimeErr) throw allTimeErr;
 
         const allTimeCountryCount: { [key: string]: { views: number; visitors: Set<string> } } = {};
+        const hourlyStatsAllTime = Array.from({ length: 24 }, (_, i) => ({ hour: i, views: 0 }));
+
         (allTimeViews || []).forEach(row => {
             const country = normalizeCountry(row.country);
             if (!allTimeCountryCount[country]) {
@@ -202,6 +204,15 @@ export async function GET(req: NextRequest) {
             allTimeCountryCount[country].views += 1;
             if (row.ip_hash) {
                 allTimeCountryCount[country].visitors.add(row.ip_hash);
+            }
+
+            // Hourly stats all-time (Bangkok time UTC+7)
+            if (row.created_at) {
+                const date = new Date(row.created_at);
+                const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+                const bangkokTime = new Date(utc + (3600000 * 7));
+                const hour = bangkokTime.getHours();
+                hourlyStatsAllTime[hour].views += 1;
             }
         });
 
@@ -220,6 +231,7 @@ export async function GET(req: NextRequest) {
             todayUniqueVisitors: todayUniqueVisitors.size,
             past7Days,
             hourlyStats,
+            hourlyStatsAllTime,
             topCountries,
             topCountriesAllTime
         });
