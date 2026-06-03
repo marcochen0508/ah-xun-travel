@@ -2,6 +2,10 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+
 const countryMap: { [key: string]: string } = {
     "TW": "Taiwan",
     "TAIWAN": "Taiwan",
@@ -89,6 +93,7 @@ export async function GET(req: NextRequest) {
             }
             throw countErr;
         }
+
 
         // 2. Fetch last 7 days of data
         const sevenDaysAgo = new Date();
