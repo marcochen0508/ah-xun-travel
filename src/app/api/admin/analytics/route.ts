@@ -2,6 +2,38 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
+const countryMap: { [key: string]: string } = {
+    "TW": "Taiwan",
+    "TAIWAN": "Taiwan",
+    "TH": "Thailand",
+    "THAILAND": "Thailand",
+    "HK": "Hong Kong",
+    "HONG KONG": "Hong Kong",
+    "MY": "Malaysia",
+    "MALAYSIA": "Malaysia",
+    "MO": "Macau",
+    "MACAO": "Macau",
+    "MACAU": "Macau",
+    "NL": "Netherlands",
+    "NETHERLANDS": "Netherlands",
+    "SE": "Sweden",
+    "SWEDEN": "Sweden",
+    "US": "United States",
+    "UNITED STATES": "United States",
+    "JP": "Japan",
+    "JAPAN": "Japan",
+    "CN": "China",
+    "CHINA": "China",
+    "SG": "Singapore",
+    "SINGAPORE": "Singapore"
+};
+
+function normalizeCountry(country: string | null | undefined): string {
+    if (!country) return "Taiwan";
+    const upper = country.trim().toUpperCase();
+    return countryMap[upper] || country;
+}
+
 // Helper to get current session user
 async function getCurrentUser() {
     const cookieStore = await cookies();
@@ -117,7 +149,7 @@ export async function GET(req: NextRequest) {
             hourlyStats[hour].views += 1;
 
             // Country count
-            const country = row.country || "Taiwan";
+            const country = normalizeCountry(row.country);
             countryCount[country] = (countryCount[country] || 0) + 1;
 
             // Global unique visitors count
