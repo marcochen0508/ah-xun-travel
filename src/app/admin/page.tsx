@@ -225,12 +225,12 @@ CREATE POLICY "Allow authenticated read" ON page_views
                                         return (
                                             <div key={day.date} className="flex items-center gap-4">
                                                 <span className="text-xs font-semibold text-gray-500 w-20">{day.date}</span>
-                                                <div className="flex-1 bg-gray-100 h-8 rounded-lg overflow-hidden relative">
+                                                <div className="flex-1 bg-indigo-50/30 h-8 rounded-lg overflow-hidden relative border border-indigo-100/30">
                                                     <div 
-                                                        className="bg-indigo-500/80 h-full rounded-lg transition-all duration-500"
+                                                        className="bg-indigo-100/70 h-full rounded-lg transition-all duration-500"
                                                         style={{ width: `${Math.max(day.views > 0 ? 5 : 0, widthPercent)}%` }}
                                                     />
-                                                    <span className="absolute left-3 top-2 text-xs font-bold text-gray-700">
+                                                    <span className="absolute left-3 top-2 text-xs font-bold text-indigo-950">
                                                         {day.views} 點閱 / {day.visitors} 訪客
                                                     </span>
                                                 </div>
@@ -278,9 +278,9 @@ CREATE POLICY "Allow authenticated read" ON page_views
                                         const heightPercent = maxViews > 0 ? (item.views / maxViews) * 100 : 0;
                                         return (
                                             <div key={item.hour} className="flex-1 flex flex-col items-center group relative h-full justify-end">
-                                                {/* Tooltip on hover */}
-                                                <span className="absolute -top-8 hidden group-hover:block bg-gray-800 text-white text-[10px] px-2 py-1 rounded shadow-md z-10 whitespace-nowrap">
-                                                    {item.views} 次點閱
+                                                {/* Always visible view count above the bar */}
+                                                <span className="text-[10px] font-bold text-amber-700 mb-1">
+                                                    {item.views > 0 ? item.views : ""}
                                                 </span>
                                                 <div 
                                                     className="bg-amber-500/80 group-hover:bg-amber-500 w-3 md:w-6 rounded-t-md transition-all duration-300"
