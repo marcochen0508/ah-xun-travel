@@ -119,6 +119,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import MaintenanceBlocker from "@/components/MaintenanceBlocker";
 import { Toaster } from "sonner";
 import { GoogleAnalytics } from '@next/third-parties/google';
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
@@ -134,6 +135,7 @@ export default function RootLayout({
       >
         <LanguageProvider>
           <MaintenanceBlocker />
+          <AnalyticsTracker />
           <JsonLd />
           <Toaster position="top-center" richColors />
           {children}
