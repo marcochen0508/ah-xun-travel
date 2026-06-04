@@ -23,6 +23,7 @@ export default function Reviews() {
         rating: 5,
         photos: [] as string[]
     });
+    const [defaultPhotos, setDefaultPhotos] = useState<string[]>([]);
 
     const [selectedReview, setSelectedReview] = useState<CustomerReview | null>(null);
 
@@ -38,6 +39,14 @@ export default function Reviews() {
     const scrollNext = useCallback(() => {
         if (emblaApi) emblaApi.scrollNext();
     }, [emblaApi]);
+
+    // Seeded random: picks a consistent banner per review based on its id
+    const getDefaultPhoto = (reviewId: string) => {
+        if (defaultPhotos.length === 0) return null;
+        // Use the sum of char codes of the review id to pick a stable index
+        const seed = reviewId.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+        return defaultPhotos[seed % defaultPhotos.length];
+    };
 
     useEffect(() => {
         const fetchAndShuffleReviews = async () => {
@@ -59,7 +68,19 @@ export default function Reviews() {
             }
         };
 
+        const fetchDefaultPhotos = async () => {
+            try {
+                const res = await fetch("/api/banner?t=" + Date.now(), { cache: "no-store" });
+                const data = await res.json();
+                const urls = (data || []).map((b: any) => b.image_url).filter(Boolean);
+                if (urls.length > 0) setDefaultPhotos(urls);
+            } catch (e) {
+                console.error("Failed to fetch banner defaults for reviews");
+            }
+        };
+
         fetchAndShuffleReviews();
+        fetchDefaultPhotos();
     }, []);
 
     const toggleModal = (review: CustomerReview | null) => {
@@ -209,25 +230,32 @@ export default function Reviews() {
                                                 </div>
 
                                                 {/* Photos Preview */}
-                                                {review.photos && review.photos.length > 0 && (
-                                                    <div className="mb-6 flex gap-2 overflow-hidden h-16">
-                                                        {review.photos.slice(0, 3).map((photo, index) => (
-                                                            <div key={index} className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 border-white shadow-sm">
-                                                                <Image
-                                                                    src={photo}
-                                                                    alt={`Review photo ${index}`}
-                                                                    fill
-                                                                    className="object-cover"
-                                                                />
-                                                            </div>
-                                                        ))}
-                                                        {review.photos.length > 3 && (
-                                                            <div className="w-16 h-16 flex items-center justify-center bg-gray-100 text-xs text-gray-500 rounded-lg border-2 border-white shadow-sm font-bold">
-                                                                +{review.photos.length - 3}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                )}
+                                                {(() => {
+                                                    const photos = review.photos && review.photos.length > 0
+                                                        ? review.photos
+                                                        : (getDefaultPhoto(review.id) ? [getDefaultPhoto(review.id)!] : []);
+                                                    if (photos.length === 0) return null;
+                                                    return (
+                                                        <div className="mb-6 flex gap-2 overflow-hidden h-16">
+                                                            {photos.slice(0, 3).map((photo, index) => (
+                                                                <div key={index} className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 border-white shadow-sm">
+                                                                    <Image
+                                                                        src={photo}
+                                                                        alt={`Review photo ${index}`}
+                                                                        fill
+                                                                        className="object-cover"
+                                                                        unoptimized
+                                                                    />
+                                                                </div>
+                                                            ))}
+                                                            {photos.length > 3 && (
+                                                                <div className="w-16 h-16 flex items-center justify-center bg-gray-100 text-xs text-gray-500 rounded-lg border-2 border-white shadow-sm font-bold">
+                                                                    +{photos.length - 3}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })()}
 
                                                 <div className="flex items-center justify-between border-t border-gray-200/60 pt-6 mt-auto">
                                                     <div className="flex flex-col">
@@ -301,20 +329,27 @@ export default function Reviews() {
                             </div>
 
                             {/* Full Photos Grid */}
-                            {selectedReview.photos && selectedReview.photos.length > 0 && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {selectedReview.photos.map((photo, index) => (
-                                        <div key={index} className="relative aspect-video rounded-lg overflow-hidden border bg-gray-50">
-                                            <Image
-                                                src={photo}
-                                                alt={`Review full photo ${index}`}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                            {(() => {
+                                const photos = selectedReview.photos && selectedReview.photos.length > 0
+                                    ? selectedReview.photos
+                                    : (getDefaultPhoto(selectedReview.id) ? [getDefaultPhoto(selectedReview.id)!] : []);
+                                if (photos.length === 0) return null;
+                                return (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {photos.map((photo, index) => (
+                                            <div key={index} className="relative aspect-video rounded-lg overflow-hidden border bg-gray-50">
+                                                <Image
+                                                    src={photo}
+                                                    alt={`Review full photo ${index}`}
+                                                    fill
+                                                    className="object-cover"
+                                                    unoptimized
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>
