@@ -41,10 +41,11 @@ export default function Reviews() {
     }, [emblaApi]);
 
     // Seeded random: picks a consistent banner per review based on its id
-    const getDefaultPhoto = (reviewId: string) => {
-        if (defaultPhotos.length === 0) return null;
+    const getDefaultPhoto = (reviewId: any) => {
+        if (reviewId === null || reviewId === undefined || defaultPhotos.length === 0) return null;
+        const idStr = String(reviewId);
         // Use the sum of char codes of the review id to pick a stable index
-        const seed = reviewId.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+        const seed = idStr.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
         return defaultPhotos[seed % defaultPhotos.length];
     };
 
