@@ -419,6 +419,9 @@ export default function Reviews() {
                                         onChange={handleFileUpload}
                                         className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-lanna-gold/10 file:text-lanna-gold hover:file:bg-lanna-gold/20"
                                     />
+                                    <p className="text-xs text-amber-700/80 mt-1.5 font-medium leading-relaxed">
+                                        {t.reviews.photoHint}
+                                    </p>
                                     {reviewForm.photos.length > 0 && (
                                         <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
                                             {reviewForm.photos.map((photo, i) => (
