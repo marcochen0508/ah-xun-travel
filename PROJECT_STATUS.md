@@ -58,5 +58,14 @@ Tables used:
 2. **Review Submission**: Polish the frontend user review submission flow.
 3. **Deployment**: Verify production deployment on Vercel after recent reverts.
 
+## Security & Database Compliance (Supabase RLS)
+- **Rule**: All tables in the Supabase database (both current and any new ones created in the future) **MUST** have Row-Level Security (RLS) enabled to prevent unauthorized public read/write access.
+- **Current Tables Status**: RLS is fully enabled on all 11 tables (`about_info`, `banners`, `travel_messages`, `general_content`, `page_views`, `travel_groups`, `features_routes`, `navigation_links`, `customer_reviews`, `news_events`, `travel_members`).
+- **Policy Standard**:
+  - Public read-only tables must only have a `SELECT` policy configured for public access (`using (true)`).
+  - Write, update, and delete access must be restricted to authenticated users or done exclusively via API routes using the `supabaseAdmin` service role client.
+  - Never expose raw insert/update/delete permissions to anonymous keys.
+
 ---
 *End of Status Report*
+
