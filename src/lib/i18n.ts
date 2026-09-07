@@ -17,6 +17,7 @@ export const translations = {
             title: "阿勛・清邁包車旅遊規劃",
             subtitle: "探索清邁蘭納文化與自然之美\n專屬您的 VIP 包車深度旅程",
             cta: "立即諮詢",
+            tour3d: "✦ 探索 3D 蘭納地圖",
         },
         features: {
             vipTitle: "10人座 VIP 包車",
@@ -90,6 +91,7 @@ export const translations = {
             title: "阿勋・清迈包车旅游规划",
             subtitle: "探索清迈兰纳文化与自然之美\n专属您的 VIP 包车深度旅程",
             cta: "立即咨询",
+            tour3d: "✦ 探索 3D 兰纳地图",
         },
         features: {
             vipTitle: "10人座 VIP 包车",
@@ -163,6 +165,7 @@ export const translations = {
             title: "อาชิน & สุชาติ: บริการรถเช่าพร้อมคนขับ พาเที่ยวเชียงใหม่",
             subtitle: "สัมผัสเสน่ห์ล้านนาและธรรมชาติที่งดงาม\nเปิดประสบการณ์เที่ยวเชียงใหม่แบบ VIP ส่วนตัว",
             cta: "จองทริปเลย",
+            tour3d: "✦ สำรวจทัวร์ 3D ล้านนา",
         },
         features: {
             vipTitle: "รถตู้ VIP 10 ที่นั่ง",

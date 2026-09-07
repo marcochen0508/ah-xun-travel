@@ -1,0 +1,501 @@
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import Image from 'next/image';
+import { Landmark, DISTRICTS, Language } from './landmarkData';
+import { TrafficRoute, Waypoint } from './trafficPaths';
+import TrafficLayer from './TrafficLayer';
+
+interface ChiangMaiChiangRai3DMapProps {
+  language: Language;
+  selectedRegionId: 'all' | 'chiang-mai' | 'chiang-rai';
+  selectedDistrictId: string | null;
+  selectedCategoryId: string | null;
+  selectedLandmarkId: string | null;
+  routes?: TrafficRoute[];
+  activeRouteId?: string | null;
+  isEditorActive?: boolean;
+  onSelectRegion: (regionId: 'all' | 'chiang-mai' | 'chiang-rai') => void;
+  onSelectDistrict: (districtId: string | null) => void;
+  onSelectLandmark: (landmark: Landmark | null) => void;
+  onUpdateRoutes?: (newRoutes: TrafficRoute[]) => void;
+  onSelectActiveRoute?: (id: string) => void;
+}
+
+export default function ChiangMaiChiangRai3DMap({
+  language,
+  selectedRegionId,
+  selectedDistrictId,
+  selectedCategoryId,
+  selectedLandmarkId,
+  routes = [],
+  activeRouteId = null,
+  isEditorActive = false,
+  onSelectRegion,
+  onSelectDistrict,
+  onSelectLandmark,
+  onUpdateRoutes,
+  onSelectActiveRoute,
+}: ChiangMaiChiangRai3DMapProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+
+  // Smooth 2.5D Map State (Scale, Pan Offsets)
+  const [scale, setScale] = useState(1.1);
+  const [panX, setPanX] = useState(0);
+  const [panY, setPanY] = useState(0);
+
+  // Direct Mouse Drag Pan tracking
+  const isDraggingRef = useRef(false);
+  const startMouseRef = useRef({ x: 0, y: 0 });
+  const startPanRef = useRef({ x: 0, y: 0 });
+
+  // Waypoint dragging state in editor mode
+  const [draggingWaypoint, setDraggingWaypoint] = useState<{
+    routeId: string;
+    pointIndex: number;
+  } | null>(null);
+
+  // Toggle Visibility of Waypoints & Lines (按 H 切換隱藏/顯示)
+  const [showWaypoints, setShowWaypoints] = useState(true);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Toggle when pressing 'H' or 'h'
+      if ((e.key === 'h' || e.key === 'H') && isEditorActive) {
+        setShowWaypoints((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isEditorActive]);
+
+  // Determine current diorama artwork based on selected district
+  let currentDioramaArt = '/images/diorama/diorama_00_v17_no_car.jpg';
+  if (selectedDistrictId === 'old-city-district') {
+    currentDioramaArt = '/images/diorama/old_city_square_v1.jpg';
+  } else if (selectedDistrictId === 'south-city-district') {
+    currentDioramaArt = '/images/diorama/south_city_accurate_v3.jpg';
+  } else if (selectedDistrictId === 'nimman-district') {
+    currentDioramaArt = '/images/diorama/nimman_cmu_diorama.jpg';
+  } else if (selectedDistrictId === 'doi-suthep-district') {
+    currentDioramaArt = '/images/diorama/doi_suthep_sacred_diorama.jpg';
+  } else if (selectedDistrictId === 'doi-inthanon-district') {
+    currentDioramaArt = '/images/diorama/doi_inthanon_diorama.jpg';
+  } else if (selectedDistrictId === 'chiang-rai-city-district') {
+    currentDioramaArt = '/images/diorama/chiang_rai_art_diorama.jpg';
+  } else if (selectedDistrictId === 'tea-mountain-district') {
+    currentDioramaArt = '/images/diorama/tea_golden_triangle_diorama.jpg';
+  } else if (selectedDistrictId === 'night-bazaar-district') {
+    currentDioramaArt = '/images/diorama/ping_river_warorot_diorama.jpg';
+  } else if (selectedDistrictId === 'mae-kampong-district' || selectedDistrictId === 'san-kamphaeng-district') {
+    currentDioramaArt = '/images/diorama/maekampong_giant_diorama.jpg';
+  } else if (selectedDistrictId === 'mae-rim-district') {
+    currentDioramaArt = '/images/diorama/maerim_maetaeng_diorama.jpg';
+  } else if (selectedDistrictId === 'hang-dong-district') {
+    currentDioramaArt = '/images/diorama/hangdong_maewang_diorama.jpg';
+  } else if (selectedDistrictId === 'chiang-dao-district') {
+    currentDioramaArt = '/images/diorama/6_lalitta_cafe_chiang_rai.jpg';
+  }
+
+  // Reset pan and scale when switching between overview and district
+  useEffect(() => {
+    setPanX(0);
+    setPanY(0);
+    setScale(1.05);
+  }, [selectedDistrictId]);
+
+  // Mouse Wheel Zooming
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+    setScale((prev) => Math.min(Math.max(prev * zoomFactor, 0.8), 3.5));
+  }, []);
+
+  // Mouse Drag Pan
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0 || draggingWaypoint) return;
+    isDraggingRef.current = true;
+    startMouseRef.current = { x: e.clientX, y: e.clientY };
+    startPanRef.current = { x: panX, y: panY };
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (draggingWaypoint && canvasRef.current && onUpdateRoutes) {
+      const rect = canvasRef.current.getBoundingClientRect();
+      const xPct = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+      const yPct = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+
+      const updated = routes.map((r) => {
+        if (r.id !== draggingWaypoint.routeId) return r;
+        const newPoints = [...r.points];
+        newPoints[draggingWaypoint.pointIndex] = {
+          x: Math.round(xPct * 10) / 10,
+          y: Math.round(yPct * 10) / 10,
+        };
+        return { ...r, points: newPoints };
+      });
+      onUpdateRoutes(updated);
+      return;
+    }
+
+    if (!isDraggingRef.current) return;
+    const dx = e.clientX - startMouseRef.current.x;
+    const dy = e.clientY - startMouseRef.current.y;
+    setPanX(startPanRef.current.x + dx);
+    setPanY(startPanRef.current.y + dy);
+  };
+
+  const handleMouseUp = () => {
+    isDraggingRef.current = false;
+    setDraggingWaypoint(null);
+  };
+
+  // Click Canvas to Add Waypoint in Editor Mode
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    if (!isEditorActive || !activeRouteId || !canvasRef.current || !onUpdateRoutes) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const xPct = Math.round((((e.clientX - rect.left) / rect.width) * 100) * 10) / 10;
+    const yPct = Math.round((((e.clientY - rect.top) / rect.height) * 100) * 10) / 10;
+
+    const updated = routes.map((r) => {
+      if (r.id !== activeRouteId) return r;
+      return {
+        ...r,
+        points: [...r.points, { x: xPct, y: yPct }],
+      };
+    });
+    onUpdateRoutes(updated);
+  };
+
+  const handleDeleteWaypoint = (routeId: string, pointIndex: number) => {
+    if (!onUpdateRoutes) return;
+    const updated = routes.map((r) => {
+      if (r.id !== routeId) return r;
+      return {
+        ...r,
+        points: r.points.filter((_, idx) => idx !== pointIndex),
+      };
+    });
+    onUpdateRoutes(updated);
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      onWheel={handleWheel}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      className={`relative w-full h-full min-h-[600px] overflow-hidden bg-slate-900 select-none flex items-center justify-center ${
+        isEditorActive ? 'cursor-crosshair' : 'cursor-grab active:cursor-grabbing'
+      }`}
+    >
+      {/* Quick Route Selector Banner (Always visible in editor mode) */}
+      {isEditorActive && (
+        <div className="absolute top-4 left-6 z-40 max-w-[calc(100vw-28rem)] overflow-x-auto flex items-center gap-2 p-1.5 bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-700 shadow-xl scrollbar-none">
+          <span className="text-[10px] font-bold text-slate-400 px-1 shrink-0">🎯 編輯路線:</span>
+          {routes.map((r) => {
+            const isSelected = r.id === activeRouteId;
+            const badgeIcon =
+              r.type === 'road' ? '🚗' : r.type === 'river' ? '🚤' : r.type === 'runway' ? '🛫' : '✈️';
+            const activeClass = isSelected
+              ? 'bg-amber-400 text-slate-950 font-black shadow-md scale-105 ring-2 ring-amber-300'
+              : 'bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium';
+
+            return (
+              <button
+                key={r.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectActiveRoute?.(r.id);
+                }}
+                className={`px-2.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 whitespace-nowrap transition-all ${activeClass}`}
+              >
+                <span>{badgeIcon}</span>
+                <span>{r.name}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-slate-900 text-amber-300' : 'bg-slate-700 text-slate-400'}`}>
+                  {r.points.length}點
+                </span>
+              </button>
+            );
+          })}
+
+          <div className="w-px h-5 bg-slate-700 mx-1 shrink-0" />
+
+          {/* Quick Add Buttons directly in top bar */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              const newId = `river-${Date.now()}`;
+              const newRoute: TrafficRoute = {
+                id: newId,
+                name: `新河流航道 #${routes.filter(r => r.type === 'river').length + 1}`,
+                type: 'river',
+                density: 2,
+                speed: 0.6,
+                points: [
+                  { x: 45, y: 55 },
+                  { x: 55, y: 55 },
+                ],
+              };
+              onUpdateRoutes?.([...routes, newRoute]);
+              onSelectActiveRoute?.(newId);
+            }}
+            className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white flex items-center gap-1 shrink-0 shadow transition"
+          >
+            <span>➕ 新增河流</span>
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              const newId = `road-${Date.now()}`;
+              const newRoute: TrafficRoute = {
+                id: newId,
+                name: `新道路 #${routes.filter(r => r.type === 'road').length + 1}`,
+                type: 'road',
+                density: 3,
+                speed: 1.0,
+                points: [
+                  { x: 40, y: 50 },
+                  { x: 60, y: 50 },
+                ],
+              };
+              onUpdateRoutes?.([...routes, newRoute]);
+              onSelectActiveRoute?.(newId);
+            }}
+            className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white flex items-center gap-1 shrink-0 shadow transition"
+          >
+            <span>➕ 新增道路</span>
+          </button>
+
+          <div className="w-px h-5 bg-slate-700 mx-1 shrink-0" />
+
+          {/* Quick Copy JSON Button directly in top bar */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigator.clipboard.writeText(JSON.stringify(routes, null, 2));
+              alert('✅ 已成功複製路徑設定 JSON！請直接貼在對話框傳給我！');
+            }}
+            className="px-3 py-1.5 rounded-xl text-xs font-black bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center gap-1.5 shrink-0 shadow-lg ring-2 ring-emerald-300 transition"
+          >
+            <span>📋 複製路徑 JSON</span>
+          </button>
+
+          <div className="w-px h-5 bg-slate-700 mx-1 shrink-0" />
+
+          {/* Toggle Hide/Show Waypoints Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowWaypoints((prev) => !prev);
+            }}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition shadow-sm shrink-0 border ${
+              showWaypoints
+                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-600'
+                : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 border-emerald-400 font-black ring-2 ring-emerald-300'
+            }`}
+            title="快捷鍵: 按鍵盤 H 鍵可隨時切換"
+          >
+            <span>{showWaypoints ? '👁️ 隱藏節點 (按 H)' : '🙈 顯示節點 (按 H)'}</span>
+          </button>
+        </div>
+      )}
+
+      {/* 2.5D Direct Drag Panning Map Canvas */}
+      <div
+        ref={canvasRef}
+        onClick={handleCanvasClick}
+        className="relative w-full max-w-6xl aspect-[16/9] transition-transform duration-150 ease-out shadow-2xl rounded-3xl overflow-hidden border border-slate-700 transform-gpu"
+        style={{
+          transform: `translate3d(${panX}px, ${panY}px, 0px) scale(${scale})`,
+        }}
+      >
+        {/* 1. Overview Diorama Layer (Always in DOM for instant seamless cross-dissolve) */}
+        <div
+          className={`absolute inset-0 w-full h-full transition-all duration-700 ease-out transform-gpu ${
+            !selectedDistrictId
+              ? 'opacity-100 scale-100 filter-none pointer-events-auto'
+              : 'opacity-0 scale-125 blur-sm pointer-events-none'
+          }`}
+        >
+          <Image
+            src="/images/diorama/diorama_00_v17_no_car.jpg"
+            alt="Northern Thailand Overview Diorama Map"
+            fill
+            priority
+            className="object-cover"
+          />
+        </div>
+
+        {/* 2. District Closeup Diorama Layer (Always in DOM so CSS transition executes in both directions) */}
+        <div
+          className={`absolute inset-0 w-full h-full transition-all duration-700 ease-out transform-gpu ${
+            selectedDistrictId
+              ? 'opacity-100 scale-100 filter-none pointer-events-auto'
+              : 'opacity-0 scale-90 blur-sm pointer-events-none'
+          }`}
+        >
+          <Image
+            src={currentDioramaArt}
+            alt="District 3D Closeup Diorama Map"
+            fill
+            priority
+            className="object-cover"
+          />
+        </div>
+
+        {/* Cinematic Camera Transition Vignette & Atmospheric Glow Flash */}
+        <div
+          className={`absolute inset-0 pointer-events-none transition-opacity duration-700 ${
+            selectedDistrictId
+              ? 'bg-gradient-to-t from-slate-950/30 via-transparent to-slate-950/15'
+              : 'bg-gradient-to-t from-slate-950/20 via-transparent to-slate-950/10'
+          }`}
+        />
+
+        {/* Dynamic Traffic & Animations Layer (Smoothly fades in/out with overview) */}
+        <div
+          className={`absolute inset-0 transition-opacity duration-500 ${
+            !selectedDistrictId ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          <TrafficLayer routes={routes} isEditorActive={isEditorActive && showWaypoints} />
+        </div>
+
+        {/* Waypoint Markers when Editor is Active & showWaypoints is true */}
+        {isEditorActive && showWaypoints && (
+          <div className="absolute inset-0 z-30 pointer-events-none">
+            {routes.map((r) => {
+              const isActiveRoute = r.id === activeRouteId;
+              const pointColor =
+                r.type === 'road'
+                  ? 'bg-amber-400 border-amber-600'
+                  : r.type === 'river'
+                  ? 'bg-sky-400 border-sky-600'
+                  : r.type === 'runway'
+                  ? 'bg-pink-400 border-pink-600'
+                  : 'bg-purple-400 border-purple-600';
+
+              return r.points.map((pt, pIdx) => (
+                <div
+                  key={`${r.id}-pt-${pIdx}`}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    onSelectActiveRoute?.(r.id);
+                    setDraggingWaypoint({ routeId: r.id, pointIndex: pIdx });
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectActiveRoute?.(r.id);
+                  }}
+                  onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteWaypoint(r.id, pIdx);
+                  }}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDeleteWaypoint(r.id, pIdx);
+                  }}
+                  className={`pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 shadow-md cursor-move flex items-center justify-center text-[8px] font-black transition-transform ${pointColor} ${
+                    isActiveRoute ? 'ring-2 ring-white scale-125 z-40 text-slate-950' : 'opacity-70 scale-90 text-slate-900'
+                  }`}
+                  style={{ left: `${pt.x}%`, top: `${pt.y}%` }}
+                  title={`${r.name} 節點 #${pIdx + 1} (${pt.x}, ${pt.y})\n點擊切換路線 / 拖曳移動 / 雙擊刪除`}
+                >
+                  {pIdx + 1}
+                </div>
+              ));
+            })}
+          </div>
+        )}
+
+
+
+        {/* Clean Frosted Lanna District Badges (Only displayed on Overview Map) */}
+        {!selectedDistrictId &&
+          DISTRICTS.map((dist) => {
+            let coords = { top: '50%', left: '50%' };
+
+            switch (dist.id) {
+              case 'doi-suthep-district':
+                coords = { top: '16%', left: '22%' }; // 左上角素帖山頂金塔下方 (避開左側清單欄)
+                break;
+              case 'nimman-district':
+                coords = { top: '36%', left: '26%' }; // 左側山腳尼曼街區
+                break;
+              case 'mae-rim-district':
+                coords = { top: '33%', left: '46%' }; // 古城北門外北郊梅林山谷綠地
+                break;
+              case 'old-city-district':
+                coords = { top: '51%', left: '46%' }; // 四方護城河正中央古城
+                break;
+              case 'south-city-district':
+                coords = { top: '67%', left: '45%' }; // 古城南門外 (瓦萊路/銀廟前)
+                break;
+              case 'night-bazaar-district':
+                coords = { top: '51%', left: '64%' }; // 古城東門外 ➔ 濱河畔與瓦洛洛市場區
+                break;
+              case 'hang-dong-district':
+                coords = { top: '80%', left: '38%' }; // 南郊杭東與美王休閒區
+                break;
+              case 'mae-kampong-district':
+              case 'san-kamphaeng-district':
+                coords = { top: '58%', left: '76%' }; // 東郊湄康蓬古村、大樹咖啡與溫泉區 (往內收避免溢出)
+                break;
+              case 'chiang-dao-district':
+                coords = { top: '15%', left: '42%' }; // 北郊湄林與清道秘境
+                break;
+              case 'doi-inthanon-district':
+                coords = { top: '86%', left: '26%' }; // 西南郊茵他儂國家公園
+                break;
+              case 'chiang-rai-city-district':
+                coords = { top: '23%', left: '55%' }; // 清萊市區藝術區
+                break;
+              case 'tea-mountain-district':
+                coords = { top: '15%', left: '72%' }; // 右上角高山茶園區
+                break;
+              default:
+                break;
+            }
+
+            const isSelected = selectedDistrictId === dist.id;
+            // Strip any emoji from the display name to keep pure text
+            const distName = (dist.name[language] || dist.name['zh-TW']).replace(/^[^\s\w\u4e00-\u9fa5]+\s*/, '').trim();
+
+            return (
+              <button
+                key={dist.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectDistrict(dist.id);
+                  onSelectRegion(dist.regionId);
+                }}
+                style={{ top: coords.top, left: coords.left }}
+                className={`absolute -translate-x-1/2 -translate-y-1/2 z-25 group cursor-pointer transition-all duration-200 ${
+                  isSelected ? 'scale-110 z-40' : 'hover:scale-105'
+                }`}
+              >
+                <div className="relative flex flex-col items-center">
+                  <div
+                    className={`px-3.5 py-1.5 rounded-xl shadow-md border flex items-center justify-center transition-all duration-200 backdrop-blur-md ${
+                      isSelected
+                        ? 'bg-lanna-gold text-white border-lanna-gold ring-2 ring-lanna-gold/40 shadow-lg'
+                        : 'bg-lanna-cream/90 hover:bg-white text-lanna-coffee border-lanna-gold/30 shadow-sm'
+                    }`}
+                  >
+                    <span className={`text-sm tracking-wide whitespace-nowrap font-serif ${isSelected ? 'font-bold text-white' : 'font-bold text-lanna-coffee'}`}>
+                      {distName}
+                    </span>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+      </div>
+    </div>
+  );
+}
+

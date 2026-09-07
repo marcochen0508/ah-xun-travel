@@ -38,6 +38,7 @@ const Navbar = () => {
                     // Fallback to defaults if no links in DB
                     const defaults: any[] = [
                         { id: '1', url: "/", label_zh_tw: t.nav.home, label_zh_cn: t.nav.home, label_th: t.nav.home },
+                        { id: '3d', url: "/tour-3d", label_zh_tw: "🗺️ 3D 旅遊導覽", label_zh_cn: "🗺️ 3D 旅游导览", label_th: "🗺️ 3D Tour" },
                         { id: '2', url: "#services", label_zh_tw: t.nav.services, label_zh_cn: t.nav.services, label_th: t.nav.services },
                         { id: '3', url: "#destinations", label_zh_tw: t.nav.destinations, label_zh_cn: t.nav.destinations, label_th: t.nav.destinations },
                         { id: '4', url: "#about", label_zh_tw: t.nav.about, label_zh_cn: t.nav.about, label_th: t.nav.about },
