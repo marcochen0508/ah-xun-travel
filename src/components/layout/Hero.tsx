@@ -11,7 +11,7 @@ export default function Hero({ customTitle, customSubtitle }: { customTitle?: st
     const { t } = useLanguage();
     const [bannerList, setBannerList] = useState<Banner[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [bgImage, setBgImage] = useState("/images/banner-default.jpg"); // Default fallback
+    const [bgImage, setBgImage] = useState("/hero-bg-new.jpg"); // Default fallback
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [intervalMs, setIntervalMs] = useState(5000);
 
