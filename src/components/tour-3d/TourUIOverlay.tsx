@@ -550,54 +550,54 @@ export default function TourUIOverlay({
         </div>
       )}
 
-      {/* TOP HEADER */}
-      <header className="pointer-events-auto flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-lanna-cream/95 backdrop-blur-md border border-lanna-gold/40 px-4 py-3 rounded-2xl shadow-md">
-        {/* Title & Brand Logo matching Ah Xun Travel Navbar */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee transition text-xs font-bold border border-lanna-gold/30 shadow-sm"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 text-lanna-gold" />
-              <span className="hidden sm:inline">
-                {language === 'en' ? 'Back to Home' : language === 'th' ? 'กลับหน้าแรก' : '返回官網'}
+      {/* TOP HEADER - SLEEK & COMPACT SINGLE ROW ON ALL SCREENS */}
+      <header className="pointer-events-auto bg-lanna-cream/95 backdrop-blur-md border border-lanna-gold/40 px-3 sm:px-4 py-2 sm:py-3 rounded-2xl shadow-md flex items-center justify-between gap-2 sm:gap-3">
+        {/* Left: Brand Logo matching Ah Xun Travel Navbar */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <Link
+            href="/"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee transition text-xs font-bold border border-lanna-gold/30 shadow-sm shrink-0"
+            title="返回官網"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-lanna-gold shrink-0" />
+            <span className="hidden sm:inline">
+              {language === 'en' ? 'Home' : language === 'th' ? 'กลับหน้าแรก' : '官網'}
+            </span>
+          </Link>
+          
+          <Link href="/" className="flex items-center gap-1.5 sm:gap-2 group">
+            <span className="text-xl sm:text-2xl">🐘</span>
+            <div className="flex flex-col">
+              <span className="tracking-widest font-serif text-sm sm:text-base font-bold text-lanna-coffee leading-tight group-hover:text-lanna-gold transition">
+                阿勛
               </span>
-            </Link>
-            <div className="h-6 w-px bg-lanna-gold/30 hidden sm:block" />
-            <Link href="/" className="flex items-center gap-2 group">
-              <span className="text-2xl sm:text-3xl">🐘</span>
-              <div className="flex flex-col">
-                <span className="tracking-widest font-serif text-base sm:text-lg font-bold text-lanna-coffee leading-tight group-hover:text-lanna-gold transition">
-                  阿勛
-                </span>
-                <span className="text-[10px] font-normal tracking-wider text-lanna-coffee/80">
-                  清邁包車旅遊規劃
-                </span>
-              </div>
-            </Link>
-            <div className="h-5 w-px bg-lanna-gold/20 hidden md:block" />
-            <div className="hidden md:flex items-center gap-2">
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-lanna-gold/15 text-lanna-coffee font-serif font-bold border border-lanna-gold/40">
-                🗺️ 3D 泰北雙城導覽
+              <span className="text-[9px] sm:text-[10px] font-normal tracking-wider text-lanna-coffee/80 hidden xs:inline">
+                清邁包車
               </span>
             </div>
+          </Link>
+          
+          <div className="hidden md:flex items-center gap-2">
+            <div className="h-5 w-px bg-lanna-gold/20" />
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-lanna-gold/15 text-lanna-coffee font-serif font-bold border border-lanna-gold/40">
+              🗺️ 3D 泰北雙城導覽
+            </span>
           </div>
         </div>
 
         {/* Right Side: Itinerary, Weather, Passport & Language Switcher */}
-        <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap justify-end">
+        <div className="flex items-center gap-1.5 sm:gap-2 justify-end shrink-0">
           {/* Custom Itinerary Capsule Button */}
           <button
             onClick={() => setShowItineraryModal(true)}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white border border-amber-300/40 text-xs sm:text-sm font-bold font-serif transition-all shadow-md hover:shadow-lg active:scale-95 shrink-0"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white border border-amber-300/40 text-xs sm:text-sm font-bold font-serif transition-all shadow-md hover:shadow-lg active:scale-95 shrink-0"
             title="查看我的自訂行程心願單"
           >
-            <Route className="w-4 h-4 text-amber-100" />
-            <span>
-              {language === 'en' ? 'My Itinerary' : language === 'th' ? 'แผนการเดินทาง' : '自訂行程心願單'}
+            <Route className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-100 shrink-0" />
+            <span className="hidden sm:inline">
+              {language === 'en' ? 'Itinerary' : language === 'th' ? 'แผนการเดินทาง' : '心願單'}
             </span>
-            <span className="bg-white text-amber-900 px-2 py-0.2 rounded-full text-xs font-black shadow-inner">
+            <span className="bg-white text-amber-900 px-1.5 sm:px-2 py-0.2 rounded-full text-[11px] sm:text-xs font-black shadow-inner">
               {wishlist.length}
             </span>
           </button>
@@ -605,17 +605,17 @@ export default function TourUIOverlay({
           {/* Live Weather Pill Badge */}
           <button
             onClick={() => setShowWeatherModal(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee border border-lanna-gold/40 text-xs font-bold transition shadow-sm group active:scale-95"
+            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee border border-lanna-gold/40 text-xs font-bold transition shadow-sm group active:scale-95 shrink-0"
             title={language === 'en' ? 'Live Meteorological & Air Quality Data' : language === 'th' ? 'สภาพอากาศและมลพิษทางอากาศสด' : '即時天氣與空氣品質 (點擊查看詳情)'}
           >
             {headerWeather ? (
               <>
-                <span className="text-base leading-none drop-shadow-sm">{headerWeather.current.weatherIcon}</span>
-                <span className="text-lanna-coffee font-black">{headerWeather.current.temperature}°C</span>
-                <span className="hidden md:inline text-lanna-gold font-normal">|</span>
-                <span className="hidden md:inline text-lanna-coffee font-semibold">{headerWeather.locationName[language]}</span>
+                <span className="text-sm sm:text-base leading-none drop-shadow-sm shrink-0">{headerWeather.current.weatherIcon}</span>
+                <span className="text-lanna-coffee font-black text-xs sm:text-sm">{headerWeather.current.temperature}°C</span>
+                <span className="hidden lg:inline text-lanna-gold font-normal">|</span>
+                <span className="hidden lg:inline text-lanna-coffee font-semibold">{headerWeather.locationName[language]}</span>
                 <span
-                  className="px-1.5 py-0.5 rounded text-[10px] font-black border"
+                  className="hidden md:inline px-1.5 py-0.5 rounded text-[10px] font-black border"
                   style={{
                     backgroundColor: headerWeather.airQuality.aqiColor + '20',
                     color: headerWeather.airQuality.aqiColor,
@@ -626,48 +626,55 @@ export default function TourUIOverlay({
                 </span>
               </>
             ) : (
-              <div className="flex items-center gap-1.5 text-lanna-coffee/70">
-                <span className="animate-spin text-xs">⏳</span>
-                <span>{language === 'en' ? 'Weather...' : language === 'th' ? 'กำลังโหลด...' : '讀取天氣中...'}</span>
-              </div>
+              <span className="text-[11px] text-lanna-coffee/70">⛅ 天氣</span>
             )}
           </button>
 
           {/* Passport Stamp Button */}
           <button
             onClick={() => setShowPassportModal(true)}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee border border-lanna-gold/40 text-sm font-bold transition shadow-sm"
+            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3.5 py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee border border-lanna-gold/40 text-xs sm:text-sm font-bold transition shadow-sm shrink-0"
+            title="泰北旅行護照集章"
           >
-            <Award className="w-4 h-4 text-lanna-gold" />
-            <span>
-              {language === 'en' ? 'Passport' : language === 'th' ? 'พาสปอร์ต' : '護照集章'}
+            <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-lanna-gold shrink-0" />
+            <span className="hidden sm:inline">
+              {language === 'en' ? 'Passport' : language === 'th' ? 'พาสปอร์ต' : '護照'}
             </span>
-            <span className="bg-lanna-gold text-white px-2 py-0.5 rounded-full text-xs font-bold">
-              {collectedStamps.length}/{LANDMARKS.length}
+            <span className="bg-lanna-gold text-white px-1.5 sm:px-2 py-0.2 rounded-full text-[10px] sm:text-xs font-bold">
+              {collectedStamps.length}
             </span>
           </button>
 
           {/* Language Switcher */}
-          <div className="flex items-center bg-white p-1 rounded-xl border border-lanna-gold/30 text-sm font-semibold text-lanna-coffee shadow-sm">
-            <Globe className="w-4 h-4 text-lanna-gold ml-1.5 mr-1" />
+          <div className="flex items-center bg-white p-0.5 sm:p-1 rounded-xl border border-lanna-gold/30 text-xs sm:text-sm font-semibold text-lanna-coffee shadow-sm shrink-0">
             <button
-              onClick={() => onLanguageChange('zh-TW')}
-              className={`px-2.5 py-1 rounded-lg transition ${language === 'zh-TW' ? 'bg-lanna-gold text-white font-bold shadow-sm' : 'text-lanna-coffee hover:bg-lanna-cream'}`}
+              onClick={() => onLanguageChange(language === 'zh-TW' ? 'en' : language === 'en' ? 'th' : 'zh-TW')}
+              className="sm:hidden px-2 py-1 rounded-lg bg-lanna-gold text-white font-bold text-xs"
+              title="切換語系"
             >
-              繁中
+              {language === 'zh-TW' ? '繁中' : language === 'en' ? 'EN' : 'ไทย'}
             </button>
-            <button
-              onClick={() => onLanguageChange('en')}
-              className={`px-2.5 py-1 rounded-lg transition ${language === 'en' ? 'bg-lanna-gold text-white font-bold shadow-sm' : 'text-lanna-coffee hover:bg-lanna-cream'}`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => onLanguageChange('th')}
-              className={`px-2.5 py-1 rounded-lg transition ${language === 'th' ? 'bg-lanna-gold text-white font-bold shadow-sm' : 'text-lanna-coffee hover:bg-lanna-cream'}`}
-            >
-              ไทย
-            </button>
+            <div className="hidden sm:flex items-center">
+              <Globe className="w-4 h-4 text-lanna-gold ml-1.5 mr-1" />
+              <button
+                onClick={() => onLanguageChange('zh-TW')}
+                className={`px-2 py-0.5 rounded-lg transition text-xs ${language === 'zh-TW' ? 'bg-lanna-gold text-white font-bold shadow-sm' : 'text-lanna-coffee hover:bg-lanna-cream'}`}
+              >
+                繁中
+              </button>
+              <button
+                onClick={() => onLanguageChange('en')}
+                className={`px-2 py-0.5 rounded-lg transition text-xs ${language === 'en' ? 'bg-lanna-gold text-white font-bold shadow-sm' : 'text-lanna-coffee hover:bg-lanna-cream'}`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => onLanguageChange('th')}
+                className={`px-2 py-0.5 rounded-lg transition text-xs ${language === 'th' ? 'bg-lanna-gold text-white font-bold shadow-sm' : 'text-lanna-coffee hover:bg-lanna-cream'}`}
+              >
+                ไทย
+              </button>
+            </div>
           </div>
         </div>
       </header>

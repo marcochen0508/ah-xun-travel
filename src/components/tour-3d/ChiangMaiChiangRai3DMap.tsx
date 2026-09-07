@@ -421,41 +421,41 @@ export default function ChiangMaiChiangRai3DMap({
 
             switch (dist.id) {
               case 'doi-suthep-district':
-                coords = { top: '16%', left: '22%' }; // 左上角素帖山頂金塔下方 (避開左側清單欄)
+                coords = { top: '15%', left: '20%' };
                 break;
               case 'nimman-district':
-                coords = { top: '36%', left: '26%' }; // 左側山腳尼曼街區
+                coords = { top: '38%', left: '22%' };
                 break;
               case 'mae-rim-district':
-                coords = { top: '33%', left: '46%' }; // 古城北門外北郊梅林山谷綠地
+                coords = { top: '30%', left: '46%' };
                 break;
               case 'old-city-district':
-                coords = { top: '51%', left: '46%' }; // 四方護城河正中央古城
+                coords = { top: '50%', left: '46%' };
                 break;
               case 'south-city-district':
-                coords = { top: '67%', left: '45%' }; // 古城南門外 (瓦萊路/銀廟前)
+                coords = { top: '66%', left: '46%' };
                 break;
               case 'night-bazaar-district':
-                coords = { top: '51%', left: '64%' }; // 古城東門外 ➔ 濱河畔與瓦洛洛市場區
+                coords = { top: '50%', left: '68%' };
                 break;
               case 'hang-dong-district':
-                coords = { top: '80%', left: '38%' }; // 南郊杭東與美王休閒區
+                coords = { top: '82%', left: '38%' };
                 break;
               case 'mae-kampong-district':
               case 'san-kamphaeng-district':
-                coords = { top: '58%', left: '76%' }; // 東郊湄康蓬古村、大樹咖啡與溫泉區 (往內收避免溢出)
+                coords = { top: '64%', left: '80%' };
                 break;
               case 'chiang-dao-district':
-                coords = { top: '15%', left: '42%' }; // 北郊湄林與清道秘境
+                coords = { top: '12%', left: '44%' };
                 break;
               case 'doi-inthanon-district':
-                coords = { top: '86%', left: '26%' }; // 西南郊茵他儂國家公園
+                coords = { top: '88%', left: '20%' };
                 break;
               case 'chiang-rai-city-district':
-                coords = { top: '23%', left: '55%' }; // 清萊市區藝術區
+                coords = { top: '22%', left: '58%' };
                 break;
               case 'tea-mountain-district':
-                coords = { top: '15%', left: '72%' }; // 右上角高山茶園區
+                coords = { top: '14%', left: '78%' };
                 break;
               default:
                 break;
@@ -480,13 +480,13 @@ export default function ChiangMaiChiangRai3DMap({
               >
                 <div className="relative flex flex-col items-center">
                   <div
-                    className={`px-3.5 py-1.5 rounded-xl shadow-md border flex items-center justify-center transition-all duration-200 backdrop-blur-md ${
+                    className={`px-2 py-0.5 sm:px-3.5 sm:py-1.5 rounded-lg sm:rounded-xl shadow-md border flex items-center justify-center transition-all duration-200 backdrop-blur-md ${
                       isSelected
                         ? 'bg-lanna-gold text-white border-lanna-gold ring-2 ring-lanna-gold/40 shadow-lg'
-                        : 'bg-lanna-cream/90 hover:bg-white text-lanna-coffee border-lanna-gold/30 shadow-sm'
+                        : 'bg-lanna-cream/95 hover:bg-white text-lanna-coffee border-lanna-gold/40 shadow-sm'
                     }`}
                   >
-                    <span className={`text-sm tracking-wide whitespace-nowrap font-serif ${isSelected ? 'font-bold text-white' : 'font-bold text-lanna-coffee'}`}>
+                    <span className={`text-[10px] sm:text-sm tracking-tight sm:tracking-wide whitespace-nowrap font-sans font-bold ${isSelected ? 'text-white' : 'text-lanna-coffee'}`}>
                       {distName}
                     </span>
                   </div>
