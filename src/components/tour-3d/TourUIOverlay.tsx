@@ -2024,11 +2024,11 @@ export default function TourUIOverlay({
                           </div>
 
                           {/* Title & District Tag */}
-                          <div className="w-full flex flex-col items-center gap-1">
+                          <div className="w-full flex flex-col items-center gap-1.5">
                             <h4
                               className={`text-xs sm:text-sm leading-snug line-clamp-2 w-full text-center ${
                                 isUnlocked
-                                  ? 'font-bold text-stone-900'
+                                  ? 'font-bold text-stone-950'
                                   : 'font-semibold text-stone-800'
                               }`}
                             >
@@ -2036,10 +2036,10 @@ export default function TourUIOverlay({
                             </h4>
                             {districtLabel && (
                               <span
-                                className={`text-[10px] px-2 py-0.5 rounded-md truncate max-w-full font-medium ${
+                                className={`text-[11px] px-2 py-0.5 rounded-md truncate max-w-full font-bold ${
                                   isUnlocked
-                                    ? 'text-amber-900 bg-amber-100/90'
-                                    : 'text-stone-500 bg-stone-100'
+                                    ? 'text-amber-950 bg-amber-200/90 border border-amber-300'
+                                    : 'text-stone-700 bg-stone-100 border border-stone-200'
                                 }`}
                               >
                                 {districtLabel}
@@ -2048,14 +2048,14 @@ export default function TourUIOverlay({
                           </div>
 
                           {/* Status Badge */}
-                          <div className="mt-auto w-full pt-1">
+                          <div className="mt-auto w-full pt-1.5">
                             {isUnlocked ? (
-                              <span className="inline-flex items-center justify-center gap-1 w-full text-[11px] font-bold text-amber-900 bg-amber-100/90 border border-amber-300/80 py-1 px-2 rounded-full shadow-2xs">
+                              <span className="inline-flex items-center justify-center gap-1.5 w-full text-xs font-bold text-white bg-gradient-to-r from-amber-600 via-amber-650 to-amber-700 border border-amber-800/30 py-1 px-3 rounded-full shadow-xs">
                                 <span>💮 已集章</span>
                               </span>
                             ) : (
-                              <span className="inline-flex items-center justify-center gap-1 w-full text-[11px] font-medium text-stone-600 bg-stone-100 border border-stone-200 py-1 px-2 rounded-full">
-                                <span>尚未解鎖</span>
+                              <span className="inline-flex items-center justify-center gap-1.5 w-full text-xs font-bold text-stone-700 bg-stone-100 border border-stone-300 py-1 px-3 rounded-full shadow-2xs">
+                                <span>🔒 尚未解鎖</span>
                               </span>
                             )}
                           </div>
