@@ -231,7 +231,7 @@ export default function ChiangMaiChiangRai3DMap({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className={`relative w-full h-full min-h-[600px] overflow-hidden bg-slate-900 select-none flex items-center justify-center ${
+      className={`relative w-full h-full min-h-[100dvh] md:min-h-[600px] overflow-hidden bg-[#dce5ed] md:bg-slate-900 select-none flex items-center justify-center ${
         isEditorActive ? 'cursor-crosshair' : 'cursor-grab active:cursor-grabbing'
       }`}
     >
@@ -352,7 +352,7 @@ export default function ChiangMaiChiangRai3DMap({
       <div
         ref={canvasRef}
         onClick={handleCanvasClick}
-        className="relative w-full aspect-[3/4] md:aspect-[16/9] max-w-6xl max-h-[72vh] md:max-h-none transition-transform duration-150 ease-out shadow-2xl rounded-2xl md:rounded-3xl overflow-hidden border border-slate-700 transform-gpu shrink-0 my-auto"
+        className="relative w-full h-full md:h-auto md:aspect-[16/9] md:max-w-6xl md:max-h-none transition-transform duration-150 ease-out shadow-none md:shadow-2xl rounded-none md:rounded-3xl overflow-hidden border-0 md:border md:border-slate-700 transform-gpu shrink-0 my-0 md:my-auto"
         style={{
           transform: `translate3d(${panX}px, ${panY}px, 0px) scale(${scale})`,
         }}

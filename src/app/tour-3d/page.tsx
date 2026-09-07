@@ -105,7 +105,7 @@ export default function Tour3DPage() {
   };
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-slate-900 font-sans">
+    <main className="relative w-screen h-screen overflow-hidden bg-[#dce5ed] md:bg-slate-900 font-sans">
       {/* 3D Map & Dynamic Animated Traffic Canvas */}
       <div className="w-full h-full">
         <ChiangMaiChiangRai3DMap
