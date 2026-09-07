@@ -1161,7 +1161,7 @@ export default function TourUIOverlay({
             >
               <MapPin className="w-4 h-4 text-lanna-gold shrink-0" />
               <span className="font-bold font-sans text-lanna-coffee text-xs sm:text-sm truncate">
-                {selectedDistrictName ? `${selectedDistrictName}` : '泰北雙城 12 分區總覽'}
+                {selectedDistrictName ? `${selectedDistrictName}` : '泰北 11 大分區總覽'}
               </span>
               <span className="text-[10px] bg-amber-50 border border-lanna-gold/40 text-amber-900 px-2 py-0.2 rounded-full font-bold shrink-0">
                 {filteredLandmarks.length} 處
@@ -1191,14 +1191,17 @@ export default function TourUIOverlay({
             </div>
           </div>
 
-          {/* Horizontal Scrollable Category Chips */}
+          {/* Horizontal Scrollable Category Chips (Auto Open Drawer On Click) */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
             {categories.map((cat) => {
               const isSelected = selectedCategoryId === cat.id;
               return (
                 <button
                   key={cat.id || 'all'}
-                  onClick={() => onCategoryChange(cat.id)}
+                  onClick={() => {
+                    onCategoryChange(cat.id);
+                    setMobileListOpen(true);
+                  }}
                   className={`px-2.5 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-all shrink-0 border ${
                     isSelected
                       ? 'bg-lanna-gold text-white border-lanna-gold shadow-sm'

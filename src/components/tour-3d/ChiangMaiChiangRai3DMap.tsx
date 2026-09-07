@@ -515,13 +515,13 @@ export default function ChiangMaiChiangRai3DMap({
                 coordsDesktop = { top: '67%', left: '45%' };
                 coordsMobile = { top: '58%', left: '44%' };
                 icon = '🪙';
-                shortNameZh = '瓦萊';
+                shortNameZh = '古城南區';
                 break;
               case 'night-bazaar-district':
                 coordsDesktop = { top: '51%', left: '64%' };
                 coordsMobile = { top: '48%', left: '88%' };
                 icon = '🏮';
-                shortNameZh = '夜市';
+                shortNameZh = '湄平河夜市';
                 break;
               case 'hang-dong-district':
                 coordsDesktop = { top: '80%', left: '38%' };
@@ -546,7 +546,7 @@ export default function ChiangMaiChiangRai3DMap({
                 coordsDesktop = { top: '86%', left: '26%' };
                 coordsMobile = { top: '72%', left: '28%' };
                 icon = '👑';
-                shortNameZh = '茵他儂';
+                shortNameZh = '因他農';
                 break;
               case 'chiang-rai-city-district':
                 coordsDesktop = { top: '23%', left: '55%' };
@@ -558,7 +558,7 @@ export default function ChiangMaiChiangRai3DMap({
                 coordsDesktop = { top: '15%', left: '72%' };
                 coordsMobile = { top: '12%', left: '82%' };
                 icon = '🍵';
-                shortNameZh = '金三角';
+                shortNameZh = '金三角茶園';
                 break;
               default:
                 break;
