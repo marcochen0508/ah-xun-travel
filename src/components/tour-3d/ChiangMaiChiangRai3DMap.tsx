@@ -610,13 +610,12 @@ export default function ChiangMaiChiangRai3DMap({
                   }`}
                 >
                   <div
-                    className={`flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg border backdrop-blur-md transition-all duration-300 ${
+                    className={`flex items-center justify-center px-2 py-0.5 rounded-full shadow-lg border backdrop-blur-md transition-all duration-300 ${
                       isSelected
                         ? 'bg-amber-600 text-white border-amber-300 ring-2 ring-amber-400/50 shadow-amber-900/40'
                         : 'bg-[#1C140E]/88 hover:bg-[#2C1D13] text-amber-100 border-amber-400/40 ring-1 ring-amber-300/20 shadow-black/60'
                     }`}
                   >
-                    <span className="text-[11px] leading-none shrink-0 drop-shadow">{icon}</span>
                     <span className={`text-[10px] font-bold font-sans tracking-tight whitespace-nowrap ${isSelected ? 'text-white font-extrabold' : 'text-amber-50'}`}>
                       {language === 'zh-TW' ? shortNameZh : distName}
                     </span>
