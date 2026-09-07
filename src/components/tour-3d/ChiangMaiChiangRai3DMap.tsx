@@ -96,11 +96,15 @@ export default function ChiangMaiChiangRai3DMap({
     currentDioramaArt = '/images/diorama/6_lalitta_cafe_chiang_rai.jpg';
   }
 
-  // Reset pan and scale when switching between overview and district
+  // Track touch pan and pinch-to-zoom gestures on mobile
+  const touchStartRef = useRef<{ x: number; y: number; dist: number }>({ x: 0, y: 0, dist: 0 });
+
+  // Set initial scale responsive to screen size (mobile needs ~1.65x to fill screen height)
   useEffect(() => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     setPanX(0);
     setPanY(0);
-    setScale(1.05);
+    setScale(isMobile ? 1.65 : 1.05);
   }, [selectedDistrictId]);
 
   // Mouse Wheel Zooming
@@ -149,6 +153,45 @@ export default function ChiangMaiChiangRai3DMap({
     setDraggingWaypoint(null);
   };
 
+  // Mobile Touch Pan and Pinch-to-Zoom handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      isDraggingRef.current = true;
+      startMouseRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      startPanRef.current = { x: panX, y: panY };
+    } else if (e.touches.length === 2) {
+      isDraggingRef.current = false;
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      touchStartRef.current = {
+        x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+        y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
+        dist: Math.hypot(dx, dy),
+      };
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length === 1 && isDraggingRef.current) {
+      const dx = e.touches[0].clientX - startMouseRef.current.x;
+      const dy = e.touches[0].clientY - startMouseRef.current.y;
+      setPanX(startPanRef.current.x + dx);
+      setPanY(startPanRef.current.y + dy);
+    } else if (e.touches.length === 2 && touchStartRef.current.dist > 0) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const newDist = Math.hypot(dx, dy);
+      const factor = newDist / touchStartRef.current.dist;
+      setScale((prev) => Math.min(Math.max(prev * factor, 0.9), 3.5));
+      touchStartRef.current.dist = newDist;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    isDraggingRef.current = false;
+    touchStartRef.current = { x: 0, y: 0, dist: 0 };
+  };
+
   // Click Canvas to Add Waypoint in Editor Mode
   const handleCanvasClick = (e: React.MouseEvent) => {
     if (!isEditorActive || !activeRouteId || !canvasRef.current || !onUpdateRoutes) return;
@@ -186,7 +229,10 @@ export default function ChiangMaiChiangRai3DMap({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      className={`relative w-full h-full min-h-[600px] overflow-hidden bg-slate-900 select-none flex items-center justify-center ${
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      className={`relative w-full h-full min-h-[600px] overflow-hidden bg-gradient-to-b from-[#120D0A] via-[#1C140E] to-[#0E0906] select-none flex items-center justify-center ${
         isEditorActive ? 'cursor-crosshair' : 'cursor-grab active:cursor-grabbing'
       }`}
     >
