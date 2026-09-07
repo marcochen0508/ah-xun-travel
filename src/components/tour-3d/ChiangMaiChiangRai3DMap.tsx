@@ -231,7 +231,7 @@ export default function ChiangMaiChiangRai3DMap({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className={`relative w-full h-full min-h-[600px] overflow-hidden bg-gradient-to-b from-[#120D0A] via-[#1C140E] to-[#0E0906] select-none flex items-center justify-center ${
+      className={`relative w-full h-full min-h-[600px] overflow-hidden bg-slate-900 select-none flex items-center justify-center ${
         isEditorActive ? 'cursor-crosshair' : 'cursor-grab active:cursor-grabbing'
       }`}
     >
@@ -352,7 +352,7 @@ export default function ChiangMaiChiangRai3DMap({
       <div
         ref={canvasRef}
         onClick={handleCanvasClick}
-        className="relative w-full aspect-[16/9] max-w-6xl transition-transform duration-150 ease-out shadow-2xl rounded-2xl md:rounded-3xl overflow-hidden border border-amber-900/30 transform-gpu shrink-0"
+        className="relative w-full aspect-[16/9] max-w-6xl transition-transform duration-150 ease-out shadow-2xl rounded-2xl md:rounded-3xl overflow-hidden border border-slate-700 transform-gpu shrink-0"
         style={{
           transform: `translate3d(${panX}px, ${panY}px, 0px) scale(${scale})`,
         }}
@@ -466,63 +466,63 @@ export default function ChiangMaiChiangRai3DMap({
 
             switch (dist.id) {
               case 'doi-suthep-district':
-                coords = { top: '15%', left: '20%' };
+                coords = { top: '16%', left: '22%' }; // 左上角素帖山頂金塔下方
                 icon = '⛰️';
                 shortNameZh = '素帖山';
                 break;
               case 'nimman-district':
-                coords = { top: '38%', left: '22%' };
+                coords = { top: '36%', left: '26%' }; // 左側山腳尼曼街區
                 icon = '☕';
                 shortNameZh = '尼曼';
                 break;
               case 'mae-rim-district':
-                coords = { top: '30%', left: '46%' };
+                coords = { top: '33%', left: '46%' }; // 古城北門外北郊梅林山谷綠地
                 icon = '🐘';
                 shortNameZh = '美林';
                 break;
               case 'old-city-district':
-                coords = { top: '50%', left: '46%' };
+                coords = { top: '51%', left: '46%' }; // 四方護城河正中央古城
                 icon = '🏛️';
                 shortNameZh = '古城';
                 break;
               case 'south-city-district':
-                coords = { top: '66%', left: '46%' };
+                coords = { top: '67%', left: '45%' }; // 古城南門外 (瓦萊路/銀廟前)
                 icon = '🪙';
                 shortNameZh = '瓦萊';
                 break;
               case 'night-bazaar-district':
-                coords = { top: '50%', left: '68%' };
+                coords = { top: '51%', left: '64%' }; // 古城東門外 ➔ 濱河畔與瓦洛洛市場區
                 icon = '🏮';
                 shortNameZh = '夜市';
                 break;
               case 'hang-dong-district':
-                coords = { top: '82%', left: '38%' };
+                coords = { top: '80%', left: '38%' }; // 南郊杭東與美王休閒區
                 icon = '🪵';
                 shortNameZh = '杭東';
                 break;
               case 'mae-kampong-district':
               case 'san-kamphaeng-district':
-                coords = { top: '64%', left: '80%' };
+                coords = { top: '58%', left: '76%' }; // 東郊湄康蓬古村、大樹咖啡與溫泉區
                 icon = '🌿';
                 shortNameZh = '湄康蓬';
                 break;
               case 'chiang-dao-district':
-                coords = { top: '12%', left: '44%' };
+                coords = { top: '15%', left: '42%' }; // 北郊湄林與清道秘境
                 icon = '🏔️';
                 shortNameZh = '清道';
                 break;
               case 'doi-inthanon-district':
-                coords = { top: '88%', left: '20%' };
+                coords = { top: '86%', left: '26%' }; // 西南郊茵他儂國家公園
                 icon = '👑';
                 shortNameZh = '茵他儂';
                 break;
               case 'chiang-rai-city-district':
-                coords = { top: '22%', left: '58%' };
+                coords = { top: '23%', left: '55%' }; // 清萊市區藝術區
                 icon = '🎨';
                 shortNameZh = '清萊市區';
                 break;
               case 'tea-mountain-district':
-                coords = { top: '14%', left: '78%' };
+                coords = { top: '15%', left: '72%' }; // 右上角高山茶園區
                 icon = '🍵';
                 shortNameZh = '金三角';
                 break;
@@ -543,21 +543,36 @@ export default function ChiangMaiChiangRai3DMap({
                   onSelectRegion(dist.regionId);
                 }}
                 style={{ top: coords.top, left: coords.left }}
-                className={`absolute -translate-x-1/2 -translate-y-1/2 z-25 group cursor-pointer transition-all duration-300 active:scale-95 ${
+                className={`absolute -translate-x-1/2 -translate-y-1/2 z-25 group cursor-pointer transition-all duration-200 ${
                   isSelected ? 'scale-110 z-40' : 'hover:scale-105'
                 }`}
               >
+                {/* Desktop: Original clean Lanna cream rectangular badge */}
+                <div className="hidden md:flex relative flex-col items-center">
+                  <div
+                    className={`px-3.5 py-1.5 rounded-xl shadow-md border flex items-center justify-center transition-all duration-200 backdrop-blur-md ${
+                      isSelected
+                        ? 'bg-lanna-gold text-white border-lanna-gold ring-2 ring-lanna-gold/40 shadow-lg'
+                        : 'bg-lanna-cream/90 hover:bg-white text-lanna-coffee border-lanna-gold/30 shadow-sm'
+                    }`}
+                  >
+                    <span className={`text-sm tracking-wide whitespace-nowrap font-serif ${isSelected ? 'font-bold text-white' : 'font-bold text-lanna-coffee'}`}>
+                      {distName}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Mobile: Compact mini badge */}
                 <div
-                  className={`flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-full shadow-lg border backdrop-blur-md transition-all duration-300 ${
+                  className={`flex md:hidden items-center gap-1 px-2 py-0.5 rounded-full shadow-lg border backdrop-blur-md transition-all duration-300 ${
                     isSelected
                       ? 'bg-amber-600 text-white border-amber-300 ring-2 ring-amber-400/50 shadow-amber-900/40'
                       : 'bg-[#1C140E]/88 hover:bg-[#2C1D13] text-amber-100 border-amber-400/40 ring-1 ring-amber-300/20 shadow-black/60'
                   }`}
                 >
-                  <span className="text-[11px] sm:text-sm leading-none shrink-0 drop-shadow">{icon}</span>
-                  <span className={`text-[10px] sm:text-xs font-bold font-sans tracking-tight sm:tracking-wide whitespace-nowrap ${isSelected ? 'text-white font-extrabold' : 'text-amber-50'}`}>
-                    <span className="sm:hidden">{language === 'zh-TW' ? shortNameZh : distName}</span>
-                    <span className="hidden sm:inline">{distName}</span>
+                  <span className="text-[11px] leading-none shrink-0 drop-shadow">{icon}</span>
+                  <span className={`text-[10px] font-bold font-sans tracking-tight whitespace-nowrap ${isSelected ? 'text-white font-extrabold' : 'text-amber-50'}`}>
+                    {language === 'zh-TW' ? shortNameZh : distName}
                   </span>
                 </div>
               </button>
