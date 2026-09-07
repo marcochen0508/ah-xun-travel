@@ -489,13 +489,13 @@ export default function ChiangMaiChiangRai3DMap({
             switch (dist.id) {
               case 'doi-suthep-district':
                 coordsDesktop = { top: '16%', left: '22%' };
-                coordsMobile = { top: '15%', left: '23%' };
+                coordsMobile = { top: '15%', left: '26%' };
                 icon = '⛰️';
                 shortNameZh = '素帖山';
                 break;
               case 'nimman-district':
                 coordsDesktop = { top: '36%', left: '26%' };
-                coordsMobile = { top: '48%', left: '16%' };
+                coordsMobile = { top: '48%', left: '21%' };
                 icon = '☕';
                 shortNameZh = '尼曼';
                 break;
@@ -519,20 +519,20 @@ export default function ChiangMaiChiangRai3DMap({
                 break;
               case 'night-bazaar-district':
                 coordsDesktop = { top: '51%', left: '64%' };
-                coordsMobile = { top: '48%', left: '88%' };
+                coordsMobile = { top: '48%', left: '81%' };
                 icon = '🏮';
                 shortNameZh = '湄平河夜市';
                 break;
               case 'hang-dong-district':
                 coordsDesktop = { top: '80%', left: '38%' };
-                coordsMobile = { top: '74%', left: '80%' };
+                coordsMobile = { top: '74%', left: '78%' };
                 icon = '🪵';
                 shortNameZh = '杭東';
                 break;
               case 'mae-kampong-district':
               case 'san-kamphaeng-district':
                 coordsDesktop = { top: '58%', left: '76%' };
-                coordsMobile = { top: '38%', left: '84%' };
+                coordsMobile = { top: '38%', left: '79%' };
                 icon = '🌿';
                 shortNameZh = '湄康蓬';
                 break;
@@ -544,7 +544,7 @@ export default function ChiangMaiChiangRai3DMap({
                 break;
               case 'doi-inthanon-district':
                 coordsDesktop = { top: '86%', left: '26%' };
-                coordsMobile = { top: '72%', left: '28%' };
+                coordsMobile = { top: '72%', left: '29%' };
                 icon = '👑';
                 shortNameZh = '因他農';
                 break;
@@ -556,7 +556,7 @@ export default function ChiangMaiChiangRai3DMap({
                 break;
               case 'tea-mountain-district':
                 coordsDesktop = { top: '15%', left: '72%' };
-                coordsMobile = { top: '12%', left: '82%' };
+                coordsMobile = { top: '12%', left: '77%' };
                 icon = '🍵';
                 shortNameZh = '金三角茶園';
                 break;
