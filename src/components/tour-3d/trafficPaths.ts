@@ -108,6 +108,18 @@ export const DEFAULT_TRAFFIC_ROUTES: TrafficRoute[] = [
 // Calibrated Traffic Routes matching the Vertical 3:4 Mobile Portrait Diorama
 export const DEFAULT_MOBILE_TRAFFIC_ROUTES: TrafficRoute[] = [
   {
+    id: 'mobile-runway-cnx',
+    name: '清邁機場跑道起飛 (縱向手機版)',
+    type: 'runway',
+    density: 1,
+    speed: 1,
+    vehicleTypes: ['plane'],
+    points: [
+      { x: 19.0, y: 64.0 },
+      { x: 19.0, y: 39.0 },
+    ],
+  },
+  {
     id: 'mobile-highway',
     name: '泰北雙城跨城公路 (縱向手機版)',
     type: 'road',
@@ -125,20 +137,6 @@ export const DEFAULT_MOBILE_TRAFFIC_ROUTES: TrafficRoute[] = [
       { x: 45.0, y: 27.0 },
       { x: 38.0, y: 20.0 },
       { x: 32.0, y: 15.0 },
-    ],
-  },
-  {
-    id: 'mobile-nimman-road',
-    name: '尼曼潮流大道 (縱向手機版)',
-    type: 'road',
-    density: 2,
-    speed: 0.8,
-    vehicleTypes: ['car', 'tuktuk'],
-    isBiDirectional: true,
-    points: [
-      { x: 19.0, y: 64.0 },
-      { x: 19.0, y: 52.0 },
-      { x: 19.0, y: 39.0 },
     ],
   },
   {
