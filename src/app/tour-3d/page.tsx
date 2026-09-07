@@ -31,12 +31,19 @@ export default function Tour3DPage() {
 
   // Traffic Routes & Interactive Path State (Default to Calibrated Live Routes)
   const [routes, setRoutes] = useState<TrafficRoute[]>(DEFAULT_TRAFFIC_ROUTES);
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isEditorActive, setIsEditorActive] = useState(false);
   const [activeRouteId, setActiveRouteId] = useState<string | null>(DEFAULT_TRAFFIC_ROUTES[0]?.id || null);
 
   // Load collected stamps & custom traffic routes from LocalStorage
   useEffect(() => {
     try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('editor') === 'true') {
+          setIsEditorActive(true);
+        }
+      }
+
       const savedStamps = localStorage.getItem('ah_xun_collected_stamps');
       if (savedStamps) {
         setCollectedStamps(JSON.parse(savedStamps));
@@ -116,7 +123,7 @@ export default function Tour3DPage() {
           selectedLandmarkId={selectedLandmark?.id || null}
           routes={routes}
           activeRouteId={activeRouteId}
-          isEditorActive={false}
+          isEditorActive={isEditorActive}
           onSelectRegion={setSelectedRegionId}
           onSelectDistrict={setSelectedDistrictId}
           onSelectLandmark={setSelectedLandmark}
