@@ -55,7 +55,7 @@ export const DISTRICTS: DistrictInfo[] = [
   {
     id: 'doi-suthep-district',
     regionId: 'chiang-mai',
-    name: { 'zh-TW': '🌄 素貼山聖區', 'en': '🌄 Doi Suthep Area', 'th': '🌄 ดอยสุเทพ' },
+    name: { 'zh-TW': '🌄 素帖山聖區', 'en': '🌄 Doi Suthep Area', 'th': '🌄 ดอยสุเทพ' },
   },
   {
     id: 'night-bazaar-district',
@@ -6978,9 +6978,9 @@ export const LANDMARKS: Landmark[] = [
     "googleMapsQuery": "Pun Pun Organic Temple Rest, Chiang Mai"
   },
   {
-    "id": "素貼山雙龍寺-wat-phra-that-doi-suthe-118",
+    "id": "素帖山雙龍寺-wat-phra-that-doi-suthe-118",
     "name": {
-      "zh-TW": "素貼山雙龍寺 (Wat Phra That Doi Suthep)",
+      "zh-TW": "素帖山雙龍寺 (Wat Phra That Doi Suthep)",
       "en": "Wat Phra That Doi Suthep",
       "th": "Wat Phra That Doi Suthep, Chiang Mai"
     },
@@ -6992,7 +6992,7 @@ export const LANDMARKS: Landmark[] = [
       1,
       0
     ],
-    "image": "/images/landmarks/素貼山雙龍寺-wat-phra-that-doi-suthe-118.jpg",
+    "image": "/images/landmarks/素帖山雙龍寺-wat-phra-that-doi-suthe-118.jpg",
     "tag": {
       "zh-TW": "古蹟/寺廟聖地",
       "en": "Featured Destination",
@@ -7034,7 +7034,7 @@ export const LANDMARKS: Landmark[] = [
       "th": "ข้อแนะนำและข้อมูลการเดินทางสำหรับ Wat Phra That Doi Suthep, Chiang Mai"
     },
     "charterNote": {
-      "zh-TW": "阿勛旅遊包車提供專屬中文司機接送，直達素貼山雙龍寺 (Wat Phra That Doi Suthep)，行程彈性不趕路。",
+      "zh-TW": "阿勛旅遊包車提供專屬中文司機接送，直達素帖山雙龍寺 (Wat Phra That Doi Suthep)，行程彈性不趕路。",
       "en": "Ah-Xun Travel private charter provides dedicated chauffeur service directly to Wat Phra That Doi Suthep with comfortable, flexible timing.",
       "th": "บริการรถตู้พร้อมคนขับนำเที่ยว Wat Phra That Doi Suthep, Chiang Mai อย่างสะดวกสบาย ไม่เร่งรีบ กำหนดเวลาได้เอง"
     },
@@ -7087,7 +7087,7 @@ export const LANDMARKS: Landmark[] = [
       "th": "1.5 ชั่วโมง"
     },
     "tips": {
-      "zh-TW": "素貼山更高處",
+      "zh-TW": "素帖山更高處",
       "en": "Location highlight & travel tip for Bhubing Palace.",
       "th": "ข้อแนะนำและข้อมูลการเดินทางสำหรับ Bhubing Palace, Chiang Mai"
     },
@@ -7536,13 +7536,13 @@ export const LANDMARKS: Landmark[] = [
       "th": "จุดเช็คอินแนะนำ"
     },
     "description": {
-      "zh-TW": "隱匿於素貼山半山腰森林中的古老溪流寺廟、苔蘚石佛與瀑布",
+      "zh-TW": "隱匿於素帖山半山腰森林中的古老溪流寺廟、苔蘚石佛與瀑布",
       "en": "Discover Wat Pha Lat — one of Northern Thailand's premier attractions, renowned for its distinctive charm and memorable experience.",
       "th": "สัมผัสความงดงามและเสน่ห์อันเป็นเอกลักษณ์ของ Wat Pha Lat, Chiang Mai จุดเช็คอินยอดนิยมที่ไม่ควรพลาด"
     },
     "highlights": {
       "zh-TW": [
-        "隱匿於素貼山半山腰森林中的古老溪流寺廟",
+        "隱匿於素帖山半山腰森林中的古老溪流寺廟",
         "苔蘚石佛與瀑布"
       ],
       "en": [
@@ -7573,9 +7573,9 @@ export const LANDMARKS: Landmark[] = [
     "googleMapsQuery": "Wat Pha Lat, Chiang Mai"
   },
   {
-    "id": "素貼山觀景台-doi-suthep-viewpoint-128",
+    "id": "素帖山觀景台-doi-suthep-viewpoint-128",
     "name": {
-      "zh-TW": "素貼山觀景台 (Doi Suthep Viewpoint)",
+      "zh-TW": "素帖山觀景台 (Doi Suthep Viewpoint)",
       "en": "Doi Suthep Viewpoint",
       "th": "Doi Suthep Viewpoint, Chiang Mai"
     },
@@ -7623,7 +7623,7 @@ export const LANDMARKS: Landmark[] = [
       "th": "ข้อแนะนำและข้อมูลการเดินทางสำหรับ Doi Suthep Viewpoint, Chiang Mai"
     },
     "charterNote": {
-      "zh-TW": "阿勛旅遊包車提供專屬中文司機接送，直達素貼山觀景台 (Doi Suthep Viewpoint)，行程彈性不趕路。",
+      "zh-TW": "阿勛旅遊包車提供專屬中文司機接送，直達素帖山觀景台 (Doi Suthep Viewpoint)，行程彈性不趕路。",
       "en": "Ah-Xun Travel private charter provides dedicated chauffeur service directly to Doi Suthep Viewpoint with comfortable, flexible timing.",
       "th": "บริการรถตู้พร้อมคนขับนำเที่ยว Doi Suthep Viewpoint, Chiang Mai อย่างสะดวกสบาย ไม่เร่งรีบ กำหนดเวลาได้เอง"
     },
@@ -7652,13 +7652,13 @@ export const LANDMARKS: Landmark[] = [
       "th": "จุดเช็คอินแนะนำ"
     },
     "description": {
-      "zh-TW": "素貼山頂苗族部落、每年1-2月盛開的泰國高山野櫻花",
+      "zh-TW": "素帖山頂苗族部落、每年1-2月盛開的泰國高山野櫻花",
       "en": "Discover Khun Chang Kian Sakura Highland — one of Northern Thailand's premier attractions, renowned for its distinctive charm and memorable experience.",
       "th": "สัมผัสความงดงามและเสน่ห์อันเป็นเอกลักษณ์ของ ขุนช่างเคี่ยน (หุบเขานางพญาเสือโคร่ง) จุดเช็คอินยอดนิยมที่ไม่ควรพลาด"
     },
     "highlights": {
       "zh-TW": [
-        "素貼山頂苗族部落",
+        "素帖山頂苗族部落",
         "每年1-2月盛開的泰國高山野櫻花"
       ],
       "en": [
@@ -7710,13 +7710,13 @@ export const LANDMARKS: Landmark[] = [
       "th": "คาเฟ่วิวภูเขาและดอย"
     },
     "description": {
-      "zh-TW": "素貼山半山腰景觀平台、品嚐泰北知名象山高山精品咖啡",
+      "zh-TW": "素帖山半山腰景觀平台、品嚐泰北知名象山高山精品咖啡",
       "en": "Discover Doi Chaang Coffee — one of Northern Thailand's premier attractions, renowned for its distinctive charm and memorable experience.",
       "th": "สัมผัสความงดงามและเสน่ห์อันเป็นเอกลักษณ์ของ Doi Chaang Coffee, Chiang Mai จุดเช็คอินยอดนิยมที่ไม่ควรพลาด"
     },
     "highlights": {
       "zh-TW": [
-        "素貼山半山腰景觀平台",
+        "素帖山半山腰景觀平台",
         "品嚐泰北知名象山高山精品咖啡"
       ],
       "en": [
@@ -7823,14 +7823,14 @@ export const LANDMARKS: Landmark[] = [
       "th": "จุดเช็คอินแนะนำ"
     },
     "description": {
-      "zh-TW": "清大湖畔大片草地、素貼山倒影與傍晚散步打卡勝地",
+      "zh-TW": "清大湖畔大片草地、素帖山倒影與傍晚散步打卡勝地",
       "en": "Discover Ang Kaew CMU — one of Northern Thailand's premier attractions, renowned for its distinctive charm and memorable experience.",
       "th": "สัมผัสความงดงามและเสน่ห์อันเป็นเอกลักษณ์ของ Ang Kaew CMU, Chiang Mai จุดเช็คอินยอดนิยมที่ไม่ควรพลาด"
     },
     "highlights": {
       "zh-TW": [
         "清大湖畔大片草地",
-        "素貼山倒影與傍晚散步打卡勝地"
+        "素帖山倒影與傍晚散步打卡勝地"
       ],
       "en": [
         "Ang Kaew CMU signature experience",
@@ -10212,7 +10212,7 @@ export const LANDMARKS: Landmark[] = [
       "th": "2.5 ชั่วโมง"
     },
     "tips": {
-      "zh-TW": "素貼山腳北側",
+      "zh-TW": "素帖山腳北側",
       "en": "Location highlight & travel tip for Huay Tung Tao Lake.",
       "th": "ข้อแนะนำและข้อมูลการเดินทางสำหรับ Huay Tung Tao Lake, Chiang Mai"
     },

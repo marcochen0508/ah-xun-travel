@@ -476,7 +476,7 @@ export default function TourUIOverlay({
     // 尼曼潮流區：購物商場為首、網美咖啡與潮流美食並重
     'nimman-district': ['shopping', 'cafe', 'food', 'night-market', 'market', 'experience', 'spa'],
 
-    // 素貼山聖區：神聖古寺為首、自然景觀與高山咖啡
+    // 素帖山聖區：神聖古寺為首、自然景觀與高山咖啡
     'doi-suthep-district': ['temple', 'nature', 'cafe', 'experience', 'food'],
 
     // 湄平河與夜市：傳統百年大市場為首、觀光夜市與河畔美食咖啡

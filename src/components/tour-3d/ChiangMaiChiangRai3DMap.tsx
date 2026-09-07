@@ -417,56 +417,69 @@ export default function ChiangMaiChiangRai3DMap({
           DISTRICTS.map((dist) => {
             let coords = { top: '50%', left: '50%' };
             let icon = '📍';
+            let shortNameZh = '分區';
 
             switch (dist.id) {
               case 'doi-suthep-district':
                 coords = { top: '15%', left: '20%' };
                 icon = '⛰️';
+                shortNameZh = '素帖山';
                 break;
               case 'nimman-district':
                 coords = { top: '38%', left: '22%' };
                 icon = '☕';
+                shortNameZh = '尼曼';
                 break;
               case 'mae-rim-district':
                 coords = { top: '30%', left: '46%' };
                 icon = '🐘';
+                shortNameZh = '美林';
                 break;
               case 'old-city-district':
                 coords = { top: '50%', left: '46%' };
                 icon = '🏛️';
+                shortNameZh = '古城';
                 break;
               case 'south-city-district':
                 coords = { top: '66%', left: '46%' };
                 icon = '🪙';
+                shortNameZh = '瓦萊';
                 break;
               case 'night-bazaar-district':
                 coords = { top: '50%', left: '68%' };
                 icon = '🏮';
+                shortNameZh = '夜市';
                 break;
               case 'hang-dong-district':
                 coords = { top: '82%', left: '38%' };
                 icon = '🪵';
+                shortNameZh = '杭東';
                 break;
               case 'mae-kampong-district':
               case 'san-kamphaeng-district':
                 coords = { top: '64%', left: '80%' };
                 icon = '🌿';
+                shortNameZh = '湄康蓬';
                 break;
               case 'chiang-dao-district':
                 coords = { top: '12%', left: '44%' };
                 icon = '🏔️';
+                shortNameZh = '清道';
                 break;
               case 'doi-inthanon-district':
                 coords = { top: '88%', left: '20%' };
                 icon = '👑';
+                shortNameZh = '茵他儂';
                 break;
               case 'chiang-rai-city-district':
                 coords = { top: '22%', left: '58%' };
                 icon = '🎨';
+                shortNameZh = '清萊市區';
                 break;
               case 'tea-mountain-district':
                 coords = { top: '14%', left: '78%' };
                 icon = '🍵';
+                shortNameZh = '金三角';
                 break;
               default:
                 break;
@@ -490,15 +503,16 @@ export default function ChiangMaiChiangRai3DMap({
                 }`}
               >
                 <div
-                  className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-xl border backdrop-blur-md transition-all duration-300 ${
+                  className={`flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-full shadow-lg border backdrop-blur-md transition-all duration-300 ${
                     isSelected
                       ? 'bg-amber-600 text-white border-amber-300 ring-2 ring-amber-400/50 shadow-amber-900/40'
                       : 'bg-[#1C140E]/88 hover:bg-[#2C1D13] text-amber-100 border-amber-400/40 ring-1 ring-amber-300/20 shadow-black/60'
                   }`}
                 >
-                  <span className="text-xs sm:text-sm leading-none shrink-0 drop-shadow">{icon}</span>
-                  <span className={`text-[11px] sm:text-xs font-bold font-sans tracking-wide whitespace-nowrap ${isSelected ? 'text-white font-extrabold' : 'text-amber-50'}`}>
-                    {distName}
+                  <span className="text-[11px] sm:text-sm leading-none shrink-0 drop-shadow">{icon}</span>
+                  <span className={`text-[10px] sm:text-xs font-bold font-sans tracking-tight sm:tracking-wide whitespace-nowrap ${isSelected ? 'text-white font-extrabold' : 'text-amber-50'}`}>
+                    <span className="sm:hidden">{language === 'zh-TW' ? shortNameZh : distName}</span>
+                    <span className="hidden sm:inline">{distName}</span>
                   </span>
                 </div>
               </button>
