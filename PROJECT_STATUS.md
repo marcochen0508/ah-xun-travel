@@ -46,10 +46,20 @@ Next.js (App Router) website for Ah Xun Chiang Mai Travel (阿勛清邁包車旅
 
 ---
 
-## 接續任務（Next Steps）
-1. **線上發布與 Git 推送**：提交本次修正並推送至 Vercel 正式站。
-2. **最新消息/專題內容擴充（SEO）**：發布清邁包車與拜縣行程專題文章。
+### 8. 後台最新消息存檔與多語系發布文稿
+- **資料庫日期容錯處理**：修正 [`NewsForm.tsx`](file:///c:/Users/marcochen/Downloads/個人/ah-xun-travel/src/components/admin/NewsForm.tsx) 中若未填截止日會傳送空字串 `""` 導致 Postgres 報錯問題，自動轉為 `null`，實現「留空即代表永久顯示」。
+- **3D 導覽上線消息發布**：提供繁中、簡中及專業流暢的泰文在地化發布文案。
 
 ---
-*記錄完成時間：2026-09-07 14:40 (已建檔備份)*
 
+## 待接續任務（Tomorrow's Agenda）
+
+### 🚗 1. 手機版 3D 地圖車輛路徑精準校對（核心待辦）
+- **背景與現狀**：使用者提供重新繪製的手機版車輛路徑（包含左上方素帖山山路頂部，一路貫穿古城北側公路，並順著最右側南北幹道一路向下經湄康遜、湄平河夜市至杭東右側）。
+- **待檢查與校準項目**：
+  1. 檢查 [`trafficPaths.ts`](file:///c:/Users/marcochen/Downloads/個人/ah-xun-travel/src/components/tour-3d/trafficPaths.ts) 的 `DEFAULT_MOBILE_TRAFFIC_ROUTES` 座標點位在 3:4 縱向手機版沙盤上的視覺位置。
+  2. 檢查 [`TrafficLayer.tsx`](file:///c:/Users/marcochen/Downloads/個人/ah-xun-travel/src/components/tour-3d/TrafficLayer.tsx) 在 `isMobile={true}` 模式下的 `aspectMultiplier` (1.3333) 與插值算法，確認是否影響了端點的顯示範圍。
+  3. 實機測試手機版車輛與嘟嘟車的行駛路線，確認起訖點完全符合使用者手繪紅線。
+
+---
+*記錄完成時間：2026-09-07 18:10 (已建檔備份)*
