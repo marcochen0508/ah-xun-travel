@@ -46,28 +46,32 @@ export default function NewsForm({ initialData, isEdit = false }: NewsFormProps)
         setLoading(true);
 
         try {
+            const payload = {
+                ...formData,
+                start_date: formData.start_date?.trim() ? formData.start_date : null,
+                end_date: formData.end_date?.trim() ? formData.end_date : null,
+            };
+
             if (isEdit && initialData?.id) {
                 // Only run update if not mock
                 if (!initialData.id.startsWith("mock-")) {
                     const { error } = await supabase
                         .from("news_events")
-                        .update(formData)
+                        .update(payload)
                         .eq("id", initialData.id);
                     if (error) throw error;
                 }
             } else {
-                const { error } = await supabase.from("news_events").insert([formData]);
+                const { error } = await supabase.from("news_events").insert([payload]);
                 if (error) throw error;
             }
 
             alert("儲存成功！");
             router.push("/admin/news");
             router.refresh();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error saving news:", error);
-            // For demo, just redirect
-            alert("儲存成功 (Demo Mode)");
-            router.push("/admin/news");
+            alert(`儲存失敗：${error?.message || "請檢查網路連線或權限設定"}`);
         } finally {
             setLoading(false);
         }
