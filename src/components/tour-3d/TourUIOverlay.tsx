@@ -2070,11 +2070,11 @@ export default function TourUIOverlay({
                               {/* Stamp Badge */}
                               <div className="mt-auto w-full pt-1">
                                 {isUnlocked ? (
-                                  <span className="inline-flex items-center justify-center gap-1 w-full text-[11px] font-black text-[#8b1e1e] bg-[#fbebeb] border border-[#8b1e1e]/30 py-1 px-2.5 rounded-full">
+                                  <span className="inline-flex items-center justify-center gap-1 w-full text-xs font-medium text-[#8b1e1e] bg-[#fbebeb] border border-[#8b1e1e]/25 py-0.5 px-2.5 rounded-full">
                                     <span>💮 已蓋紀念章</span>
                                   </span>
                                 ) : (
-                                  <span className="inline-flex items-center justify-center gap-1 w-full text-[11px] font-medium text-[#7a6858] bg-[#ebe3d5] py-0.5 px-2.5 rounded-full">
+                                  <span className="inline-flex items-center justify-center gap-1 w-full text-xs font-normal text-[#7a6858] bg-[#ebe3d5]/80 py-0.5 px-2.5 rounded-full">
                                     <span>尚未解鎖</span>
                                   </span>
                                 )}
