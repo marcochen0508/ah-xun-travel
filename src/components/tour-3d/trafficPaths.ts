@@ -104,3 +104,59 @@ export const DEFAULT_TRAFFIC_ROUTES: TrafficRoute[] = [
     ],
   },
 ];
+
+// Calibrated Traffic Routes matching the Vertical 3:4 Mobile Portrait Diorama
+export const DEFAULT_MOBILE_TRAFFIC_ROUTES: TrafficRoute[] = [
+  {
+    id: 'mobile-highway',
+    name: '泰北雙城跨城公路 (縱向手機版)',
+    type: 'road',
+    density: 4,
+    speed: 0.9,
+    vehicleTypes: ['car', 'tuktuk', 'bus'],
+    isBiDirectional: true,
+    points: [
+      { x: 86.0, y: 66.0 },
+      { x: 85.0, y: 55.0 },
+      { x: 83.5, y: 44.0 },
+      { x: 79.5, y: 35.0 },
+      { x: 67.0, y: 31.0 },
+      { x: 53.0, y: 32.0 },
+      { x: 45.0, y: 27.0 },
+      { x: 38.0, y: 20.0 },
+      { x: 32.0, y: 15.0 },
+    ],
+  },
+  {
+    id: 'mobile-nimman-road',
+    name: '尼曼潮流大道 (縱向手機版)',
+    type: 'road',
+    density: 2,
+    speed: 0.8,
+    vehicleTypes: ['car', 'tuktuk'],
+    isBiDirectional: true,
+    points: [
+      { x: 19.0, y: 64.0 },
+      { x: 19.0, y: 52.0 },
+      { x: 19.0, y: 39.0 },
+    ],
+  },
+  {
+    id: 'mobile-riverway',
+    name: '濱河觀光遊船 (縱向手機版)',
+    type: 'river',
+    density: 3,
+    speed: 0.65,
+    vehicleTypes: ['boat'],
+    isBiDirectional: true,
+    points: [
+      { x: 91.0, y: 66.0 },
+      { x: 80.0, y: 65.0 },
+      { x: 72.0, y: 60.0 },
+      { x: 77.0, y: 48.0 },
+      { x: 75.0, y: 35.0 },
+      { x: 82.0, y: 28.0 },
+      { x: 80.0, y: 17.0 },
+    ],
+  },
+];

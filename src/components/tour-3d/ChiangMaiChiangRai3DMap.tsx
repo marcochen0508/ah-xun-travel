@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Landmark, DISTRICTS, Language } from './landmarkData';
-import { TrafficRoute, Waypoint } from './trafficPaths';
+import { TrafficRoute, Waypoint, DEFAULT_MOBILE_TRAFFIC_ROUTES } from './trafficPaths';
 import TrafficLayer from './TrafficLayer';
 
 interface ChiangMaiChiangRai3DMapProps {
@@ -352,7 +352,7 @@ export default function ChiangMaiChiangRai3DMap({
       <div
         ref={canvasRef}
         onClick={handleCanvasClick}
-        className="relative w-full aspect-[16/9] max-w-6xl transition-transform duration-150 ease-out shadow-2xl rounded-2xl md:rounded-3xl overflow-hidden border border-slate-700 transform-gpu shrink-0"
+        className="relative w-full aspect-[3/4] md:aspect-[16/9] max-w-6xl max-h-[72vh] md:max-h-none transition-transform duration-150 ease-out shadow-2xl rounded-2xl md:rounded-3xl overflow-hidden border border-slate-700 transform-gpu shrink-0 my-auto"
         style={{
           transform: `translate3d(${panX}px, ${panY}px, 0px) scale(${scale})`,
         }}
@@ -365,13 +365,27 @@ export default function ChiangMaiChiangRai3DMap({
               : 'opacity-0 scale-125 blur-sm pointer-events-none'
           }`}
         >
-          <Image
-            src="/images/diorama/diorama_00_v17_no_car.jpg"
-            alt="Northern Thailand Overview Diorama Map"
-            fill
-            priority
-            className="object-cover"
-          />
+          {/* Desktop 16:9 Landscape Artwork */}
+          <div className="hidden md:block absolute inset-0 w-full h-full">
+            <Image
+              src="/images/diorama/diorama_00_v17_no_car.jpg"
+              alt="Northern Thailand Overview Diorama Map"
+              fill
+              priority
+              className="object-cover"
+            />
+          </div>
+
+          {/* Mobile 3:4 Vertical Portrait Artwork */}
+          <div className="block md:hidden absolute inset-0 w-full h-full">
+            <Image
+              src="/images/diorama/diorama_00_mobile_portrait.jpg"
+              alt="Northern Thailand Mobile Portrait Diorama Map"
+              fill
+              priority
+              className="object-cover"
+            />
+          </div>
         </div>
 
         {/* 2. District Closeup Diorama Layer (Always in DOM so CSS transition executes in both directions) */}
@@ -406,7 +420,14 @@ export default function ChiangMaiChiangRai3DMap({
             !selectedDistrictId ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           }`}
         >
-          <TrafficLayer routes={routes} isEditorActive={isEditorActive && showWaypoints} />
+          {/* Desktop Traffic */}
+          <div className="hidden md:block absolute inset-0 w-full h-full">
+            <TrafficLayer routes={routes} isEditorActive={isEditorActive && showWaypoints} />
+          </div>
+          {/* Mobile Traffic */}
+          <div className="block md:hidden absolute inset-0 w-full h-full">
+            <TrafficLayer routes={DEFAULT_MOBILE_TRAFFIC_ROUTES} isEditorActive={isEditorActive && showWaypoints} />
+          </div>
         </div>
 
         {/* Waypoint Markers when Editor is Active & showWaypoints is true */}
@@ -460,69 +481,82 @@ export default function ChiangMaiChiangRai3DMap({
         {/* Clean Frosted Lanna District Badges (Only displayed on Overview Map) */}
         {!selectedDistrictId &&
           DISTRICTS.map((dist) => {
-            let coords = { top: '50%', left: '50%' };
+            let coordsDesktop = { top: '50%', left: '50%' };
+            let coordsMobile = { top: '50%', left: '50%' };
             let icon = '📍';
             let shortNameZh = '分區';
 
             switch (dist.id) {
               case 'doi-suthep-district':
-                coords = { top: '16%', left: '22%' }; // 左上角素帖山頂金塔下方
+                coordsDesktop = { top: '16%', left: '22%' };
+                coordsMobile = { top: '15%', left: '23%' };
                 icon = '⛰️';
                 shortNameZh = '素帖山';
                 break;
               case 'nimman-district':
-                coords = { top: '36%', left: '26%' }; // 左側山腳尼曼街區
+                coordsDesktop = { top: '36%', left: '26%' };
+                coordsMobile = { top: '48%', left: '16%' };
                 icon = '☕';
                 shortNameZh = '尼曼';
                 break;
               case 'mae-rim-district':
-                coords = { top: '33%', left: '46%' }; // 古城北門外北郊梅林山谷綠地
+                coordsDesktop = { top: '33%', left: '46%' };
+                coordsMobile = { top: '27%', left: '48%' };
                 icon = '🐘';
                 shortNameZh = '美林';
                 break;
               case 'old-city-district':
-                coords = { top: '51%', left: '46%' }; // 四方護城河正中央古城
+                coordsDesktop = { top: '51%', left: '46%' };
+                coordsMobile = { top: '43%', left: '50%' };
                 icon = '🏛️';
                 shortNameZh = '古城';
                 break;
               case 'south-city-district':
-                coords = { top: '67%', left: '45%' }; // 古城南門外 (瓦萊路/銀廟前)
+                coordsDesktop = { top: '67%', left: '45%' };
+                coordsMobile = { top: '58%', left: '44%' };
                 icon = '🪙';
                 shortNameZh = '瓦萊';
                 break;
               case 'night-bazaar-district':
-                coords = { top: '51%', left: '64%' }; // 古城東門外 ➔ 濱河畔與瓦洛洛市場區
+                coordsDesktop = { top: '51%', left: '64%' };
+                coordsMobile = { top: '48%', left: '88%' };
                 icon = '🏮';
                 shortNameZh = '夜市';
                 break;
               case 'hang-dong-district':
-                coords = { top: '80%', left: '38%' }; // 南郊杭東與美王休閒區
+                coordsDesktop = { top: '80%', left: '38%' };
+                coordsMobile = { top: '74%', left: '80%' };
                 icon = '🪵';
                 shortNameZh = '杭東';
                 break;
               case 'mae-kampong-district':
               case 'san-kamphaeng-district':
-                coords = { top: '58%', left: '76%' }; // 東郊湄康蓬古村、大樹咖啡與溫泉區
+                coordsDesktop = { top: '58%', left: '76%' };
+                coordsMobile = { top: '38%', left: '84%' };
                 icon = '🌿';
                 shortNameZh = '湄康蓬';
                 break;
               case 'chiang-dao-district':
-                coords = { top: '15%', left: '42%' }; // 北郊湄林與清道秘境
+                coordsDesktop = { top: '15%', left: '42%' };
+                coordsMobile = { top: '12%', left: '46%' };
                 icon = '🏔️';
                 shortNameZh = '清道';
                 break;
               case 'doi-inthanon-district':
-                coords = { top: '86%', left: '26%' }; // 西南郊茵他儂國家公園
+                coordsDesktop = { top: '86%', left: '26%' };
+                coordsMobile = { top: '72%', left: '28%' };
                 icon = '👑';
                 shortNameZh = '茵他儂';
                 break;
               case 'chiang-rai-city-district':
-                coords = { top: '23%', left: '55%' }; // 清萊市區藝術區
+                coordsDesktop = { top: '23%', left: '55%' };
+                coordsMobile = { top: '20%', left: '68%' };
                 icon = '🎨';
                 shortNameZh = '清萊市區';
                 break;
               case 'tea-mountain-district':
-                coords = { top: '15%', left: '72%' }; // 右上角高山茶園區
+                coordsDesktop = { top: '15%', left: '72%' };
+                coordsMobile = { top: '12%', left: '82%' };
                 icon = '🍵';
                 shortNameZh = '金三角';
                 break;
@@ -535,47 +569,60 @@ export default function ChiangMaiChiangRai3DMap({
             const distName = (dist.name[language] || dist.name['zh-TW']).replace(/^[^\s\w\u4e00-\u9fa5]+\s*/, '').trim();
 
             return (
-              <button
-                key={dist.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSelectDistrict(dist.id);
-                  onSelectRegion(dist.regionId);
-                }}
-                style={{ top: coords.top, left: coords.left }}
-                className={`absolute -translate-x-1/2 -translate-y-1/2 z-25 group cursor-pointer transition-all duration-200 ${
-                  isSelected ? 'scale-110 z-40' : 'hover:scale-105'
-                }`}
-              >
-                {/* Desktop: Original clean Lanna cream rectangular badge */}
-                <div className="hidden md:flex relative flex-col items-center">
-                  <div
-                    className={`px-3.5 py-1.5 rounded-xl shadow-md border flex items-center justify-center transition-all duration-200 backdrop-blur-md ${
-                      isSelected
-                        ? 'bg-lanna-gold text-white border-lanna-gold ring-2 ring-lanna-gold/40 shadow-lg'
-                        : 'bg-lanna-cream/90 hover:bg-white text-lanna-coffee border-lanna-gold/30 shadow-sm'
-                    }`}
-                  >
-                    <span className={`text-sm tracking-wide whitespace-nowrap font-serif ${isSelected ? 'font-bold text-white' : 'font-bold text-lanna-coffee'}`}>
-                      {distName}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Mobile: Compact mini badge */}
-                <div
-                  className={`flex md:hidden items-center gap-1 px-2 py-0.5 rounded-full shadow-lg border backdrop-blur-md transition-all duration-300 ${
-                    isSelected
-                      ? 'bg-amber-600 text-white border-amber-300 ring-2 ring-amber-400/50 shadow-amber-900/40'
-                      : 'bg-[#1C140E]/88 hover:bg-[#2C1D13] text-amber-100 border-amber-400/40 ring-1 ring-amber-300/20 shadow-black/60'
+              <React.Fragment key={dist.id}>
+                {/* Desktop Pin Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectDistrict(dist.id);
+                    onSelectRegion(dist.regionId);
+                  }}
+                  style={{ top: coordsDesktop.top, left: coordsDesktop.left }}
+                  className={`hidden md:block absolute -translate-x-1/2 -translate-y-1/2 z-25 group cursor-pointer transition-all duration-200 ${
+                    isSelected ? 'scale-110 z-40' : 'hover:scale-105'
                   }`}
                 >
-                  <span className="text-[11px] leading-none shrink-0 drop-shadow">{icon}</span>
-                  <span className={`text-[10px] font-bold font-sans tracking-tight whitespace-nowrap ${isSelected ? 'text-white font-extrabold' : 'text-amber-50'}`}>
-                    {language === 'zh-TW' ? shortNameZh : distName}
-                  </span>
-                </div>
-              </button>
+                  <div className="relative flex flex-col items-center">
+                    <div
+                      className={`px-3.5 py-1.5 rounded-xl shadow-md border flex items-center justify-center transition-all duration-200 backdrop-blur-md ${
+                        isSelected
+                          ? 'bg-lanna-gold text-white border-lanna-gold ring-2 ring-lanna-gold/40 shadow-lg'
+                          : 'bg-lanna-cream/90 hover:bg-white text-lanna-coffee border-lanna-gold/30 shadow-sm'
+                      }`}
+                    >
+                      <span className={`text-sm tracking-wide whitespace-nowrap font-serif ${isSelected ? 'font-bold text-white' : 'font-bold text-lanna-coffee'}`}>
+                        {distName}
+                      </span>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Mobile Pin Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectDistrict(dist.id);
+                    onSelectRegion(dist.regionId);
+                  }}
+                  style={{ top: coordsMobile.top, left: coordsMobile.left }}
+                  className={`block md:hidden absolute -translate-x-1/2 -translate-y-1/2 z-25 group cursor-pointer transition-all duration-300 active:scale-95 ${
+                    isSelected ? 'scale-110 z-40' : 'hover:scale-105'
+                  }`}
+                >
+                  <div
+                    className={`flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg border backdrop-blur-md transition-all duration-300 ${
+                      isSelected
+                        ? 'bg-amber-600 text-white border-amber-300 ring-2 ring-amber-400/50 shadow-amber-900/40'
+                        : 'bg-[#1C140E]/88 hover:bg-[#2C1D13] text-amber-100 border-amber-400/40 ring-1 ring-amber-300/20 shadow-black/60'
+                    }`}
+                  >
+                    <span className="text-[11px] leading-none shrink-0 drop-shadow">{icon}</span>
+                    <span className={`text-[10px] font-bold font-sans tracking-tight whitespace-nowrap ${isSelected ? 'text-white font-extrabold' : 'text-amber-50'}`}>
+                      {language === 'zh-TW' ? shortNameZh : distName}
+                    </span>
+                  </div>
+                </button>
+              </React.Fragment>
             );
           })}
       </div>
