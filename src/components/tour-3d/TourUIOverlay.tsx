@@ -35,7 +35,9 @@ import {
   Map as MapIcon,
   ListOrdered,
   Camera,
+  FileSpreadsheet,
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
 interface TourUIOverlayProps {
   language: Language;
@@ -243,6 +245,129 @@ export default function TourUIOverlay({
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3200);
+  };
+
+  // Export 247 Landmarks & Collected Stamps to Excel (.xlsx)
+  const exportPassportToExcel = () => {
+    try {
+      const exportData = LANDMARKS.map((l, index) => {
+        const isUnlocked = collectedStamps.includes(l.id);
+        const districtObj = DISTRICTS.find((d) => d.id === l.districtId);
+        const districtName = districtObj ? (districtObj.name[language] || districtObj.name['zh-TW']) : l.districtId;
+        const regionName = l.regionId === 'chiang-mai' ? '清邁' : '清萊';
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.googleMapsQuery || l.name['zh-TW'])}`;
+
+        return {
+          '序號': index + 1,
+          '景點名稱 (中文)': l.name['zh-TW'],
+          '英文名稱 (English)': l.name['en'] || '',
+          '泰文名稱 (Thai)': l.name['th'] || '',
+          '所屬地區': regionName,
+          '所屬分區': districtName,
+          '景點分類': l.tag?.[language] || l.tag?.['zh-TW'] || l.category,
+          '集章狀態': isUnlocked ? '💮 已集章' : '🔒 尚未解鎖',
+          '建議停留時間': l.recommendedTime?.[language] || l.recommendedTime?.['zh-TW'] || '',
+          '景點特色描述': l.description?.[language] || l.description?.['zh-TW'] || '',
+          '旅遊貼士': l.tips?.[language] || l.tips?.['zh-TW'] || '',
+          'Google 地圖連結': mapsUrl,
+        };
+      });
+
+      const unlockedData = exportData.filter((item) => item['集章狀態'].includes('已集章'));
+
+      const wb = XLSX.utils.book_new();
+
+      // Sheet 1: All 247 Landmarks
+      const wsAll = XLSX.utils.json_to_sheet(exportData);
+      wsAll['!cols'] = [
+        { wch: 6 },  // 序號
+        { wch: 32 }, // 景點名稱 (中文)
+        { wch: 32 }, // 英文名稱
+        { wch: 32 }, // 泰文名稱
+        { wch: 10 }, // 所屬地區
+        { wch: 24 }, // 所屬分區
+        { wch: 18 }, // 景點分類
+        { wch: 14 }, // 集章狀態
+        { wch: 14 }, // 建議停留時間
+        { wch: 48 }, // 景點特色描述
+        { wch: 28 }, // 旅遊貼士
+        { wch: 48 }, // Google 地圖連結
+      ];
+      XLSX.utils.book_append_sheet(wb, wsAll, '泰北247景點全覽');
+
+      // Sheet 2: Unlocked Stamps
+      if (unlockedData.length > 0) {
+        const wsUnlocked = XLSX.utils.json_to_sheet(unlockedData);
+        wsUnlocked['!cols'] = wsAll['!cols'];
+        XLSX.utils.book_append_sheet(wb, wsUnlocked, `已集章紀念冊 (${unlockedData.length})`);
+      }
+
+      const dateStr = new Date().toISOString().split('T')[0];
+      XLSX.writeFile(wb, `阿勛泰北旅遊_3D護照集章清單_${dateStr}.xlsx`);
+      showToast('📊 已成功匯出 Excel 護照集章表！');
+    } catch (err) {
+      console.error('Export passport excel failed:', err);
+      showToast('匯出失敗，請重試');
+    }
+  };
+
+  // Export Wishlist Itinerary to Excel (.xlsx)
+  const exportWishlistToExcel = () => {
+    try {
+      const wishlistLandmarks = wishlist
+        .map((id) => LANDMARKS.find((l) => l.id === id))
+        .filter((l): l is Landmark => l !== undefined);
+
+      if (wishlistLandmarks.length === 0) {
+        showToast('行程心願單目前沒有景點');
+        return;
+      }
+
+      const exportData = wishlistLandmarks.map((l, index) => {
+        const districtObj = DISTRICTS.find((d) => d.id === l.districtId);
+        const districtName = districtObj ? (districtObj.name[language] || districtObj.name['zh-TW']) : l.districtId;
+        const regionName = l.regionId === 'chiang-mai' ? '清邁' : '清萊';
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.googleMapsQuery || l.name['zh-TW'])}`;
+
+        return {
+          '行程順序': index + 1,
+          '景點名稱 (中文)': l.name['zh-TW'],
+          '英文名稱 (English)': l.name['en'] || '',
+          '泰文名稱 (Thai)': l.name['th'] || '',
+          '所屬地區': regionName,
+          '所屬分區': districtName,
+          '景點分類': l.tag?.[language] || l.tag?.['zh-TW'] || l.category,
+          '建議停留時間': l.recommendedTime?.[language] || l.recommendedTime?.['zh-TW'] || '',
+          '景點特色描述': l.description?.[language] || l.description?.['zh-TW'] || '',
+          '包車備註': l.charterNote?.[language] || l.charterNote?.['zh-TW'] || '',
+          'Google 地圖連結': mapsUrl,
+        };
+      });
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      ws['!cols'] = [
+        { wch: 10 }, // 行程順序
+        { wch: 32 }, // 景點名稱 (中文)
+        { wch: 32 }, // 英文名稱
+        { wch: 32 }, // 泰文名稱
+        { wch: 10 }, // 所屬地區
+        { wch: 24 }, // 所屬分區
+        { wch: 18 }, // 景點分類
+        { wch: 14 }, // 建議停留時間
+        { wch: 48 }, // 景點特色描述
+        { wch: 48 }, // 包車備註
+        { wch: 48 }, // Google 地圖連結
+      ];
+      XLSX.utils.book_append_sheet(wb, ws, '自訂包車行程表');
+
+      const dateStr = new Date().toISOString().split('T')[0];
+      XLSX.writeFile(wb, `阿勛泰北旅遊_自訂行程規劃表_${dateStr}.xlsx`);
+      showToast('📊 已成功匯出自訂行程 Excel 表！');
+    } catch (err) {
+      console.error('Export wishlist excel failed:', err);
+      showToast('匯出失敗，請重試');
+    }
   };
 
   // Toggle wishlist item
@@ -1673,7 +1798,17 @@ export default function TourUIOverlay({
                 )}
               </div>
 
-              <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+              <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+                <button
+                  onClick={exportWishlistToExcel}
+                  disabled={wishlist.length === 0}
+                  className="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold shadow-md flex items-center justify-center gap-1.5 transition active:scale-95 whitespace-nowrap shrink-0"
+                  title="匯出自訂行程 Excel 試算表"
+                >
+                  <FileSpreadsheet className="w-4 h-4 shrink-0" />
+                  <span>📊 匯出 EXCEL 行程表</span>
+                </button>
+
                 <button
                   onClick={() => setShowItineraryModal(false)}
                   className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-lanna-coffee text-xs font-bold border border-lanna-gold/30 transition whitespace-nowrap shrink-0 shadow-sm"
@@ -1774,7 +1909,16 @@ export default function TourUIOverlay({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
+                  <button
+                    onClick={exportPassportToExcel}
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition shadow-xs border border-emerald-500/30 active:scale-95"
+                    title="匯出泰北 247 景點與集章清單 Excel"
+                  >
+                    <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-100" />
+                    <span>匯出 EXCEL</span>
+                  </button>
+
                   <div className="hidden sm:flex items-center gap-2 text-xs text-[#d4af37] font-semibold bg-black/40 px-3 py-1 rounded-full border border-white/10">
                     <span>已收藏</span>
                     <span className="text-white font-bold text-sm">{totalUnlocked}</span>
@@ -2087,17 +2231,27 @@ export default function TourUIOverlay({
                   </div>
 
                   {/* Bottom Tip Bar */}
-                  <div className="px-5 py-2.5 bg-[#f3ece0] border-t border-[#d4af37]/20 flex items-center justify-between shrink-0 text-xs text-[#6b5440]">
+                  <div className="px-5 py-2.5 bg-[#f3ece0] border-t border-[#d4af37]/20 flex flex-col sm:flex-row items-center justify-between gap-2.5 shrink-0 text-xs text-[#6b5440]">
                     <div className="flex items-center gap-1.5 font-medium">
                       <Sparkles className="w-3.5 h-3.5 text-[#d4af37] shrink-0" />
                       <span>點擊任何景點卡片，立即關閉護照並於 3D 地圖中飛行定位！</span>
                     </div>
-                    <button
-                      onClick={() => setShowPassportModal(false)}
-                      className="px-4 py-1 rounded-xl bg-[#4a3728] hover:bg-[#382a1e] text-white font-bold text-xs transition shadow-xs"
-                    >
-                      關閉護照
-                    </button>
+                    <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                      <button
+                        onClick={exportPassportToExcel}
+                        className="px-3.5 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-xs active:scale-95 shrink-0"
+                        title="匯出泰北 247 景點與個人集章 Excel 清單"
+                      >
+                        <FileSpreadsheet className="w-3.5 h-3.5" />
+                        <span>匯出 EXCEL 清單 (.xlsx)</span>
+                      </button>
+                      <button
+                        onClick={() => setShowPassportModal(false)}
+                        className="px-4 py-1.5 rounded-xl bg-[#4a3728] hover:bg-[#382a1e] text-white font-bold text-xs transition shadow-xs shrink-0"
+                      >
+                        關閉護照
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
