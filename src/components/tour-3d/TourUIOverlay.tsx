@@ -552,12 +552,12 @@ export default function TourUIOverlay({
       )}
 
       {/* TOP HEADER - SLEEK & COMPACT SINGLE ROW ON ALL SCREENS */}
-      <header className="pointer-events-auto bg-lanna-cream/95 backdrop-blur-md border border-lanna-gold/40 px-3 sm:px-4 py-2 sm:py-3 rounded-2xl shadow-md flex items-center justify-between gap-2 sm:gap-3">
+      <header className="pointer-events-auto bg-lanna-cream/95 backdrop-blur-md border border-lanna-gold/40 px-2 sm:px-4 py-1.5 sm:py-2.5 rounded-2xl shadow-md flex items-center justify-between gap-1 sm:gap-3 w-full max-w-full">
         {/* Left: Brand Logo matching Ah Xun Travel Navbar */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           <Link
             href="/"
-            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee transition text-xs font-bold border border-lanna-gold/30 shadow-sm shrink-0"
+            className="flex items-center gap-1 px-1.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee transition text-xs font-bold border border-lanna-gold/30 shadow-sm shrink-0"
             title="返回官網"
           >
             <ArrowLeft className="w-3.5 h-3.5 text-lanna-gold shrink-0" />
@@ -566,16 +566,11 @@ export default function TourUIOverlay({
             </span>
           </Link>
           
-          <Link href="/" className="flex items-center gap-1.5 sm:gap-2 group">
-            <span className="text-xl sm:text-2xl">🐘</span>
-            <div className="flex flex-col">
-              <span className="tracking-widest font-serif text-sm sm:text-base font-bold text-lanna-coffee leading-tight group-hover:text-lanna-gold transition">
-                阿勛
-              </span>
-              <span className="text-[9px] sm:text-[10px] font-normal tracking-wider text-lanna-coffee/80 hidden xs:inline">
-                清邁包車
-              </span>
-            </div>
+          <Link href="/" className="flex items-center gap-1 sm:gap-2 group">
+            <span className="text-lg sm:text-2xl">🐘</span>
+            <span className="tracking-widest font-serif text-sm sm:text-base font-bold text-lanna-coffee leading-tight group-hover:text-lanna-gold transition">
+              阿勛
+            </span>
           </Link>
           
           <div className="hidden md:flex items-center gap-2">
@@ -587,18 +582,18 @@ export default function TourUIOverlay({
         </div>
 
         {/* Right Side: Itinerary, Weather, Passport & Language Switcher */}
-        <div className="flex items-center gap-1.5 sm:gap-2 justify-end shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2 justify-end shrink-0">
           {/* Custom Itinerary Capsule Button */}
           <button
             onClick={() => setShowItineraryModal(true)}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white border border-amber-300/40 text-xs sm:text-sm font-bold font-serif transition-all shadow-md hover:shadow-lg active:scale-95 shrink-0"
+            className="flex items-center gap-1 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white border border-amber-300/40 text-xs sm:text-sm font-bold font-serif transition-all shadow-md hover:shadow-lg active:scale-95 shrink-0"
             title="查看我的自訂行程心願單"
           >
-            <Route className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-100 shrink-0" />
+            <Route className="w-3.5 h-3.5 text-amber-100 shrink-0" />
             <span className="hidden sm:inline">
               {language === 'en' ? 'Itinerary' : language === 'th' ? 'แผนการเดินทาง' : '心願單'}
             </span>
-            <span className="bg-white text-amber-900 px-1.5 sm:px-2 py-0.2 rounded-full text-[11px] sm:text-xs font-black shadow-inner">
+            <span className="bg-white text-amber-900 px-1.5 py-0.2 rounded-full text-[10px] sm:text-xs font-black shadow-inner">
               {wishlist.length}
             </span>
           </button>
@@ -606,13 +601,13 @@ export default function TourUIOverlay({
           {/* Live Weather Pill Badge */}
           <button
             onClick={() => setShowWeatherModal(true)}
-            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee border border-lanna-gold/40 text-xs font-bold transition shadow-sm group active:scale-95 shrink-0"
+            className="flex items-center gap-1 sm:gap-2 px-1.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee border border-lanna-gold/40 text-xs font-bold transition shadow-sm group active:scale-95 shrink-0"
             title={language === 'en' ? 'Live Meteorological & Air Quality Data' : language === 'th' ? 'สภาพอากาศและมลพิษทางอากาศสด' : '即時天氣與空氣品質 (點擊查看詳情)'}
           >
             {headerWeather ? (
               <>
-                <span className="text-sm sm:text-base leading-none drop-shadow-sm shrink-0">{headerWeather.current.weatherIcon}</span>
-                <span className="text-lanna-coffee font-black text-xs sm:text-sm">{headerWeather.current.temperature}°C</span>
+                <span className="text-xs sm:text-base leading-none drop-shadow-sm shrink-0">{headerWeather.current.weatherIcon}</span>
+                <span className="text-lanna-coffee font-black text-[11px] sm:text-sm">{headerWeather.current.temperature}°</span>
                 <span className="hidden lg:inline text-lanna-gold font-normal">|</span>
                 <span className="hidden lg:inline text-lanna-coffee font-semibold">{headerWeather.locationName[language]}</span>
                 <span
@@ -634,14 +629,14 @@ export default function TourUIOverlay({
           {/* Passport Stamp Button */}
           <button
             onClick={() => setShowPassportModal(true)}
-            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3.5 py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee border border-lanna-gold/40 text-xs sm:text-sm font-bold transition shadow-sm shrink-0"
+            className="flex items-center gap-1 px-1.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee border border-lanna-gold/40 text-xs sm:text-sm font-bold transition shadow-sm shrink-0"
             title="泰北旅行護照集章"
           >
-            <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-lanna-gold shrink-0" />
+            <Award className="w-3.5 h-3.5 text-lanna-gold shrink-0" />
             <span className="hidden sm:inline">
               {language === 'en' ? 'Passport' : language === 'th' ? 'พาสปอร์ต' : '護照'}
             </span>
-            <span className="bg-lanna-gold text-white px-1.5 sm:px-2 py-0.2 rounded-full text-[10px] sm:text-xs font-bold">
+            <span className="bg-lanna-gold text-white px-1.5 py-0.2 rounded-full text-[10px] sm:text-xs font-bold">
               {collectedStamps.length}
             </span>
           </button>
@@ -650,7 +645,7 @@ export default function TourUIOverlay({
           <div className="flex items-center bg-white p-0.5 sm:p-1 rounded-xl border border-lanna-gold/30 text-xs sm:text-sm font-semibold text-lanna-coffee shadow-sm shrink-0">
             <button
               onClick={() => onLanguageChange(language === 'zh-TW' ? 'en' : language === 'en' ? 'th' : 'zh-TW')}
-              className="sm:hidden px-2 py-1 rounded-lg bg-lanna-gold text-white font-bold text-xs"
+              className="sm:hidden px-1.5 py-0.5 rounded-lg bg-lanna-gold text-white font-bold text-[11px]"
               title="切換語系"
             >
               {language === 'zh-TW' ? '繁中' : language === 'en' ? 'EN' : 'ไทย'}

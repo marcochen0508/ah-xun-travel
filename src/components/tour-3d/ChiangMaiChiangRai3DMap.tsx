@@ -99,12 +99,11 @@ export default function ChiangMaiChiangRai3DMap({
   // Track touch pan and pinch-to-zoom gestures on mobile
   const touchStartRef = useRef<{ x: number; y: number; dist: number }>({ x: 0, y: 0, dist: 0 });
 
-  // Set initial scale responsive to screen size (mobile needs ~1.65x to fill screen height)
+  // Set initial scale to 1.0 so the entire overview diorama (from Doi Inthanon to Chiang Rai) is 100% visible
   useEffect(() => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     setPanX(0);
     setPanY(0);
-    setScale(isMobile ? 1.65 : 1.05);
+    setScale(1.0);
   }, [selectedDistrictId]);
 
   // Mouse Wheel Zooming
