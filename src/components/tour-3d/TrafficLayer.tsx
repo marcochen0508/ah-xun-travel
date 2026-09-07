@@ -6,6 +6,7 @@ import { TrafficRoute, Waypoint } from './trafficPaths';
 interface TrafficLayerProps {
   routes: TrafficRoute[];
   isEditorActive?: boolean;
+  isMobile?: boolean;
 }
 
 // 1. Realistic Commercial Airliner SVG
@@ -85,16 +86,17 @@ function RealisticBoatSVG({ isCruise = true }: { isCruise?: boolean }) {
 }
 
 // Helper to calculate total distance and segments of a path
-function getPathMetrics(points: Waypoint[]) {
+function getPathMetrics(points: Waypoint[], isMobile = false) {
   if (points.length < 2) return { totalDist: 0, segments: [] };
   const segments: { p1: Waypoint; p2: Waypoint; dist: number; cumDist: number }[] = [];
   let totalDist = 0;
+  const aspectMultiplier = isMobile ? 1.3333 : 0.5625;
 
   for (let i = 0; i < points.length - 1; i++) {
     const p1 = points[i];
     const p2 = points[i + 1];
     const dx = p2.x - p1.x;
-    const dy = (p2.y - p1.y) * 0.5625;
+    const dy = (p2.y - p1.y) * aspectMultiplier;
     const dist = Math.sqrt(dx * dx + dy * dy);
     totalDist += dist;
     segments.push({ p1, p2, dist, cumDist: totalDist });
@@ -106,10 +108,12 @@ function getPathMetrics(points: Waypoint[]) {
 function samplePath(
   segments: { p1: Waypoint; p2: Waypoint; dist: number; cumDist: number }[],
   totalDist: number,
-  t: number
+  t: number,
+  isMobile = false
 ): { x: number; y: number; angle: number; progress: number } | null {
   if (!segments.length || totalDist === 0) return null;
   const targetDist = ((t % 1) + 1) % 1 * totalDist;
+  const aspectMultiplier = isMobile ? 1.3333 : 0.5625;
 
   for (let i = 0; i < segments.length; i++) {
     const seg = segments[i];
@@ -119,7 +123,7 @@ function samplePath(
       const x = seg.p1.x + (seg.p2.x - seg.p1.x) * segT;
       const y = seg.p1.y + (seg.p2.y - seg.p1.y) * segT;
       const dx = seg.p2.x - seg.p1.x;
-      const dy = seg.p2.y - seg.p1.y;
+      const dy = (seg.p2.y - seg.p1.y) * aspectMultiplier;
       const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
       return { x, y, angle, progress: t };
     }
@@ -210,7 +214,7 @@ function getSmoothOneWayFlightPosition(p1: Waypoint, p2: Waypoint, progress: num
   return { x, y, altitude: 0, scale: 0.95, opacity, isAirborne: false };
 }
 
-export default function TrafficLayer({ routes, isEditorActive = false }: TrafficLayerProps) {
+export default function TrafficLayer({ routes, isEditorActive = false, isMobile = false }: TrafficLayerProps) {
   const [time, setTime] = useState(0);
   const animFrameRef = useRef<number | null>(null);
 
@@ -231,9 +235,9 @@ export default function TrafficLayer({ routes, isEditorActive = false }: Traffic
   const routeMetrics = useMemo(() => {
     return routes.map((r) => ({
       route: r,
-      ...getPathMetrics(r.points),
+      ...getPathMetrics(r.points, isMobile),
     }));
-  }, [routes]);
+  }, [routes, isMobile]);
 
   const carColors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#ffffff', '#8b5cf6'];
 
@@ -391,7 +395,7 @@ export default function TrafficLayer({ routes, isEditorActive = false }: Traffic
         for (let i = 0; i < count; i++) {
           const offset = i / count;
           const rawProgress = (time * baseSpeed + offset) % 1;
-          const sample = samplePath(segments, totalDist, rawProgress);
+          const sample = samplePath(segments, totalDist, rawProgress, isMobile);
           if (!sample) continue;
 
           const { x, y, angle } = sample;

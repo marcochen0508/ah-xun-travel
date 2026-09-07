@@ -426,7 +426,7 @@ export default function ChiangMaiChiangRai3DMap({
           </div>
           {/* Mobile Traffic */}
           <div className="block md:hidden absolute inset-0 w-full h-full">
-            <TrafficLayer routes={DEFAULT_MOBILE_TRAFFIC_ROUTES} isEditorActive={isEditorActive && showWaypoints} />
+            <TrafficLayer routes={DEFAULT_MOBILE_TRAFFIC_ROUTES} isEditorActive={isEditorActive && showWaypoints} isMobile={true} />
           </div>
         </div>
 
