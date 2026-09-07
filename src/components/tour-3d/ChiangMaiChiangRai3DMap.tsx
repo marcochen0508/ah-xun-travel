@@ -352,7 +352,7 @@ export default function ChiangMaiChiangRai3DMap({
       <div
         ref={canvasRef}
         onClick={handleCanvasClick}
-        className="relative w-full aspect-[3/4] max-w-[520px] md:max-w-6xl md:aspect-[16/9] transition-transform duration-150 ease-out shadow-none md:shadow-2xl rounded-none md:rounded-3xl overflow-hidden border-0 md:border md:border-slate-700 transform-gpu shrink-0 my-auto"
+        className="relative h-full max-h-[100dvh] aspect-[3/4] md:w-full md:h-auto md:aspect-[16/9] md:max-w-6xl md:max-h-none transition-transform duration-150 ease-out shadow-none md:shadow-2xl rounded-none md:rounded-3xl overflow-hidden border-0 md:border md:border-slate-700 transform-gpu shrink-0 my-auto mx-auto"
         style={{
           transform: `translate3d(${panX}px, ${panY}px, 0px) scale(${scale})`,
         }}
