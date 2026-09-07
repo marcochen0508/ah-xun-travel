@@ -105,7 +105,7 @@ export const DEFAULT_TRAFFIC_ROUTES: TrafficRoute[] = [
   },
 ];
 
-// Calibrated Traffic Routes matching the Vertical 3:4 Mobile Portrait Diorama
+// Calibrated Traffic Routes matching the Vertical 3:4 Mobile Portrait Diorama (Moving Bottom -> Top: South to North)
 export const DEFAULT_MOBILE_TRAFFIC_ROUTES: TrafficRoute[] = [
   {
     id: 'mobile-highway',
@@ -116,16 +116,16 @@ export const DEFAULT_MOBILE_TRAFFIC_ROUTES: TrafficRoute[] = [
     vehicleTypes: ['car', 'tuktuk', 'bus'],
     isBiDirectional: true,
     points: [
-      { x: 32.5, y: 16.6 },
-      { x: 38.5, y: 18.8 },
-      { x: 44.1, y: 20.9 },
-      { x: 49.6, y: 23.4 },
-      { x: 55.2, y: 26.0 },
-      { x: 61.2, y: 27.4 },
-      { x: 67.4, y: 28.7 },
-      { x: 73.1, y: 30.9 },
-      { x: 79.4, y: 32.2 },
       { x: 83.4, y: 35.9 },
+      { x: 79.4, y: 32.2 },
+      { x: 73.1, y: 30.9 },
+      { x: 67.4, y: 28.7 },
+      { x: 61.2, y: 27.4 },
+      { x: 55.2, y: 26.0 },
+      { x: 49.6, y: 23.4 },
+      { x: 44.1, y: 20.9 },
+      { x: 38.5, y: 18.8 },
+      { x: 32.5, y: 16.6 },
     ],
   },
   {
@@ -137,20 +137,20 @@ export const DEFAULT_MOBILE_TRAFFIC_ROUTES: TrafficRoute[] = [
     vehicleTypes: ['boat'],
     isBiDirectional: true,
     points: [
-      { x: 80.8, y: 17.9 },
-      { x: 80.0, y: 21.9 },
-      { x: 81.5, y: 26.2 },
-      { x: 79.7, y: 29.9 },
-      { x: 75.0, y: 36.5 },
-      { x: 79.0, y: 39.3 },
-      { x: 78.6, y: 43.8 },
-      { x: 82.2, y: 50.3 },
-      { x: 78.0, y: 53.4 },
-      { x: 74.0, y: 56.8 },
-      { x: 72.7, y: 58.3 },
-      { x: 72.1, y: 62.8 },
-      { x: 76.2, y: 65.9 },
       { x: 82.5, y: 67.0 },
+      { x: 76.2, y: 65.9 },
+      { x: 72.1, y: 62.8 },
+      { x: 72.7, y: 58.3 },
+      { x: 74.0, y: 56.8 },
+      { x: 78.0, y: 53.4 },
+      { x: 82.2, y: 50.3 },
+      { x: 78.6, y: 43.8 },
+      { x: 79.0, y: 39.3 },
+      { x: 75.0, y: 36.5 },
+      { x: 79.7, y: 29.9 },
+      { x: 81.5, y: 26.2 },
+      { x: 80.0, y: 21.9 },
+      { x: 80.8, y: 17.9 },
     ],
   },
 ];
