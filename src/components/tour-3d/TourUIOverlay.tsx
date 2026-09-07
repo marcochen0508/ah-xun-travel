@@ -1773,10 +1773,10 @@ export default function TourUIOverlay({
                       </div>
                       <p className="text-xs text-stone-600 mt-0.5">
                         {language === 'en'
-                          ? 'Explore landmarks to collect exclusive memorial stamps. Collect 5 to unlock 200 THB charter discount!'
+                          ? 'Explore 247 curated landmarks across Northern Thailand and collect exclusive travel stamps!'
                           : language === 'th'
-                          ? 'สำรวจสถานที่เพื่อสะสมตราประทับ สะสมครบ 5 ดวงรับส่วนลดเหมารถ 200 บาท!'
-                          : '探索泰北 247 處精選地標蓋印章，集滿 5 枚印章即可於預約包車時現折 200 泰銖！'}
+                          ? 'สำรวจ 247 จุดเช็คอินในภาคเหนือและสะสมตราประทับที่ระลึกการเดินทาง!'
+                          : '探索泰北 247 處精選特色地標，點擊卡片可於 3D 地圖定位探索並收藏專屬紀念鋼印！'}
                       </p>
                     </div>
                   </div>
@@ -2068,21 +2068,15 @@ export default function TourUIOverlay({
 
               {/* Modal Footer */}
               <div className="p-4 bg-[#faf6ed] border-t border-amber-900/15 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-                {/* Discount Box */}
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                  <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-700 shrink-0">
-                    <Gift className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-stone-900">
-                      包車集章獎勵折扣
-                    </h4>
-                    <p className="text-[11px] text-stone-600">
-                      {collectedStamps.length >= 5
-                        ? '🎉 恭喜已集滿 5 個印章！預約包車可享 200 泰銖優惠折扣！'
-                        : `集滿 5 個印章即可領取 200 泰銖包車折價！還差 ${5 - collectedStamps.length} 個`}
-                    </p>
-                  </div>
+                <div className="flex items-center gap-2 text-xs text-stone-600 font-medium">
+                  <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>
+                    {language === 'en'
+                      ? 'Tip: Click any landmark card to navigate directly to it in the 3D map.'
+                      : language === 'th'
+                      ? 'คำแนะนำ: คลิกที่การ์ดสถานที่เพื่อเปิดดูตำแหน่งบนแผนที่ 3D ทันที'
+                      : '提示：點擊任一景點卡片即可關閉護照並直接在 3D 地圖中飛行定位！'}
+                  </span>
                 </div>
 
                 <button
