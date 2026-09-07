@@ -84,23 +84,23 @@ export default function Hero({ customTitle, customSubtitle }: { customTitle?: st
 
             {/* Content */}
             <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto mt-20">
-                <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 drop-shadow-lg leading-tight">
+                <h1 className="text-3xl sm:text-5xl md:text-6xl font-sans font-bold mb-4 sm:mb-6 drop-shadow-lg leading-tight tracking-wide">
                     {customTitle || t.hero.title}
                 </h1>
-                <h2 className="text-xl md:text-2xl font-light mb-8 drop-shadow-md tracking-wide whitespace-pre-line">
+                <h2 className="text-base sm:text-xl md:text-2xl font-sans font-light mb-8 drop-shadow-md tracking-wide whitespace-pre-line">
                     {customSubtitle || t.hero.subtitle}
                 </h2>
 
                 <div className="flex flex-wrap items-center justify-center gap-4">
                     <Link
                         href="#contact"
-                        className="inline-flex items-center gap-2 bg-lanna-gold hover:bg-lanna-gold/90 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg text-lg"
+                        className="inline-flex items-center gap-2 bg-lanna-gold hover:bg-lanna-gold/90 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg text-base sm:text-lg font-sans"
                     >
                         {t.hero.cta} <ArrowRight size={20} />
                     </Link>
                     <Link
                         href="/tour-3d"
-                        className="group relative inline-flex items-center gap-2.5 bg-gradient-to-r from-amber-500/25 via-amber-600/35 to-amber-800/30 hover:from-amber-500/40 hover:via-amber-600/50 hover:to-amber-800/45 text-amber-50 hover:text-white border border-amber-300/60 hover:border-amber-200 backdrop-blur-md font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg shadow-amber-500/25 hover:shadow-amber-400/40 ring-1 ring-amber-300/40 hover:ring-amber-200/80 text-lg font-serif"
+                        className="group relative inline-flex items-center gap-2.5 bg-gradient-to-r from-amber-500/25 via-amber-600/35 to-amber-800/30 hover:from-amber-500/40 hover:via-amber-600/50 hover:to-amber-800/45 text-amber-50 hover:text-white border border-amber-300/60 hover:border-amber-200 backdrop-blur-md font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg shadow-amber-500/25 hover:shadow-amber-400/40 ring-1 ring-amber-300/40 hover:ring-amber-200/80 text-base sm:text-lg font-sans"
                     >
                         <Globe className="w-5 h-5 text-amber-300 group-hover:rotate-45 group-hover:text-white transition-all duration-300 shrink-0" />
                         <span>{(t.hero as any).tour3d || "✦ 探索 3D 蘭納地圖"}</span>
