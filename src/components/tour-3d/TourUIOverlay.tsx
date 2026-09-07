@@ -1383,13 +1383,14 @@ export default function TourUIOverlay({
                 const tagText = landmark.tag[language] || landmark.tag['zh-TW'];
 
                 return (
-                  <button
+                  <div
                     key={landmark.id}
                     onClick={() => {
                       onSelectLandmark(landmark);
+                      setShowDetailModal(true);
                       setMobileListOpen(false);
                     }}
-                    className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 ${
+                    className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 cursor-pointer ${
                       isSelected
                         ? 'bg-lanna-cream border-lanna-gold shadow-md ring-2 ring-lanna-gold/30'
                         : 'bg-white border-lanna-gold/20 shadow-sm active:bg-lanna-cream/60'
@@ -1409,15 +1410,33 @@ export default function TourUIOverlay({
                           {tagText}
                         </span>
                         {isInWishlist && (
-                          <span className="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 font-bold px-1 rounded">
+                          <span className="text-[9px] bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold px-1.5 py-0.2 rounded">
                             ✓ 已在行程
                           </span>
                         )}
                       </div>
                       <h3 className="text-xs font-sans font-bold text-lanna-coffee truncate">{landmarkName}</h3>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-lanna-gold shrink-0" />
-                  </button>
+
+                    {/* Quick Wishlist toggle directly in list */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(landmark.id);
+                      }}
+                      className={`p-1.5 rounded-lg text-xs font-bold shrink-0 transition active:scale-90 border ${
+                        isInWishlist
+                          ? 'bg-emerald-600 text-white border-emerald-400/50 shadow-sm'
+                          : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300 shadow-sm'
+                      }`}
+                      title={isInWishlist ? '從行程心願移除' : '加入行程心願'}
+                    >
+                      {isInWishlist ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5 text-amber-700" />}
+                    </button>
+
+                    <ChevronRight className="w-4 h-4 text-lanna-gold/60 shrink-0" />
+                  </div>
                 );
               })}
             </div>
