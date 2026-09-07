@@ -207,6 +207,12 @@ export default function TourUIOverlay({
   const [searchQuery, setSearchQuery] = useState('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Digital Passport Modal Filters
+  const [passportRegionFilter, setPassportRegionFilter] = useState<'all' | 'chiang-mai' | 'chiang-rai'>('all');
+  const [passportDistrictFilter, setPassportDistrictFilter] = useState<string>('all');
+  const [passportStatusFilter, setPassportStatusFilter] = useState<'all' | 'unlocked' | 'locked'>('all');
+  const [passportSearchQuery, setPassportSearchQuery] = useState<string>('');
+
   // Automatically clear search input whenever the user changes district, region, or category
   useEffect(() => {
     setSearchQuery('');
@@ -1691,89 +1697,405 @@ export default function TourUIOverlay({
       )}
 
       {/* DIGITAL PASSPORT MODAL */}
-      {showPassportModal && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowPassportModal(false);
-          }}
-          onWheel={(e) => e.stopPropagation()}
-          onMouseDown={(e) => e.stopPropagation()}
-          onTouchMove={(e) => e.stopPropagation()}
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto"
-        >
+      {showPassportModal && (() => {
+        const availableDistricts = DISTRICTS.filter((d) => {
+          if (passportRegionFilter === 'all') return true;
+          return d.regionId === passportRegionFilter;
+        });
+
+        const filteredPassportLandmarks = LANDMARKS.filter((l) => {
+          if (passportRegionFilter !== 'all' && l.regionId !== passportRegionFilter) {
+            return false;
+          }
+          if (passportDistrictFilter !== 'all' && l.districtId !== passportDistrictFilter) {
+            return false;
+          }
+          const isUnlocked = collectedStamps.includes(l.id);
+          if (passportStatusFilter === 'unlocked' && !isUnlocked) return false;
+          if (passportStatusFilter === 'locked' && isUnlocked) return false;
+
+          if (passportSearchQuery.trim()) {
+            const q = passportSearchQuery.toLowerCase().trim();
+            const zh = (l.name['zh-TW'] || '').toLowerCase();
+            const en = (l.name['en'] || '').toLowerCase();
+            const th = (l.name['th'] || '').toLowerCase();
+            const tag = ((l.tag && (l.tag[language] || l.tag['zh-TW'])) || '').toLowerCase();
+            if (!zh.includes(q) && !en.includes(q) && !th.includes(q) && !tag.includes(q)) {
+              return false;
+            }
+          }
+          return true;
+        });
+
+        const totalInCurrentRegion = LANDMARKS.filter((l) =>
+          passportRegionFilter === 'all' ? true : l.regionId === passportRegionFilter
+        ).length;
+
+        const collectedInCurrentRegion = LANDMARKS.filter(
+          (l) => (passportRegionFilter === 'all' ? true : l.regionId === passportRegionFilter) && collectedStamps.includes(l.id)
+        ).length;
+
+        return (
           <div
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setShowPassportModal(false);
+            }}
             onWheel={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
-            className="bg-white border border-lanna-gold/40 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 pointer-events-auto"
+            onTouchMove={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 pointer-events-auto font-sans"
           >
-            <div className="p-4 bg-lanna-cream border-b border-lanna-gold/30 text-lanna-coffee flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <Award className="w-6 h-6 text-lanna-gold" />
-                <div>
-                  <h3 className="text-base font-serif font-bold text-lanna-coffee">阿勛泰北旅遊 3D 護照集章卡</h3>
-                  <p className="text-xs text-lanna-coffee/80 font-medium">已集章 {collectedStamps.length} / {LANDMARKS.length}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowPassportModal(false)}
-                className="p-1.5 rounded-full bg-white/80 hover:bg-white text-lanna-coffee border border-lanna-gold/30 transition shadow-sm"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-5 max-h-[60vh] overflow-y-auto bg-lanna-cream/10">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {LANDMARKS.map((l) => {
-                  const isUnlocked = collectedStamps.includes(l.id);
-                  const lName = l.name[language] || l.name['zh-TW'];
-                  return (
-                    <div
-                      key={l.id}
-                      className={`p-3.5 rounded-2xl border flex flex-col items-center justify-center text-center gap-1.5 ${
-                        isUnlocked
-                          ? 'bg-lanna-cream border-lanna-gold/50 text-lanna-coffee shadow-sm'
-                          : 'bg-white border-slate-200 text-slate-400 opacity-60'
-                      }`}
-                    >
-                      <div className="w-12 h-12 rounded-full bg-white border border-lanna-gold/30 flex items-center justify-center text-2xl shadow-inner">
-                        {isUnlocked ? l.stampIcon : '🔒'}
-                      </div>
-                      <span className="text-xs font-serif font-bold text-lanna-coffee">{lName}</span>
-                      <span className="text-[10px] text-lanna-gold font-bold">
-                        {isUnlocked ? '💮 已蓋章' : '尚未解鎖'}
-                      </span>
+            <div
+              onClick={(e) => e.stopPropagation()}
+              onWheel={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              className="bg-white border border-amber-900/20 rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 pointer-events-auto"
+            >
+              {/* Modal Header */}
+              <div className="p-4 sm:p-5 bg-[#faf6ed] border-b border-amber-900/15 flex flex-col gap-3 shrink-0">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-700 shadow-xs shrink-0">
+                      <Award className="w-6 h-6 sm:w-7 sm:h-7" />
                     </div>
-                  );
-                })}
-              </div>
+                    <div>
+                      <div className="flex items-center gap-2.5">
+                        <h3 className="text-base sm:text-xl font-bold text-stone-900">
+                          {language === 'en'
+                            ? 'Northern Thailand 3D Travel Passport'
+                            : language === 'th'
+                            ? 'พาสปอร์ตท่องเที่ยว 3D ภาคเหนือ'
+                            : '阿勛泰北旅遊 3D 護照集章冊'}
+                        </h3>
+                        <span className="hidden sm:inline-block px-3 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                          已集章 {collectedStamps.length} / {LANDMARKS.length}
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-600 mt-0.5">
+                        {language === 'en'
+                          ? 'Explore landmarks to collect exclusive memorial stamps. Collect 5 to unlock 200 THB charter discount!'
+                          : language === 'th'
+                          ? 'สำรวจสถานที่เพื่อสะสมตราประทับ สะสมครบ 5 ดวงรับส่วนลดเหมารถ 200 บาท!'
+                          : '探索泰北 247 處精選地標蓋印章，集滿 5 枚印章即可於預約包車時現折 200 泰銖！'}
+                      </p>
+                    </div>
+                  </div>
 
-              {/* Discount Reward Box */}
-              <div className="mt-5 p-4 rounded-2xl bg-lanna-cream border border-lanna-gold/40 flex items-center justify-between shadow-sm">
-                <div className="flex items-center gap-3">
-                  <Gift className="w-8 h-8 text-lanna-gold shrink-0" />
-                  <div>
-                    <h4 className="text-xs font-serif font-bold text-lanna-coffee">包車集章獎勵折扣</h4>
-                    <p className="text-[11px] text-lanna-coffee/90 font-medium">
-                      {collectedStamps.length >= 5 ? '🎉 恭喜已集滿 5 章！預約包車可享 200 泰銖折扣！' : `還差 ${5 - collectedStamps.length} 個印章即可領取 200 泰銖包車折價！`}
-                    </p>
+                  <button
+                    onClick={() => setShowPassportModal(false)}
+                    className="p-2 rounded-full bg-white hover:bg-stone-100 text-stone-600 hover:text-stone-900 border border-stone-200 transition shadow-xs shrink-0"
+                    title="關閉護照"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Overall Progress Bar */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[11px] font-semibold text-stone-700">
+                    <span>集章總進度</span>
+                    <span className="text-amber-800">
+                      {collectedStamps.length} / {LANDMARKS.length} ({Math.round((collectedStamps.length / LANDMARKS.length) * 100)}%)
+                    </span>
+                  </div>
+                  <div className="w-full bg-stone-200 h-2.5 rounded-full overflow-hidden flex">
+                    <div
+                      className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${Math.max(1.5, (collectedStamps.length / LANDMARKS.length) * 100)}%`,
+                      }}
+                    />
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="p-4 bg-lanna-cream border-t border-lanna-gold/30 flex justify-end">
-              <button
-                onClick={() => setShowPassportModal(false)}
-                className="px-5 py-2 rounded-xl bg-lanna-gold hover:bg-[#b38e47] text-white text-xs font-serif font-bold shadow-md transition"
-              >
-                關閉護照
-              </button>
+              {/* Control & Filter Toolbar */}
+              <div className="p-3.5 sm:p-4 bg-stone-50 border-b border-stone-200 flex flex-col gap-3 shrink-0">
+                {/* Row 1: Region + Status + Search */}
+                <div className="flex flex-wrap items-center justify-between gap-2.5">
+                  {/* Region selector */}
+                  <div className="flex items-center bg-white p-1 rounded-xl border border-stone-200 shadow-xs text-xs font-semibold text-stone-700">
+                    <button
+                      onClick={() => {
+                        setPassportRegionFilter('all');
+                        setPassportDistrictFilter('all');
+                      }}
+                      className={`px-3 py-1.5 rounded-lg transition ${
+                        passportRegionFilter === 'all'
+                          ? 'bg-amber-600 text-white font-bold shadow-xs'
+                          : 'hover:bg-stone-100 text-stone-700'
+                      }`}
+                    >
+                      全部地區 ({LANDMARKS.length})
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPassportRegionFilter('chiang-mai');
+                        setPassportDistrictFilter('all');
+                      }}
+                      className={`px-3 py-1.5 rounded-lg transition ${
+                        passportRegionFilter === 'chiang-mai'
+                          ? 'bg-amber-600 text-white font-bold shadow-xs'
+                          : 'hover:bg-stone-100 text-stone-700'
+                      }`}
+                    >
+                      清邁 ({LANDMARKS.filter((l) => l.regionId === 'chiang-mai').length})
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPassportRegionFilter('chiang-rai');
+                        setPassportDistrictFilter('all');
+                      }}
+                      className={`px-3 py-1.5 rounded-lg transition ${
+                        passportRegionFilter === 'chiang-rai'
+                          ? 'bg-amber-600 text-white font-bold shadow-xs'
+                          : 'hover:bg-stone-100 text-stone-700'
+                      }`}
+                    >
+                      清萊 ({LANDMARKS.filter((l) => l.regionId === 'chiang-rai').length})
+                    </button>
+                  </div>
+
+                  {/* Status filter */}
+                  <div className="flex items-center bg-white p-1 rounded-xl border border-stone-200 shadow-xs text-xs font-semibold text-stone-700">
+                    <button
+                      onClick={() => setPassportStatusFilter('all')}
+                      className={`px-2.5 py-1.5 rounded-lg transition ${
+                        passportStatusFilter === 'all'
+                          ? 'bg-stone-800 text-white font-bold shadow-xs'
+                          : 'hover:bg-stone-100 text-stone-700'
+                      }`}
+                    >
+                      全部
+                    </button>
+                    <button
+                      onClick={() => setPassportStatusFilter('unlocked')}
+                      className={`px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 ${
+                        passportStatusFilter === 'unlocked'
+                          ? 'bg-amber-600 text-white font-bold shadow-xs'
+                          : 'hover:bg-stone-100 text-stone-700'
+                      }`}
+                    >
+                      <span>💮 已集章</span>
+                      <span className="text-[11px] opacity-90">({collectedStamps.length})</span>
+                    </button>
+                    <button
+                      onClick={() => setPassportStatusFilter('locked')}
+                      className={`px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 ${
+                        passportStatusFilter === 'locked'
+                          ? 'bg-stone-700 text-white font-bold shadow-xs'
+                          : 'hover:bg-stone-100 text-stone-700'
+                      }`}
+                    >
+                      <span>🔒 尚未解鎖</span>
+                      <span className="text-[11px] opacity-90">({LANDMARKS.length - collectedStamps.length})</span>
+                    </button>
+                  </div>
+
+                  {/* Search box */}
+                  <div className="relative flex-1 min-w-[180px] max-w-xs">
+                    <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={passportSearchQuery}
+                      onChange={(e) => setPassportSearchQuery(e.target.value)}
+                      placeholder="搜尋 247 個景點名稱、分類..."
+                      className="w-full pl-9 pr-8 py-1.5 text-xs bg-white border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-stone-800 placeholder-stone-400 shadow-2xs font-medium"
+                    />
+                    {passportSearchQuery && (
+                      <button
+                        onClick={() => setPassportSearchQuery('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 p-0.5"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Row 2: District Pills Tabs */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin text-xs">
+                  <button
+                    onClick={() => setPassportDistrictFilter('all')}
+                    className={`px-3 py-1.5 rounded-xl whitespace-nowrap transition flex items-center gap-1.5 shrink-0 font-bold ${
+                      passportDistrictFilter === 'all'
+                        ? 'bg-stone-900 text-white shadow-xs'
+                        : 'bg-white hover:bg-stone-100 text-stone-700 border border-stone-200'
+                    }`}
+                  >
+                    <span>全部分區</span>
+                    <span
+                      className={`text-[11px] px-1.5 py-0.2 rounded-full ${
+                        passportDistrictFilter === 'all'
+                          ? 'bg-stone-700 text-white'
+                          : 'bg-stone-100 text-stone-600'
+                      }`}
+                    >
+                      {collectedInCurrentRegion}/{totalInCurrentRegion}
+                    </span>
+                  </button>
+                  {availableDistricts.map((d) => {
+                    const dLandmarks = LANDMARKS.filter((l) => l.districtId === d.id);
+                    const dCollected = dLandmarks.filter((l) => collectedStamps.includes(l.id)).length;
+                    const isSelected = passportDistrictFilter === d.id;
+                    const dName = d.name[language] || d.name['zh-TW'];
+                    return (
+                      <button
+                        key={d.id}
+                        onClick={() => setPassportDistrictFilter(d.id)}
+                        className={`px-3 py-1.5 rounded-xl whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
+                          isSelected
+                            ? 'bg-amber-600 text-white font-bold shadow-xs'
+                            : 'bg-white hover:bg-stone-100 text-stone-800 border border-stone-200 font-semibold'
+                        }`}
+                      >
+                        <span>{dName}</span>
+                        <span
+                          className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
+                            isSelected
+                              ? 'bg-amber-700/80 text-white'
+                              : dCollected > 0
+                              ? 'bg-amber-100 text-amber-900'
+                              : 'bg-stone-100 text-stone-500'
+                          }`}
+                        >
+                          {dCollected}/{dLandmarks.length}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Landmark Cards Grid */}
+              <div className="p-4 sm:p-6 overflow-y-auto flex-1 bg-[#fcfbfa]/90 min-h-[300px]">
+                {filteredPassportLandmarks.length === 0 ? (
+                  <div className="py-16 text-center flex flex-col items-center justify-center gap-3">
+                    <div className="w-16 h-16 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-3xl text-stone-400">
+                      🔍
+                    </div>
+                    <h4 className="text-base font-bold text-stone-800">查無符合條件的景點集章</h4>
+                    <p className="text-xs text-stone-500 max-w-sm">
+                      請嘗試切換其他分區、清除搜尋關鍵字，或切換集章狀態。
+                    </p>
+                    <button
+                      onClick={() => {
+                        setPassportRegionFilter('all');
+                        setPassportDistrictFilter('all');
+                        setPassportStatusFilter('all');
+                        setPassportSearchQuery('');
+                      }}
+                      className="mt-2 px-4 py-2 bg-stone-800 text-white rounded-xl text-xs font-bold hover:bg-stone-900 transition shadow-sm"
+                    >
+                      重設所有篩選條件
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
+                    {filteredPassportLandmarks.map((l) => {
+                      const isUnlocked = collectedStamps.includes(l.id);
+                      const lName = l.name[language] || l.name['zh-TW'];
+                      const districtObj = DISTRICTS.find((d) => d.id === l.districtId);
+                      const districtLabel = districtObj ? (districtObj.name[language] || districtObj.name['zh-TW']) : '';
+
+                      return (
+                        <div
+                          key={l.id}
+                          onClick={() => {
+                            onSelectLandmark(l);
+                            setShowPassportModal(false);
+                          }}
+                          className={`p-3.5 rounded-2xl border transition-all duration-200 flex flex-col items-center text-center justify-between gap-2.5 cursor-pointer group select-none hover:-translate-y-0.5 ${
+                            isUnlocked
+                              ? 'bg-gradient-to-b from-amber-50/90 via-white to-amber-50/30 border-amber-400 shadow-xs hover:shadow-md hover:border-amber-500'
+                              : 'bg-white border-stone-200 shadow-2xs hover:border-amber-300 hover:bg-stone-50/70 hover:shadow-xs'
+                          }`}
+                          title="點擊可在 3D 地圖中定位此景點"
+                        >
+                          {/* Stamp Circle Icon */}
+                          <div
+                            className={`w-14 h-14 rounded-full flex items-center justify-center text-3xl transition-transform duration-200 group-hover:scale-105 shrink-0 ${
+                              isUnlocked
+                                ? 'bg-gradient-to-br from-amber-100 to-amber-50 border-2 border-amber-400 text-amber-700 shadow-inner'
+                                : 'bg-stone-100 border border-stone-200 text-stone-400'
+                            }`}
+                          >
+                            {isUnlocked ? l.stampIcon : '🔒'}
+                          </div>
+
+                          {/* Title & District Tag */}
+                          <div className="w-full flex flex-col items-center gap-1">
+                            <h4
+                              className={`text-xs sm:text-sm leading-snug line-clamp-2 w-full text-center ${
+                                isUnlocked
+                                  ? 'font-bold text-stone-900'
+                                  : 'font-semibold text-stone-800'
+                              }`}
+                            >
+                              {lName}
+                            </h4>
+                            {districtLabel && (
+                              <span
+                                className={`text-[10px] px-2 py-0.5 rounded-md truncate max-w-full font-medium ${
+                                  isUnlocked
+                                    ? 'text-amber-900 bg-amber-100/90'
+                                    : 'text-stone-500 bg-stone-100'
+                                }`}
+                              >
+                                {districtLabel}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Status Badge */}
+                          <div className="mt-auto w-full pt-1">
+                            {isUnlocked ? (
+                              <span className="inline-flex items-center justify-center gap-1 w-full text-[11px] font-bold text-amber-900 bg-amber-100/90 border border-amber-300/80 py-1 px-2 rounded-full shadow-2xs">
+                                <span>💮 已集章</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center justify-center gap-1 w-full text-[11px] font-medium text-stone-600 bg-stone-100 border border-stone-200 py-1 px-2 rounded-full">
+                                <span>尚未解鎖</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-4 bg-[#faf6ed] border-t border-amber-900/15 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+                {/* Discount Box */}
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-700 shrink-0">
+                    <Gift className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-stone-900">
+                      包車集章獎勵折扣
+                    </h4>
+                    <p className="text-[11px] text-stone-600">
+                      {collectedStamps.length >= 5
+                        ? '🎉 恭喜已集滿 5 個印章！預約包車可享 200 泰銖優惠折扣！'
+                        : `集滿 5 個印章即可領取 200 泰銖包車折價！還差 ${5 - collectedStamps.length} 個`}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowPassportModal(false)}
+                  className="w-full sm:w-auto px-6 py-2 rounded-xl bg-amber-700 hover:bg-amber-800 active:scale-98 text-white text-xs sm:text-sm font-bold shadow-md transition shrink-0"
+                >
+                  關閉護照
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Live Meteorological & Air Quality Modal */}
       <WeatherModal

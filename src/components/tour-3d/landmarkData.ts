@@ -14205,8 +14205,8 @@ export const LANDMARKS: Landmark[] = [
       "en": "Pai Treehouse Resort",
       "th": "Pai Treehouse Resort"
     },
-    "regionId": "chiang-rai",
-    "districtId": "mae-kampong-district",
+    "regionId": "chiang-mai",
+    "districtId": "mae-rim-district",
     "category": "cafe",
     "position": [
       0,
@@ -14266,8 +14266,8 @@ export const LANDMARKS: Landmark[] = [
       "en": "Yun Lai Viewpoint Pai",
       "th": "Yun Lai Viewpoint Pai"
     },
-    "regionId": "chiang-rai",
-    "districtId": "tea-mountain-district",
+    "regionId": "chiang-mai",
+    "districtId": "mae-rim-district",
     "category": "nature",
     "position": [
       0,
@@ -14324,8 +14324,8 @@ export const LANDMARKS: Landmark[] = [
       "en": "Pai Canyon",
       "th": "Pai Canyon"
     },
-    "regionId": "chiang-rai",
-    "districtId": "tea-mountain-district",
+    "regionId": "chiang-mai",
+    "districtId": "mae-rim-district",
     "category": "nature",
     "position": [
       0,
@@ -14385,8 +14385,8 @@ export const LANDMARKS: Landmark[] = [
       "en": "Memorial Bridge Pai",
       "th": "Tha-Pai Memorial Bridge"
     },
-    "regionId": "chiang-rai",
-    "districtId": "tea-mountain-district",
+    "regionId": "chiang-mai",
+    "districtId": "mae-rim-district",
     "category": "experience",
     "position": [
       0,
@@ -14443,8 +14443,8 @@ export const LANDMARKS: Landmark[] = [
       "en": "Santichon Village",
       "th": "หมู่บ้านสันติชล (Santichon Village)"
     },
-    "regionId": "chiang-rai",
-    "districtId": "tea-mountain-district",
+    "regionId": "chiang-mai",
+    "districtId": "mae-rim-district",
     "category": "nature",
     "position": [
       0,
@@ -14504,8 +14504,8 @@ export const LANDMARKS: Landmark[] = [
       "en": "Wat Phra That Mae Yen",
       "th": "Wat Phra That Mae Yen"
     },
-    "regionId": "chiang-rai",
-    "districtId": "tea-mountain-district",
+    "regionId": "chiang-mai",
+    "districtId": "mae-rim-district",
     "category": "temple",
     "position": [
       0,
