@@ -307,7 +307,7 @@ export default function ChiangMaiChiangRai3DMap({
       <div
         ref={canvasRef}
         onClick={handleCanvasClick}
-        className="relative w-full max-w-6xl aspect-[16/9] transition-transform duration-150 ease-out shadow-2xl rounded-3xl overflow-hidden border border-slate-700 transform-gpu"
+        className="relative w-full h-full md:max-w-6xl md:aspect-[16/9] transition-transform duration-150 ease-out shadow-2xl md:rounded-3xl overflow-hidden border-0 md:border border-slate-700 transform-gpu"
         style={{
           transform: `translate3d(${panX}px, ${panY}px, 0px) scale(${scale})`,
         }}
@@ -412,50 +412,61 @@ export default function ChiangMaiChiangRai3DMap({
           </div>
         )}
 
-
-
         {/* Clean Frosted Lanna District Badges (Only displayed on Overview Map) */}
         {!selectedDistrictId &&
           DISTRICTS.map((dist) => {
             let coords = { top: '50%', left: '50%' };
+            let icon = '📍';
 
             switch (dist.id) {
               case 'doi-suthep-district':
                 coords = { top: '15%', left: '20%' };
+                icon = '⛰️';
                 break;
               case 'nimman-district':
                 coords = { top: '38%', left: '22%' };
+                icon = '☕';
                 break;
               case 'mae-rim-district':
                 coords = { top: '30%', left: '46%' };
+                icon = '🐘';
                 break;
               case 'old-city-district':
                 coords = { top: '50%', left: '46%' };
+                icon = '🏛️';
                 break;
               case 'south-city-district':
                 coords = { top: '66%', left: '46%' };
+                icon = '🪙';
                 break;
               case 'night-bazaar-district':
                 coords = { top: '50%', left: '68%' };
+                icon = '🏮';
                 break;
               case 'hang-dong-district':
                 coords = { top: '82%', left: '38%' };
+                icon = '🪵';
                 break;
               case 'mae-kampong-district':
               case 'san-kamphaeng-district':
                 coords = { top: '64%', left: '80%' };
+                icon = '🌿';
                 break;
               case 'chiang-dao-district':
                 coords = { top: '12%', left: '44%' };
+                icon = '🏔️';
                 break;
               case 'doi-inthanon-district':
                 coords = { top: '88%', left: '20%' };
+                icon = '👑';
                 break;
               case 'chiang-rai-city-district':
                 coords = { top: '22%', left: '58%' };
+                icon = '🎨';
                 break;
               case 'tea-mountain-district':
                 coords = { top: '14%', left: '78%' };
+                icon = '🍵';
                 break;
               default:
                 break;
@@ -474,22 +485,21 @@ export default function ChiangMaiChiangRai3DMap({
                   onSelectRegion(dist.regionId);
                 }}
                 style={{ top: coords.top, left: coords.left }}
-                className={`absolute -translate-x-1/2 -translate-y-1/2 z-25 group cursor-pointer transition-all duration-200 ${
+                className={`absolute -translate-x-1/2 -translate-y-1/2 z-25 group cursor-pointer transition-all duration-300 active:scale-95 ${
                   isSelected ? 'scale-110 z-40' : 'hover:scale-105'
                 }`}
               >
-                <div className="relative flex flex-col items-center">
-                  <div
-                    className={`px-2 py-0.5 sm:px-3.5 sm:py-1.5 rounded-lg sm:rounded-xl shadow-md border flex items-center justify-center transition-all duration-200 backdrop-blur-md ${
-                      isSelected
-                        ? 'bg-lanna-gold text-white border-lanna-gold ring-2 ring-lanna-gold/40 shadow-lg'
-                        : 'bg-lanna-cream/95 hover:bg-white text-lanna-coffee border-lanna-gold/40 shadow-sm'
-                    }`}
-                  >
-                    <span className={`text-[10px] sm:text-sm tracking-tight sm:tracking-wide whitespace-nowrap font-sans font-bold ${isSelected ? 'text-white' : 'text-lanna-coffee'}`}>
-                      {distName}
-                    </span>
-                  </div>
+                <div
+                  className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-xl border backdrop-blur-md transition-all duration-300 ${
+                    isSelected
+                      ? 'bg-amber-600 text-white border-amber-300 ring-2 ring-amber-400/50 shadow-amber-900/40'
+                      : 'bg-[#1C140E]/88 hover:bg-[#2C1D13] text-amber-100 border-amber-400/40 ring-1 ring-amber-300/20 shadow-black/60'
+                  }`}
+                >
+                  <span className="text-xs sm:text-sm leading-none shrink-0 drop-shadow">{icon}</span>
+                  <span className={`text-[11px] sm:text-xs font-bold font-sans tracking-wide whitespace-nowrap ${isSelected ? 'text-white font-extrabold' : 'text-amber-50'}`}>
+                    {distName}
+                  </span>
                 </div>
               </button>
             );

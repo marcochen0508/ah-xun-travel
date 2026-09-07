@@ -200,6 +200,7 @@ export default function TourUIOverlay({
   const [showPassportModal, setShowPassportModal] = useState(false);
   const [showWeatherModal, setShowWeatherModal] = useState(false);
   const [showItineraryModal, setShowItineraryModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [mobileListOpen, setMobileListOpen] = useState(false);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [headerWeather, setHeaderWeather] = useState<LiveWeatherData | null>(null);
@@ -973,46 +974,43 @@ export default function TourUIOverlay({
               <div className="space-y-2.5">
                 <div className="flex items-center gap-2 text-lanna-coffee text-xs sm:text-sm">
                   <Clock className="w-4 h-4 text-lanna-gold shrink-0" />
-                  <span className="font-bold">{language === 'en' ? 'Recommended Duration:' : language === 'th' ? 'ระยะเวลาที่แนะนำ:' : '建議遊覽時間：'}</span>
-                  <span>{selectedLandmark.recommendedTime[language] || selectedLandmark.recommendedTime['zh-TW']}</span>
+                  <span className="font-bold">{language === 'en' ? 'Recommended Time:' : language === 'th' ? 'เวลาที่แนะนำ:' : '建議遊覽時間：'}</span>
+                  <span className="font-medium text-lanna-coffee/80">{selectedLandmark.recommendedTime[language] || selectedLandmark.recommendedTime['zh-TW']}</span>
                 </div>
               </div>
 
-              {/* ACTIONS: 1. Add to Itinerary Wishlist / 2. Open Single in Google Maps */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center gap-2.5">
-                {/* Wishlist Toggle Button */}
+              {/* Actions */}
+              <div className="pt-2 flex flex-col gap-2.5">
                 <button
                   onClick={() => toggleWishlist(selectedLandmark.id)}
-                  className={`flex-1 w-full py-3.5 px-4 rounded-2xl font-bold font-serif text-sm shadow-md flex items-center justify-center gap-2 transition-all duration-200 active:scale-95 ${
+                  className={`w-full py-3.5 px-4 rounded-2xl font-bold font-serif text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-95 ${
                     wishlist.includes(selectedLandmark.id)
-                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-400/50 shadow-emerald-900/20'
+                      ? 'bg-emerald-600 text-white border border-emerald-400/50'
                       : 'bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white border border-amber-300/40 shadow-amber-900/20'
                   }`}
                 >
                   {wishlist.includes(selectedLandmark.id) ? (
                     <>
                       <Check className="w-4 h-4" />
-                      <span>{language === 'en' ? 'In Itinerary (Click to Remove)' : language === 'th' ? 'อยู่ในแผนแล้ว (คลิกเพื่อนำออก)' : '✓ 已加入行程 (點擊移除)'}</span>
+                      <span>✓ 已在我的行程清單 (點擊移除)</span>
                     </>
                   ) : (
                     <>
                       <Plus className="w-4 h-4" />
-                      <span>{language === 'en' ? 'Add to My Itinerary' : language === 'th' ? '+ เพิ่มลงแผนการเดินทาง' : '+ 加入行程心願單'}</span>
+                      <span>+ 加入我的行程心願單</span>
                     </>
                   )}
                 </button>
 
-                {/* Open in Google Maps Single Spot */}
                 <a
                   href={getGoogleMapsSearchUrl(selectedLandmark, language)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto py-3.5 px-4 rounded-2xl bg-white hover:bg-lanna-cream text-lanna-coffee border border-lanna-gold/40 font-bold font-serif text-xs sm:text-sm shadow-sm flex items-center justify-center gap-1.5 transition active:scale-95 shrink-0"
-                  title={language === 'en' ? 'Open in Google Maps' : language === 'th' ? 'เปิดใน Google Maps' : '在 Google Maps 開啟此景點'}
+                  className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-lanna-cream text-lanna-coffee border border-lanna-gold/40 font-bold font-serif text-xs transition flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
                 >
-                  <Navigation className="w-4 h-4 text-lanna-gold" />
-                  <span>Google Maps</span>
-                  <ExternalLink className="w-3 h-3 text-lanna-coffee/60" />
+                  <Navigation className="w-3.5 h-3.5 text-lanna-gold" />
+                  <span>在 Google Maps 開啟官方地標導航</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-lanna-coffee/60" />
                 </a>
               </div>
             </div>
@@ -1020,35 +1018,160 @@ export default function TourUIOverlay({
         )}
       </aside>
 
-      {/* MOBILE FLOATING BOTTOM BAR (DISPLAYS 3D MAP FIRST BY DEFAULT) */}
-      <div className="md:hidden pointer-events-auto fixed bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 max-w-[94vw]">
-        <button
-          onClick={() => setMobileListOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-lanna-coffee/95 hover:bg-lanna-coffee text-white border border-lanna-gold/80 shadow-2xl backdrop-blur-md text-xs font-bold font-serif active:scale-95 transition-all"
-        >
-          <ListOrdered className="w-4 h-4 text-lanna-gold shrink-0" />
-          <span>
-            {language === 'en'
-              ? `📋 Landmarks (${filteredLandmarks.length})`
-              : language === 'th'
-              ? `📋 สถานที่ (${filteredLandmarks.length})`
-              : `📋 景點清單 (${filteredLandmarks.length} 處)`}
-          </span>
-        </button>
-        {selectedDistrictId && (
-          <button
-            onClick={() => {
-              onDistrictChange(null);
-              onRegionChange('all');
-              onSelectLandmark(null);
-            }}
-            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-300/40 shadow-2xl text-xs font-bold font-serif active:scale-95 transition-all"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>{language === 'en' ? 'Overview' : language === 'th' ? 'ภาพรวม' : '返回總覽'}</span>
-          </button>
-        )}
-      </div>
+      {/* MOBILE JAPANESE 3D TOUR BOTTOM PEEK BAR (WHEN NO LANDMARK SELECTED) */}
+      {!selectedLandmark && (
+        <div className="md:hidden pointer-events-auto fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-2xl border-t border-lanna-gold/40 shadow-2xl rounded-t-3xl pt-2 pb-5 px-3.5 flex flex-col gap-2.5 animate-in slide-in-from-bottom duration-300">
+          {/* Grabber Handle */}
+          <div 
+            onClick={() => setMobileListOpen(true)}
+            className="w-10 h-1 bg-stone-300 rounded-full mx-auto cursor-pointer" 
+          />
+          
+          {/* Info & Expand Row */}
+          <div className="flex items-center justify-between gap-2">
+            <div 
+              onClick={() => setMobileListOpen(true)}
+              className="flex items-center gap-1.5 cursor-pointer truncate"
+            >
+              <MapPin className="w-4 h-4 text-lanna-gold shrink-0" />
+              <span className="font-bold font-sans text-lanna-coffee text-xs sm:text-sm truncate">
+                {selectedDistrictName ? `${selectedDistrictName}` : '泰北雙城 12 分區總覽'}
+              </span>
+              <span className="text-[10px] bg-amber-50 border border-lanna-gold/40 text-amber-900 px-2 py-0.2 rounded-full font-bold shrink-0">
+                {filteredLandmarks.length} 處
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5 shrink-0">
+              {selectedDistrictId && (
+                <button
+                  onClick={() => {
+                    onDistrictChange(null);
+                    onRegionChange('all');
+                    onSelectLandmark(null);
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 text-xs font-bold"
+                >
+                  返回總覽
+                </button>
+              )}
+              <button
+                onClick={() => setMobileListOpen(true)}
+                className="px-3 py-1 rounded-xl bg-lanna-gold text-white text-xs font-bold font-sans shadow-sm flex items-center gap-1"
+              >
+                <ListOrdered className="w-3.5 h-3.5" />
+                <span>全部清單</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Horizontal Scrollable Category Chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
+            {categories.map((cat) => {
+              const isSelected = selectedCategoryId === cat.id;
+              return (
+                <button
+                  key={cat.id || 'all'}
+                  onClick={() => onCategoryChange(cat.id)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-all shrink-0 border ${
+                    isSelected
+                      ? 'bg-lanna-gold text-white border-lanna-gold shadow-sm'
+                      : 'bg-stone-50 text-lanna-coffee border-stone-200'
+                  }`}
+                >
+                  {cat.label[language] || cat.label['zh-TW']}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* MOBILE JAPANESE SPOTLIGHT LANDMARK CARD (FLOATING MINI SPOTLIGHT ON MAP) */}
+      {selectedLandmark && !showDetailModal && (
+        <div className="md:hidden pointer-events-auto fixed bottom-3 left-3 right-3 z-40 bg-white/98 backdrop-blur-2xl border border-lanna-gold/50 shadow-2xl rounded-2xl p-3 flex flex-col gap-2.5 max-w-lg mx-auto animate-in slide-in-from-bottom-6 duration-300">
+          {/* Top Row: Thumbnail + Title + Close */}
+          <div className="flex items-start gap-3">
+            <div 
+              onClick={() => setShowDetailModal(true)}
+              className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-lanna-gold/30 bg-lanna-cream cursor-pointer"
+            >
+              <Image src={selectedLandmark.image} alt={selectedLandmark.name[language] || selectedLandmark.name['zh-TW']} fill className="object-cover" />
+              {collectedStamps.includes(selectedLandmark.id) && (
+                <span className="absolute top-0.5 right-0.5 bg-lanna-gold text-white text-[8px] px-1 rounded-full font-black">
+                  💮
+                </span>
+              )}
+            </div>
+
+            <div className="flex-1 min-w-0" onClick={() => setShowDetailModal(true)}>
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <span className="text-[10px] font-bold text-lanna-coffee bg-lanna-cream px-2 py-0.2 rounded border border-lanna-gold/30">
+                  {selectedLandmark.tag[language] || selectedLandmark.tag['zh-TW']}
+                </span>
+                <span className="text-[10px] text-stone-500 flex items-center gap-0.5">
+                  <Clock className="w-3 h-3 text-lanna-gold" />
+                  {selectedLandmark.recommendedTime[language] || selectedLandmark.recommendedTime['zh-TW']}
+                </span>
+              </div>
+              <h3 className="text-sm font-sans font-bold text-lanna-coffee leading-tight truncate">
+                {selectedLandmark.name[language] || selectedLandmark.name['zh-TW']}
+              </h3>
+              <p className="text-[11px] text-stone-500 line-clamp-1 mt-0.5">
+                {selectedLandmark.description[language] || selectedLandmark.description['zh-TW']}
+              </p>
+            </div>
+
+            <button
+              onClick={() => onSelectLandmark(null)}
+              className="p-1 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 transition shrink-0"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Bottom Actions Row */}
+          <div className="flex items-center gap-2 pt-1 border-t border-stone-100">
+            <button
+              onClick={() => toggleWishlist(selectedLandmark.id)}
+              className={`flex-1 py-2 px-3 rounded-xl font-bold font-sans text-xs shadow-sm flex items-center justify-center gap-1.5 transition active:scale-95 ${
+                wishlist.includes(selectedLandmark.id)
+                  ? 'bg-emerald-600 text-white border border-emerald-400/50'
+                  : 'bg-gradient-to-r from-amber-500 to-amber-700 text-white border border-amber-300/40'
+              }`}
+            >
+              {wishlist.includes(selectedLandmark.id) ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>已在行程</span>
+                </>
+              ) : (
+                <>
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ 心願單</span>
+                </>
+              )}
+            </button>
+
+            <a
+              href={getGoogleMapsSearchUrl(selectedLandmark, language)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2 px-3 rounded-xl bg-white hover:bg-stone-50 text-lanna-coffee border border-lanna-gold/40 font-bold font-sans text-xs shadow-sm flex items-center justify-center gap-1 transition active:scale-95 shrink-0"
+            >
+              <Navigation className="w-3.5 h-3.5 text-lanna-gold" />
+              <span>導航</span>
+            </a>
+
+            <button
+              onClick={() => setShowDetailModal(true)}
+              className="py-2 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold font-sans text-xs shadow-sm flex items-center justify-center gap-1 transition active:scale-95 shrink-0"
+            >
+              <span>詳情 ➔</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* MOBILE LANDMARK LIST DRAWER / BOTTOM SHEET */}
       {mobileListOpen && (
@@ -1056,16 +1179,16 @@ export default function TourUIOverlay({
           onClick={(e) => {
             if (e.target === e.currentTarget) setMobileListOpen(false);
           }}
-          className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex flex-col justify-end pointer-events-auto animate-in fade-in duration-200"
+          className="md:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end pointer-events-auto animate-in fade-in duration-200"
         >
-          <div className="bg-white/98 backdrop-blur-2xl border-t-2 border-lanna-gold/50 rounded-t-3xl shadow-2xl max-h-[82vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
+          <div className="bg-white/98 backdrop-blur-2xl border-t-2 border-lanna-gold/50 rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
             {/* Drawer Header */}
             <div className="p-4 bg-lanna-cream border-b border-lanna-gold/20 flex flex-col gap-2.5 shrink-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 truncate">
                   <MapPin className="w-4 h-4 text-lanna-gold shrink-0" />
-                  <span className="font-bold font-serif text-lanna-coffee text-sm truncate">
-                    {selectedDistrictName ? `${selectedDistrictName}` : '景點總清單'}
+                  <span className="font-bold font-sans text-lanna-coffee text-sm truncate">
+                    {selectedDistrictName ? `${selectedDistrictName}` : '泰北雙城景點總清單'}
                   </span>
                   <span className="text-[11px] bg-white border border-lanna-gold/30 text-lanna-coffee px-2 py-0.2 rounded-full font-bold shrink-0">
                     {filteredLandmarks.length} 處
@@ -1087,7 +1210,7 @@ export default function TourUIOverlay({
                   placeholder={language === 'en' ? 'Search attractions, cafe, food...' : language === 'th' ? 'ค้นหาสถานที่...' : '搜尋古蹟、米其林美食、SPA...'}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-8 py-2 bg-white border border-lanna-gold/30 rounded-xl text-xs text-lanna-coffee placeholder:text-lanna-coffee/40 focus:outline-none shadow-sm"
+                  className="w-full pl-9 pr-8 py-2 bg-white border border-lanna-gold/30 rounded-xl text-xs text-lanna-coffee placeholder:text-lanna-coffee/40 focus:outline-none shadow-sm font-sans"
                 />
                 {searchQuery && (
                   <button
@@ -1162,7 +1285,7 @@ export default function TourUIOverlay({
                           </span>
                         )}
                       </div>
-                      <h3 className="text-xs font-serif font-bold text-lanna-coffee truncate">{landmarkName}</h3>
+                      <h3 className="text-xs font-sans font-bold text-lanna-coffee truncate">{landmarkName}</h3>
                     </div>
                     <ChevronRight className="w-4 h-4 text-lanna-gold shrink-0" />
                   </button>
@@ -1173,17 +1296,17 @@ export default function TourUIOverlay({
         </div>
       )}
 
-      {/* MOBILE LANDMARK DETAIL MODAL (WHEN A PIN OR SPOT IS CLICKED ON MOBILE) */}
-      {selectedLandmark && (
+      {/* DEEP STORY DETAIL MODAL (FULL MODAL ON MOBILE WHEN CLICKING '詳情') */}
+      {selectedLandmark && showDetailModal && (
         <div
           onClick={(e) => {
-            if (e.target === e.currentTarget) onSelectLandmark(null);
+            if (e.target === e.currentTarget) setShowDetailModal(false);
           }}
-          className="md:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end pointer-events-auto animate-in fade-in duration-200 p-2 sm:p-4"
+          className="md:hidden fixed inset-0 z-50 bg-black/65 backdrop-blur-md flex flex-col justify-end pointer-events-auto animate-in fade-in duration-200 p-2 sm:p-4"
         >
-          <div className="bg-white/98 backdrop-blur-2xl border-2 border-lanna-gold/40 rounded-3xl shadow-2xl max-h-[85vh] overflow-y-auto flex flex-col pointer-events-auto animate-in slide-in-from-bottom duration-300">
-            {/* Header image & Close */}
-            <div className="relative w-full h-44 shrink-0 overflow-hidden">
+          <div className="bg-white border-2 border-lanna-gold/50 rounded-3xl shadow-2xl max-h-[88vh] overflow-y-auto flex flex-col pointer-events-auto animate-in slide-in-from-bottom duration-300">
+            {/* Header photo & Back to spotlight & Close */}
+            <div className="relative w-full h-48 shrink-0 overflow-hidden">
               <a
                 href={getGoogleMapsSearchUrl(selectedLandmark, language)}
                 target="_blank"
@@ -1200,115 +1323,126 @@ export default function TourUIOverlay({
               </a>
 
               <button
-                onClick={() => onSelectLandmark(null)}
-                className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-white/90 text-lanna-coffee backdrop-blur-md shadow"
+                onClick={() => setShowDetailModal(false)}
+                className="absolute top-3.5 left-3.5 z-10 px-3 py-1 rounded-full bg-black/60 text-white text-xs font-bold backdrop-blur-md border border-white/20 flex items-center gap-1"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>返回地圖</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowDetailModal(false);
+                  onSelectLandmark(null);
+                }}
+                className="absolute top-3.5 right-3.5 z-10 p-1.5 rounded-full bg-white/90 text-lanna-coffee backdrop-blur-md shadow"
               >
                 <X className="w-4 h-4" />
               </button>
 
-              <div className="absolute bottom-2.5 left-3.5 right-3.5 z-10 text-white">
-                <span className="px-2 py-0.5 rounded bg-lanna-gold text-white text-[10px] font-serif font-bold inline-block shadow mb-1">
+              <div className="absolute bottom-3 left-3.5 right-3.5 z-10 text-white">
+                <span className="px-2.5 py-0.5 rounded-md bg-lanna-gold text-white text-[10px] font-bold inline-block shadow mb-1">
                   {selectedLandmark.tag[language] || selectedLandmark.tag['zh-TW']}
                 </span>
-                <h2 className="text-base font-serif font-bold drop-shadow-md text-white truncate">
+                <h2 className="text-base sm:text-lg font-sans font-bold drop-shadow-md text-white">
                   {selectedLandmark.name[language] || selectedLandmark.name['zh-TW']}
                 </h2>
               </div>
             </div>
 
             {/* Attribution */}
-            <div className="px-3.5 py-1.5 bg-stone-100 border-b border-lanna-gold/15 flex items-center justify-between text-[10px] text-lanna-coffee/75">
+            <div className="px-4 py-1.5 bg-stone-100 border-b border-lanna-gold/15 flex items-center justify-between text-[10px] text-stone-600">
               <span className="flex items-center gap-1">
                 <Camera className="w-3 h-3 text-lanna-gold shrink-0" />
-                <span>維基百科 Wikimedia (CC BY-SA)</span>
+                <span>照片出處：維基百科 Wikimedia (CC BY-SA)</span>
               </span>
-              <span className="font-mono text-[9px] text-lanna-coffee/50">CC BY-SA</span>
+              <span className="font-mono text-[9px] text-stone-400">CC BY-SA</span>
             </div>
 
             {/* Content */}
-            <div className="p-3.5 space-y-3 text-lanna-coffee bg-lanna-cream/10">
-              <p className="leading-relaxed text-xs text-lanna-coffee/90">
+            <div className="p-4 space-y-3.5 text-lanna-coffee bg-lanna-cream/10 font-sans">
+              <p className="leading-relaxed text-xs sm:text-sm text-stone-700">
                 {selectedLandmark.description[language] || selectedLandmark.description['zh-TW']}
               </p>
 
               {/* Stamp */}
-              <div className="bg-gradient-to-r from-amber-50 to-amber-100/50 border border-lanna-gold/40 p-2.5 rounded-xl flex items-center justify-between shadow-sm">
-                <div className="flex items-center gap-2">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm shadow-inner border ${
+              <div className="bg-gradient-to-r from-amber-50 to-amber-100/50 border border-lanna-gold/40 p-3 rounded-2xl flex items-center justify-between shadow-sm">
+                <div className="flex items-center gap-2.5">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-base shadow-inner border ${
                     collectedStamps.includes(selectedLandmark.id)
                       ? 'bg-amber-600 text-white border-amber-300'
-                      : 'bg-lanna-cream text-lanna-coffee/50 border-lanna-gold/30'
+                      : 'bg-lanna-cream text-stone-500 border-lanna-gold/30'
                   }`}>
                     {collectedStamps.includes(selectedLandmark.id) ? (
-                      <Award className="w-4 h-4 text-yellow-300" />
+                      <Award className="w-5 h-5 text-yellow-300" />
                     ) : (
                       <span>📜</span>
                     )}
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold font-serif text-lanna-coffee">
+                    <h4 className="text-xs font-bold text-lanna-coffee">
                       {language === 'en' ? 'Passport Seal' : language === 'th' ? 'ตราประทับ' : '護照紀念鋼印'}
                     </h4>
-                    <p className="text-[10px] text-lanna-coffee/70">
-                      {collectedStamps.includes(selectedLandmark.id) ? '已成功收藏 ✓' : '點擊蓋章收集紀念印章'}
+                    <p className="text-[10px] text-stone-500">
+                      {collectedStamps.includes(selectedLandmark.id) ? '已成功收藏此地標印章 ✓' : '點擊蓋章收集紀念鋼印'}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => handleStampClick(selectedLandmark.id)}
                   disabled={collectedStamps.includes(selectedLandmark.id)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition shadow ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shadow ${
                     collectedStamps.includes(selectedLandmark.id)
                       ? 'bg-emerald-50 text-emerald-800 border border-emerald-300'
                       : 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md'
                   }`}
                 >
-                  {collectedStamps.includes(selectedLandmark.id) ? '已蓋章 ✓' : '蓋章 ✦'}
+                  {collectedStamps.includes(selectedLandmark.id) ? '已蓋章 ✓' : '點擊蓋章 ✦'}
                 </button>
               </div>
 
               {/* Highlights */}
-              <div className="bg-white border border-lanna-gold/20 rounded-xl p-2.5 space-y-1 shadow-sm">
-                <h3 className="text-xs font-bold font-serif text-lanna-coffee flex items-center gap-1">
+              <div className="bg-white border border-lanna-gold/20 rounded-2xl p-3.5 space-y-2 shadow-sm">
+                <h3 className="text-xs font-bold text-lanna-coffee flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-lanna-gold" />
-                  <span>{language === 'en' ? 'Highlights' : language === 'th' ? 'ไฮไลท์' : '必看亮點'}</span>
+                  <span>{language === 'en' ? 'Highlights' : language === 'th' ? 'ไฮไลท์' : '必看精華亮點'}</span>
                 </h3>
-                <ul className="space-y-1">
+                <ul className="space-y-1.5">
                   {(selectedLandmark.highlights[language] || selectedLandmark.highlights['zh-TW']).map((item, idx) => (
-                    <li key={idx} className="flex items-center gap-1.5 text-lanna-coffee/90 text-[11px]">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-lanna-green shrink-0" />
+                    <li key={idx} className="flex items-center gap-2 text-stone-700 text-xs">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              {/* Time */}
-              <div className="flex items-center gap-1.5 text-lanna-coffee text-xs">
+              {/* Duration */}
+              <div className="flex items-center gap-2 text-stone-700 text-xs">
                 <Clock className="w-3.5 h-3.5 text-lanna-gold shrink-0" />
                 <span className="font-bold">建議遊覽時間：</span>
                 <span>{selectedLandmark.recommendedTime[language] || selectedLandmark.recommendedTime['zh-TW']}</span>
               </div>
 
               {/* Actions */}
-              <div className="pt-1 flex flex-col gap-2">
+              <div className="pt-2 flex flex-col gap-2">
                 <button
                   onClick={() => toggleWishlist(selectedLandmark.id)}
-                  className={`w-full py-2.5 px-3 rounded-xl font-bold font-serif text-xs shadow-md flex items-center justify-center gap-1.5 transition active:scale-95 ${
+                  className={`w-full py-3 px-4 rounded-xl font-bold font-sans text-xs shadow-md flex items-center justify-center gap-2 transition active:scale-95 ${
                     wishlist.includes(selectedLandmark.id)
                       ? 'bg-emerald-600 text-white border border-emerald-400/50'
-                      : 'bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-300/40 shadow-amber-900/20'
+                      : 'bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-300/40'
                   }`}
                 >
                   {wishlist.includes(selectedLandmark.id) ? (
                     <>
-                      <Check className="w-3.5 h-3.5" />
-                      <span>✓ 已加入行程 (點擊移除)</span>
+                      <Check className="w-4 h-4" />
+                      <span>✓ 已加入行程心願單 (點擊移除)</span>
                     </>
                   ) : (
                     <>
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>+ 加入行程心願單</span>
+                      <Plus className="w-4 h-4" />
+                      <span>+ 加入自訂行程心願單</span>
                     </>
                   )}
                 </button>
@@ -1317,11 +1451,11 @@ export default function TourUIOverlay({
                   href={getGoogleMapsSearchUrl(selectedLandmark, language)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2 px-3 rounded-xl bg-white text-lanna-coffee border border-lanna-gold/40 font-bold font-serif text-xs shadow-sm flex items-center justify-center gap-1.5 transition active:scale-95"
+                  className="w-full py-2.5 px-4 rounded-xl bg-white text-lanna-coffee border border-lanna-gold/40 font-bold font-sans text-xs shadow-sm flex items-center justify-center gap-1.5 transition active:scale-95"
                 >
                   <Navigation className="w-3.5 h-3.5 text-lanna-gold" />
-                  <span>Google Maps 導航</span>
-                  <ExternalLink className="w-3 h-3 text-lanna-coffee/60" />
+                  <span>在 Google Maps 開啟官方地標</span>
+                  <ExternalLink className="w-3 h-3 text-stone-400" />
                 </a>
               </div>
             </div>
