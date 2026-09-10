@@ -3496,6 +3496,68 @@ export const LANDMARKS: Landmark[] = [
     "googleMapsQuery": "Anusarn Night Market, Chiang Mai"
   },
   {
+    "id": "thai-birds-nest-anusarn-market-branch1",
+    "name": {
+      "zh-TW": "阿努善老牌泰國燕窩 1號店 (รังนกไทย สาขา 1)",
+      "en": "Thai Bird's Nest (Old Anusarn Market Branch 1)",
+      "th": "รังนกไทย เจ้าเก่าตลาดอนุสาร สาขา1"
+    },
+    "regionId": "chiang-mai",
+    "districtId": "night-bazaar-district",
+    "category": "food",
+    "position": [
+      0,
+      1,
+      0
+    ],
+    "image": "/images/categories/category_food.jpg",
+    "tag": {
+      "zh-TW": "特色傳統甜品/燕窩",
+      "en": "Featured Dessert & Bird's Nest",
+      "th": "ของหวานและรังนกชื่อดัง"
+    },
+    "description": {
+      "zh-TW": "長康路夜市與阿努善商圈知名老字號！主打現燉熱騰騰金絲燕窩、椰奶燕窩、雪蛤與白果甜品，逛夜市必嚐的暖心滋補甜品。",
+      "en": "Famous long-standing bird's nest shop at Anusarn Night Market, serving freshly simmered golden bird's nest, coconut milk bird's nest, and nourishing herbal desserts.",
+      "th": "ร้านรังนกแท้เจ้าเก่าแก่ชื่อดังย่านตลาดอนุสารและไนท์บาซาร์ เสิร์ฟรังนกต้มร้อนๆ หวานหอมกลมกล่อม พร้อมแปะก๊วยและของหวานบำรุงสุขภาพ"
+    },
+    "highlights": {
+      "zh-TW": [
+        "阿努善夜市老字號名店",
+        "現煮溫熱金絲燕窩與椰奶燕窩",
+        "高CP值養生甜品與白果雪蛤"
+      ],
+      "en": [
+        "Classic long-standing shop at Anusarn Market",
+        "Freshly brewed golden bird's nest & coconut dessert",
+        "High-value nourishing herbal desserts"
+      ],
+      "th": [
+        "รังนกแท้เจ้าเก่าตลาดอนุสาร",
+        "รังนกต้มร้อนๆ หอมหวานสดชื่น",
+        "ของหวานบำรุงสุขภาพราคาย่อมเยา"
+      ]
+    },
+    "recommendedTime": {
+      "zh-TW": "1 小時",
+      "en": "1 Hour",
+      "th": "1 ชั่วโมง"
+    },
+    "tips": {
+      "zh-TW": "位於長康夜市/阿努善市場商圈，夜市逛累時適合坐下來品嚐一碗溫熱燕窩。",
+      "en": "Located in the Night Bazaar / Anusarn Market area, perfect for a warm nourishing treat during evening strolls.",
+      "th": "ตั้งอยู่ย่านไนท์บาซาร์และตลาดอนุสาร เหมาะสำหรับแวะพักทานของหวานอุ่นๆ ยามค่ำคืน"
+    },
+    "charterNote": {
+      "zh-TW": "阿勛旅遊包車提供專屬中文司機接送，直達長康路夜市與阿努善老牌泰國燕窩，行程靈活舒適。",
+      "en": "Ah-Xun Travel private charter provides dedicated chauffeur service directly to Anusarn Thai Bird's Nest with comfortable, flexible timing.",
+      "th": "บริการรถตู้พร้อมคนขับนำเที่ยว รังนกไทย เจ้าเก่าตลาดอนุสาร อย่างสะดวกสบาย ไม่เร่งรีบ กำหนดเวลาได้เอง"
+    },
+    "stampIcon": "🥣",
+    "googleMapsQuery": "รังนกไทย เจ้าเก่าตลาดอนุสาร สาขา1, Chiang Mai",
+    "googleMapsUrl": "https://maps.app.goo.gl/KYP9gSJtcERc3Kim9"
+  },
+  {
     "id": "ploen-ruedee-night-market-58",
     "name": {
       "zh-TW": "Ploen Ruedee (草畔美食廣場文創夜市)",

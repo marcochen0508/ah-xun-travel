@@ -96,6 +96,7 @@ const SPECIFIC_LANDMARK_COORDS: Record<string, { lat: number; lng: number }> = {
   'sp-chicken-古城平價烤雞-21': { lat: 18.7880, lng: 98.9818 },
   'kiat-ocha-榮吉海南雞飯-24': { lat: 18.7898, lng: 98.9878 },
   'baan-phor-liang-meun-34': { lat: 18.7836, lng: 98.9868 },
+  'thai-birds-nest-anusarn-market-branch1': { lat: 18.79011, lng: 98.99868 },
 };
 
 const getLandmarkGeo = (l: Landmark) => {
